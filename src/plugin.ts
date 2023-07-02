@@ -29,7 +29,7 @@ type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
-  const components = getDefaultComponents(opts.components);
+  const components = getDefaultComponents(opts.components, '3.0.3');
 
   fastify.addHook('onRoute', (routeOptions) => {
     if (routeOptions.schema) {
