@@ -57,6 +57,6 @@ jobs:
           DESTINATION_BRANCH: beta
 
       - name: Publish to npm
-        run: npm run release -- --tag beta
+        run: yarn build && npm -v && npm publish --provenance --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

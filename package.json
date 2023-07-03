@@ -39,7 +39,6 @@
     "format": "skuba format",
     "lint": "skuba lint",
     "prepare": "yarn build",
-    "release": "yarn build && npm publish --provenance",
     "start": "skuba node --port=5000 examples/openapi.ts",
     "test": "skuba test",
     "test:ci": "skuba test --coverage",
