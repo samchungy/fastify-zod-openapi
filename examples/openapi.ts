@@ -2,7 +2,7 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from 'zod-openapi';
+import { type ZodOpenApiVersion, extendZodWithOpenApi } from 'zod-openapi';
 
 import {
   type FastifyZodOpenApiSchema,
@@ -15,13 +15,15 @@ import {
 
 extendZodWithOpenApi(z);
 
+const openapi: ZodOpenApiVersion = '3.1.0';
+
 const createApp = async () => {
   const app = fastify();
 
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(fastifyZodOpenApiPlugin);
+  await app.register(fastifyZodOpenApiPlugin, { openapi });
   await app.register(fastifySwagger, {
     openapi: {
       info: {
