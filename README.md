@@ -14,6 +14,8 @@ Fastify plugin for <a href="https://github.com/samchungy/zod-openapi">zod-openap
 </div>
 <br>
 
+This plugin adds Fastify [type provider](https://fastify.dev/docs/latest/Reference/Type-Providers/), [validation & serialization](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/) support for zod-openapi. This also allows for support for rendering documentation with [@fastify/swagger](https://github.com/fastify/fastify-swagger).
+
 ## Install
 
 Install via `npm` or `yarn`:
