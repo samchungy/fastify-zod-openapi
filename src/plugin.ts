@@ -21,11 +21,11 @@ declare module 'fastify' {
   }
 }
 
-export interface ZodOpenApiTypeProvider extends FastifyTypeProvider {
+export interface FastifyZodOpenApiTypeProvider extends FastifyTypeProvider {
   output: this['input'] extends ZodType ? z.infer<this['input']> : never;
 }
 
-type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
+export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {

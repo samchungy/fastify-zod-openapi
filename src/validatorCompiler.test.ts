@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from 'zod-openapi';
 
-import type { ZodOpenApiTypeProvider } from './plugin';
+import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { validatorCompiler } from './validatorCompiler';
 
 extendZodWithOpenApi(z);
@@ -13,7 +13,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/',
         {
           schema: {
@@ -38,7 +38,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/',
         {
           schema: {
@@ -85,7 +85,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
         '/',
         {
           schema: {
@@ -110,7 +110,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
         '/',
         {
           schema: {
@@ -157,7 +157,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/',
         {
           schema: {
@@ -185,7 +185,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/',
         {
           schema: {
@@ -232,7 +232,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/:jobId',
         {
           schema: {
@@ -257,7 +257,7 @@ describe('validatorCompiler', () => {
       const app = fastify();
 
       app.setValidatorCompiler(validatorCompiler);
-      app.withTypeProvider<ZodOpenApiTypeProvider>().get(
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         '/:jobId',
         {
           schema: {

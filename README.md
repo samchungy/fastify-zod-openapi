@@ -29,7 +29,7 @@ yarn add zod zod-openapi fastify-zod-openapi
 ```ts
 import fastify from 'fastify';
 import {
-  type ZodOpenApiTypeProvider,
+  type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
   serializerCompiler,
   validatorCompiler,
@@ -44,7 +44,7 @@ const app = fastify();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.withTypeProvider<ZodOpenApiTypeProvider>().route({
+app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   method: 'POST',
   url: '/:jobId',
   schema: {
@@ -79,11 +79,11 @@ import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
 import {
   type FastifyZodOpenApiSchema,
-  type ZodOpenApiTypeProvider,
+  type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
+  fastifyZodOpenApiTransform,
   serializerCompiler,
   validatorCompiler,
-  zodOpenApiTransform,
 } from 'fastify-zod-openapi';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from 'zod-openapi';
@@ -104,13 +104,13 @@ await app.register(fastifySwagger, {
     },
     openapi: '3.1.0',
   },
-  transform: zodOpenApiTransform,
+  transform: fastifyZodOpenApiTransform,
 });
 await app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
 });
 
-app.withTypeProvider<ZodOpenApiTypeProvider>().route({
+app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   method: 'POST',
   url: '/',
   schema: {

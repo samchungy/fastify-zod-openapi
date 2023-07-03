@@ -5,19 +5,19 @@ import { z } from 'zod';
 import { extendZodWithOpenApi } from 'zod-openapi';
 
 import {
-  type ZodOpenApiTypeProvider,
+  type FastifyZodOpenApiTypeProvider,
   serializerCompiler,
   validatorCompiler,
 } from '../src';
 import { fastifyZodOpenApiPlugin } from '../src/plugin';
 import {
   type FastifyZodOpenApiSchema,
-  zodOpenApiTransform,
+  fastifyZodOpenApiTransform,
 } from '../src/transformer';
 
 extendZodWithOpenApi(z);
 
-describe('zodOpenApiTransform', () => {
+describe('fastifyZodOpenApiTransform', () => {
   it('should support creating an openapi response', async () => {
     const app = fastify();
 
@@ -32,13 +32,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -123,13 +123,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -208,13 +208,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -294,13 +294,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -372,13 +372,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -450,13 +450,13 @@ describe('zodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: zodOpenApiTransform,
+      transform: fastifyZodOpenApiTransform,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {

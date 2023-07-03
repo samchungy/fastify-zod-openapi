@@ -5,7 +5,7 @@ import {
   extendZodWithOpenApi,
 } from 'zod-openapi';
 
-import type { ZodOpenApiTypeProvider } from './plugin';
+import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { serializerCompiler } from './serializerCompiler';
 
 extendZodWithOpenApi(z);
@@ -15,7 +15,7 @@ describe('validatorCompiler', () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -51,7 +51,7 @@ describe('validatorCompiler', () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -81,7 +81,7 @@ describe('validatorCompiler', () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {

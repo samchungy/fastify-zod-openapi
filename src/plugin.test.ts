@@ -4,7 +4,7 @@ import fastify from 'fastify';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from 'zod-openapi';
 
-import type { ZodOpenApiTypeProvider } from './plugin';
+import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { serializerCompiler } from './serializerCompiler';
 import type { FastifyZodOpenApiSchema } from './transformer';
 import { validatorCompiler } from './validatorCompiler';
@@ -22,7 +22,7 @@ describe('validatorCompiler', () => {
       routePrefix: '/documentation',
     });
 
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -64,7 +64,7 @@ describe('validatorCompiler', () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {
@@ -94,7 +94,7 @@ describe('validatorCompiler', () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
-    app.withTypeProvider<ZodOpenApiTypeProvider>().post(
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
       '/',
       {
         schema: {

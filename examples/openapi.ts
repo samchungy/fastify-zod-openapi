@@ -6,11 +6,11 @@ import { extendZodWithOpenApi } from 'zod-openapi';
 
 import {
   type FastifyZodOpenApiSchema,
-  type ZodOpenApiTypeProvider,
+  type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
+  fastifyZodOpenApiTransform,
   serializerCompiler,
   validatorCompiler,
-  zodOpenApiTransform,
 } from '../src';
 
 extendZodWithOpenApi(z);
@@ -30,7 +30,7 @@ const createApp = async () => {
       },
       openapi: '3.1.0',
     },
-    transform: zodOpenApiTransform,
+    transform: fastifyZodOpenApiTransform,
   });
   await app.register(fastifySwaggerUI, {
     routePrefix: '/documentation',
@@ -41,7 +41,7 @@ const createApp = async () => {
     example: '60002023',
   });
 
-  app.withTypeProvider<ZodOpenApiTypeProvider>().route({
+  app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
     method: 'POST',
     url: '/:jobId',
     schema: {

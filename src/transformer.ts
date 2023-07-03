@@ -146,7 +146,7 @@ export const createResponse = (
   );
 };
 
-export const zodOpenApiTransform: Transformer = ({ schema, url }) => {
+export const fastifyZodOpenApiTransform: Transformer = ({ schema, url }) => {
   if (!schema || schema.hide) {
     return {
       schema,
