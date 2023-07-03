@@ -1,11 +1,10 @@
 import type { FastifyPluginAsync, FastifyTypeProvider } from 'fastify';
 import fp from 'fastify-plugin';
 import type { ZodType, z } from 'zod';
-import {
-  type ComponentsObject,
-  type ZodOpenApiComponentsObject,
-  type ZodOpenApiVersion,
-  getDefaultComponents,
+import { api } from 'zod-openapi';
+import type {
+  ZodOpenApiComponentsObject,
+  ZodOpenApiVersion,
 } from 'zod-openapi';
 
 export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
@@ -19,7 +18,7 @@ type FastifyZodOpenApiOpts = {
 
 declare module 'fastify' {
   interface FastifySchema {
-    [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: ComponentsObject;
+    [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: api.ComponentsObject;
   }
 }
 
@@ -31,7 +30,7 @@ export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
-  const components = getDefaultComponents(opts.components, opts.openapi);
+  const components = api.getDefaultComponents(opts.components, opts.openapi);
 
   fastify.addHook('onRoute', (routeOptions) => {
     if (routeOptions.schema) {

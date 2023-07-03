@@ -7,7 +7,6 @@ export interface ValidationErrorDetails {
 export class ValidationError extends Error {
   constructor(public zodError: ZodError, public httpPart: string | undefined) {
     super(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       httpPart
         ? JSON.stringify(
             {

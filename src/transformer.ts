@@ -1,13 +1,11 @@
 import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 import type { FastifySchema } from 'fastify';
 import { type AnyZodObject, ZodObject, type ZodRawShape, ZodType } from 'zod';
-import {
-  type ComponentsObject,
-  type ZodOpenApiParameters,
-  type ZodOpenApiResponsesObject,
-  createMediaTypeSchema,
-  createParamOrRef,
-  type oas31,
+import { api } from 'zod-openapi';
+import type {
+  ZodOpenApiParameters,
+  ZodOpenApiResponsesObject,
+  oas31,
 } from 'zod-openapi';
 
 import { FASTIFY_ZOD_OPENAPI_COMPONENTS } from './plugin';
@@ -37,12 +35,12 @@ export type FastifyZodOpenApiSchema = Omit<
 export const createParams = (
   querystring: ZodObject<any, any, any, any, any>,
   type: keyof ZodOpenApiParameters,
-  components: ComponentsObject,
+  components: api.ComponentsObject,
   path: string[],
 ): Record<string, FastifySwaggerSchemaObject | oas31.ReferenceObject> =>
   Object.entries(querystring.shape as ZodRawShape).reduce(
     (acc, [key, value]: [string, ZodType]) => {
-      const parameter = createParamOrRef(
+      const parameter = api.createParamOrRef(
         value,
         components,
         [...path, key],
@@ -66,11 +64,11 @@ export const createParams = (
 
 export const createResponseSchema = (
   schema: FastifyResponseSchema,
-  components: ComponentsObject,
+  components: api.ComponentsObject,
   path: string[],
 ): unknown => {
   if (schema.properties instanceof ZodType) {
-    return createMediaTypeSchema(schema.properties, components, 'output', [
+    return api.createMediaTypeSchema(schema.properties, components, 'output', [
       ...path,
       'schema',
     ]);
@@ -80,7 +78,7 @@ export const createResponseSchema = (
 
 export const createContent = (
   content: unknown,
-  components: ComponentsObject,
+  components: api.ComponentsObject,
   path: string[],
 ): unknown => {
   if (typeof content !== 'object' || content == null) {
@@ -110,7 +108,7 @@ export const createContent = (
 
 export const createResponse = (
   response: unknown,
-  components: ComponentsObject,
+  components: api.ComponentsObject,
   path: string[],
 ): unknown => {
   if (typeof response !== 'object' || response == null) {
@@ -120,7 +118,7 @@ export const createResponse = (
   return Object.entries(response).reduce(
     (acc, [key, value]: [string, unknown]) => {
       if (value instanceof ZodType) {
-        acc[key] = createMediaTypeSchema(value, components, 'output', [
+        acc[key] = api.createMediaTypeSchema(value, components, 'output', [
           ...path,
           key,
         ]);
@@ -168,10 +166,12 @@ export const fastifyZodOpenApiTransform: Transformer = ({ schema, url }) => {
   };
 
   if (body instanceof ZodType) {
-    transformedSchema.body = createMediaTypeSchema(body, components, 'input', [
-      url,
-      'body',
-    ]);
+    transformedSchema.body = api.createMediaTypeSchema(
+      body,
+      components,
+      'input',
+      [url, 'body'],
+    );
   }
 
   if (maybeResponse) {
