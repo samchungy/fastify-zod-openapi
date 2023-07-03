@@ -185,7 +185,7 @@ To release a new version
 3. Click the `Generate release notes` button and adjust the description.
 4. Tick the `Set as the latest release` box and click `Publish release`. This will trigger the `Release` workflow.
 5. Check the `Pull Requests` tab for a PR labelled `Release vX.X.X`.
-6. Click `Merge Pull Request` on that Pull Request to update master with the new package version.
+6. Click `Merge Pull Request` on that Pull Request to update main with the new package version.
 
 To release a new beta version
 
