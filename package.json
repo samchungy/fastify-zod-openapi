@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/samchungy/fastify-zod-openapi"
+    "url": "git+ssh://git@github.com/samchungy/fastify-zod-openapi.git"
   },
   "license": "MIT",
   "sideEffects": false,
