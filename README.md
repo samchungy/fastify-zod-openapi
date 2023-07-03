@@ -2,7 +2,7 @@
   <h1 align="center">fastify-zod-openapi</h1>
 </p>
 <p align="center">
-Fastify plugin for <a href="https://github.com/samchungy/zod-openapi">zod-openapi</a>
+Fastify <a href="https://fastify.dev/docs/latest/Reference/Type-Providers/">type provider</a>, <a href="https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/">validation, serialization</a> and <a href="https://github.com/fastify/fastify-swagger">@fastify/swagger</a> support for <a href="https://github.com/samchungy/zod-openapi">zod-openapi</a>.
 </p>
 <div align="center">
 <a href="https://www.npmjs.com/package/fastify-zod-openapi"><img src="https://img.shields.io/npm/v/fastify-zod-openapi"/><a>
@@ -13,8 +13,6 @@ Fastify plugin for <a href="https://github.com/samchungy/zod-openapi">zod-openap
 <a href="https://github.com/seek-oss/skuba"><img src="https://img.shields.io/badge/🤿%20skuba-powered-009DC4"/><a>
 </div>
 <br>
-
-This plugin adds Fastify [type provider](https://fastify.dev/docs/latest/Reference/Type-Providers/), [validation & serialization](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/) support for zod-openapi. This also allows for support for rendering documentation with [@fastify/swagger](https://github.com/fastify/fastify-swagger).
 
 ## Install
 
