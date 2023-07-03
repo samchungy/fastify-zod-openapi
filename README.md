@@ -97,14 +97,15 @@ const app = fastify();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-await app.register(fastifyZodOpenApiPlugin);
+const openapi = '3.1.0' as const;
+await app.register(fastifyZodOpenApiPlugin, { openapi });
 await app.register(fastifySwagger, {
   openapi: {
     info: {
       title: 'hello world',
       version: '1.0.0',
     },
-    openapi: '3.1.0',
+    openapi,
   },
   transform: fastifyZodOpenApiTransform,
 });
