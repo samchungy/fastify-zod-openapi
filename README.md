@@ -29,6 +29,7 @@ yarn add zod zod-openapi fastify-zod-openapi
 ```ts
 import fastify from 'fastify';
 import {
+  type FastifyZodOpenApiSchema,
   type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
   serializerCompiler,
