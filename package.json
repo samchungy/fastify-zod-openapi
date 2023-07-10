@@ -48,19 +48,19 @@
     "fastify-plugin": "^4.5.0"
   },
   "devDependencies": {
-    "@fastify/swagger": "8.6.0",
+    "@fastify/swagger": "8.8.0",
     "@fastify/swagger-ui": "1.9.2",
     "@types/node": "20.3.3",
     "eslint-plugin-zod-openapi": "^0.1.0",
-    "fastify": "4.19.1",
+    "fastify": "4.19.2",
     "skuba": "6.2.0",
     "zod": "3.21.4",
-    "zod-openapi": "2.6.1"
+    "zod-openapi": "2.6.3"
   },
   "peerDependencies": {
     "fastify": "4",
     "zod": "^3.21.4",
-    "zod-openapi": "^2.6.1"
+    "zod-openapi": "^2.6.3"
   },
   "engines": {
     "node": ">=16.11"

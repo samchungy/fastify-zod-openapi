@@ -1,8 +1,10 @@
 import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 import type { FastifySchema } from 'fastify';
+import type { OpenAPIV3 } from 'openapi-types';
 import { type AnyZodObject, ZodObject, type ZodRawShape, ZodType } from 'zod';
 import { api } from 'zod-openapi';
 import type {
+  ZodOpenApiComponentsObject,
   ZodOpenApiParameters,
   ZodOpenApiResponsesObject,
   oas31,
@@ -10,7 +12,9 @@ import type {
 
 import { FASTIFY_ZOD_OPENAPI_COMPONENTS } from './plugin';
 
-type Transformer = FastifyDynamicSwaggerOptions['transform'];
+type Transform = FastifyDynamicSwaggerOptions['transform'];
+
+type TransformObject = FastifyDynamicSwaggerOptions['transformObject'];
 
 interface FastifyResponseSchema {
   type: string;
@@ -144,7 +148,11 @@ export const createResponse = (
   );
 };
 
-export const fastifyZodOpenApiTransform: Transformer = ({ schema, url }) => {
+export const fastifyZodOpenApiTransform: Transform = ({
+  schema,
+  url,
+  openapiObject,
+}) => {
   if (!schema || schema.hide) {
     return {
       schema,
@@ -154,6 +162,9 @@ export const fastifyZodOpenApiTransform: Transformer = ({ schema, url }) => {
 
   const { response, headers, querystring, body, params } = schema;
   const components = schema[FASTIFY_ZOD_OPENAPI_COMPONENTS];
+
+  // we need to access the components when we transform the document. Symbol's do not appear
+  openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
 
   if (!components) {
     throw new Error('Please register the fastify-zod-openapi plugin');
@@ -204,5 +215,28 @@ export const fastifyZodOpenApiTransform: Transformer = ({ schema, url }) => {
   return {
     schema: transformedSchema,
     url,
+  };
+};
+
+export const fastifyZodOpenApiTransformObject: TransformObject = ({
+  swaggerObject,
+  openapiObject,
+}) => {
+  if (swaggerObject) {
+    return swaggerObject;
+  }
+
+  const components = openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS];
+
+  if (!components) {
+    return openapiObject;
+  }
+
+  return {
+    ...openapiObject,
+    components: api.createComponents(
+      (openapiObject.components ?? {}) as ZodOpenApiComponentsObject,
+      components,
+    ) as OpenAPIV3.ComponentsObject,
   };
 };

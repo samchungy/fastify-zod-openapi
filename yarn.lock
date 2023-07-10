@@ -596,10 +596,10 @@
     rfdc "^1.3.0"
     yaml "^2.2.2"
 
-"@fastify/swagger@8.6.0":
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/@fastify/swagger/-/swagger-8.6.0.tgz#cf61f10faa82453783636f713e4768ef55f77ea6"
-  integrity sha512-PGde7ryn0nsX/BpSrjP4Ade8RK2M0uBIU4Iow3Qt3kWa/70p1fM7AW28kS3dKERnwT0VwrUdxU3ftrRI+DsNTw==
+"@fastify/swagger@8.8.0":
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/@fastify/swagger/-/swagger-8.8.0.tgz#506074cafdc8a4f693b3923a1295ecb39ecb1c46"
+  integrity sha512-tYI2lbItb4yg9FhQj+leK6DdIBICLbXkSR2vZjo117ygHyYQLxw2v0ere/d2PtDmYAx7SOJzxvg3w6y0Sxc3iw==
   dependencies:
     fastify-plugin "^4.0.0"
     json-schema-resolver "^2.0.0"
@@ -3354,10 +3354,10 @@ fastify-plugin@^4.0.0, fastify-plugin@^4.5.0:
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.0.tgz#8b853923a0bba6ab6921bb8f35b81224e6988d91"
   integrity sha512-79ak0JxddO0utAXAQ5ccKhvs6vX2MGyHHMMsmZkBANrq3hXc1CHzvNPHOcvTsVMEPl5I+NT+RO4YKMGehOfSIg==
 
-fastify@4.19.1:
-  version "4.19.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.19.1.tgz#5a95fb2f0480d0f6c36e17155fc05c3b4e67055b"
-  integrity sha512-99r7xae02BUWI1H8exJidkFJXi/SUZpO18YIJ6SSWIB1bb5CN659ga0iB85oLD+C4D9LeTOKplOJ1/YcFsK7oQ==
+fastify@4.19.2:
+  version "4.19.2"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.19.2.tgz#63a9ed0d865585aec60135128a300a93426c865e"
+  integrity sha512-2unheeIRWFf9/Jjcz7djOpKuXCTzZjlyFfiBwKqpldkHMN2rfTLu/f9pYTdwlhzC9Cdj0S2H12zlug0Kd5uZ1w==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.2.0"
@@ -7823,10 +7823,10 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod-openapi@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/zod-openapi/-/zod-openapi-2.6.1.tgz#190e0b7492c486e0173c6c42a4538b18c927d78f"
-  integrity sha512-KjN/0/hHDR0M71WQr9g40zfba0E6ZS54t17eGk23nNusQQH/VlyWBKc45ry7D74Fu7J+OGFatnRfY8PmIneQXg==
+zod-openapi@2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/zod-openapi/-/zod-openapi-2.6.2.tgz#030791a5ec329766992c11cf4505aa540364b40b"
+  integrity sha512-intMrB54h5Ta6/6fUiS+6kWEbBv6hSQVcsNeQ/tvbV1q7jDRRPXGDCL2RLTS1oTDyNmkz4lT0NwplMKX7T2BVA==
 
 zod@3.21.4:
   version "3.21.4"

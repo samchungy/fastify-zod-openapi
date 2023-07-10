@@ -29,6 +29,7 @@ yarn add zod zod-openapi fastify-zod-openapi
 ```ts
 import fastify from 'fastify';
 import {
+  type FastifyZodOpenApiSchema,
   type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
   serializerCompiler,
@@ -82,6 +83,7 @@ import {
   type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
   fastifyZodOpenApiTransform,
+  fastifyZodOpenApiTransformObject,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
@@ -95,7 +97,7 @@ const app = fastify();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-const openapi: ZodOpenApiVersion = '3.1.0';
+const openapi: ZodOpenApiVersion = '3.0.3'; // If this is not specified, it will default to 3.1.0
 
 await app.register(fastifyZodOpenApiPlugin, { openapi });
 await app.register(fastifySwagger, {
@@ -107,6 +109,7 @@ await app.register(fastifySwagger, {
     openapi,
   },
   transform: fastifyZodOpenApiTransform,
+  transformObject: fastifyZodOpenApiTransformObject,
 });
 await app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
@@ -144,9 +147,20 @@ await app.ready();
 await app.listen({ port: 5000 });
 ```
 
-## Caveats
+### Declaring Components
 
-At the moment, this plugin does \***\*not\*\*** support registering components. Future support will be added.
+To declare components follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
+
+If you wish to declare the components manually you will need to do so via the plugin's options.
+
+```ts
+await app.register(fastifyZodOpenApiPlugin, {
+  openapi,
+  components: { schema: mySchema },
+});
+```
+
+Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
 ## Development
 

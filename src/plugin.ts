@@ -12,13 +12,22 @@ export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
 );
 
 type FastifyZodOpenApiOpts = {
-  openapi: ZodOpenApiVersion;
+  openapi?: ZodOpenApiVersion;
   components?: ZodOpenApiComponentsObject;
 };
 
 declare module 'fastify' {
   interface FastifySchema {
     [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: api.ComponentsObject;
+  }
+}
+
+declare module 'openapi-types' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace OpenAPIV3 {
+    interface Document {
+      [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: api.ComponentsObject;
+    }
   }
 }
 
