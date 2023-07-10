@@ -59,7 +59,6 @@ const createApp = async () => {
         baz: z.string().openapi({
           description: 'query string example',
           example: 'quz',
-          param: { ref: 'baz' },
         }),
       }),
       body: z.object({
