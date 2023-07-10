@@ -9,13 +9,12 @@ import {
   type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
   fastifyZodOpenApiTransform,
+  fastifyZodOpenApiTransformObject,
   serializerCompiler,
   validatorCompiler,
 } from '../src';
 
 extendZodWithOpenApi(z);
-
-const openapi: ZodOpenApiVersion = '3.1.0';
 
 const createApp = async () => {
   const app = fastify();
@@ -23,6 +22,7 @@ const createApp = async () => {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
+  const openapi: ZodOpenApiVersion = '3.1.0';
   await app.register(fastifyZodOpenApiPlugin, { openapi });
   await app.register(fastifySwagger, {
     openapi: {
@@ -30,9 +30,10 @@ const createApp = async () => {
         title: 'hello world',
         version: '1.0.0',
       },
-      openapi: '3.1.0',
+      openapi,
     },
     transform: fastifyZodOpenApiTransform,
+    transformObject: fastifyZodOpenApiTransformObject,
   });
   await app.register(fastifySwaggerUI, {
     routePrefix: '/documentation',
@@ -41,6 +42,7 @@ const createApp = async () => {
   const JobIdSchema = z.string().openapi({
     description: 'Job ID',
     example: '60002023',
+    ref: 'jobId',
   });
 
   app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
