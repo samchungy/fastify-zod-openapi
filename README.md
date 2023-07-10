@@ -160,6 +160,10 @@ await app.register(fastifyZodOpenApiPlugin, {
 });
 ```
 
+### Credits
+
+[fastify-type-provider-zod](https://github.com/turkerdev/fastify-type-provider-zod): Big kudos to this library for lighting the way with how to create type providers, validators and serializers. fastify-zod-openapi is just an extension to this library whilst adding support for the functionality of zod-openapi.
+
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
 ## Development
