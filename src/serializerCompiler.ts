@@ -27,5 +27,5 @@ export const serializerCompiler: FastifySerializerCompiler<
       throw new ValidationError(result.error, 'response');
     }
 
-    return JSON.stringify(result.data, null, 2);
+    return JSON.stringify(result.data);
   };

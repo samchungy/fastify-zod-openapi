@@ -61,19 +61,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{
-          "querystring": [
-            {
-              "code": "invalid_type",
-              "expected": "number",
-              "received": "nan",
-              "path": [
-                "jobId"
-              ],
-              "message": "Expected number, received nan"
-            }
-          ]
-        }",
+          "message": "{"querystring":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
           "statusCode": 400,
         }
       `);
@@ -133,19 +121,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{
-          "body": [
-            {
-              "code": "invalid_type",
-              "expected": "number",
-              "received": "nan",
-              "path": [
-                "jobId"
-              ],
-              "message": "Expected number, received nan"
-            }
-          ]
-        }",
+          "message": "{"body":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
           "statusCode": 400,
         }
       `);
@@ -208,19 +184,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{
-          "headers": [
-            {
-              "code": "invalid_type",
-              "expected": "number",
-              "received": "nan",
-              "path": [
-                "jobId"
-              ],
-              "message": "Expected number, received nan"
-            }
-          ]
-        }",
+          "message": "{"headers":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
           "statusCode": 400,
         }
       `);
@@ -280,19 +244,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{
-          "params": [
-            {
-              "code": "invalid_type",
-              "expected": "number",
-              "received": "nan",
-              "path": [
-                "jobId"
-              ],
-              "message": "Expected number, received nan"
-            }
-          ]
-        }",
+          "message": "{"params":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
           "statusCode": 400,
         }
       `);

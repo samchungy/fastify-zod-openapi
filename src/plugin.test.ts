@@ -124,19 +124,7 @@ describe('validatorCompiler', () => {
     expect(result.json()).toMatchInlineSnapshot(`
       {
         "error": "Internal Server Error",
-        "message": "{
-        "response": [
-          {
-            "code": "invalid_type",
-            "expected": "string",
-            "received": "number",
-            "path": [
-              "jobId"
-            ],
-            "message": "Expected string, received number"
-          }
-        ]
-      }",
+        "message": "{"response":[{"code":"invalid_type","expected":"string","received":"number","path":["jobId"],"message":"Expected string, received number"}]}",
         "statusCode": 500,
       }
     `);
