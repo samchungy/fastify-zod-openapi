@@ -1,7 +1,7 @@
 import type { FastifySerializerCompiler } from 'fastify/types/schema';
 import type { AnyZodObject, ZodType } from 'zod';
 
-import { ValidationError } from './validatonError';
+import { ValidationError } from './validationError';
 
 /**
  * Enables zod-openapi schema response validation
