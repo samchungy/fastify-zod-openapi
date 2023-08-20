@@ -31,7 +31,6 @@ import fastify from 'fastify';
 import {
   type FastifyZodOpenApiSchema,
   type FastifyZodOpenApiTypeProvider,
-  fastifyZodOpenApiPlugin,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
