@@ -52,7 +52,7 @@
     "@fastify/swagger-ui": "1.9.3",
     "@types/node": "20.8.3",
     "eslint-plugin-zod-openapi": "^0.1.0",
-    "fastify": "4.23.2",
+    "fastify": "4.24.2",
     "skuba": "6.2.0",
     "zod": "3.22.2",
     "zod-openapi": "2.9.0"
