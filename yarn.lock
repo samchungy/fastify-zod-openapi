@@ -585,10 +585,10 @@
     p-limit "^3.1.0"
     readable-stream "^4.0.0"
 
-"@fastify/swagger-ui@1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@fastify/swagger-ui/-/swagger-ui-1.10.1.tgz#513c19e28b3393f037a6c88f5ad7cba2935c57a8"
-  integrity sha512-u3EJqNKvVr3X+6jY5i6pbs6/tXCrSlqc2Y+PVjnHBTOGh/d36uHMz+z4jPFy9gie2my6iHUrAdM8itlVmoUjog==
+"@fastify/swagger-ui@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@fastify/swagger-ui/-/swagger-ui-2.0.1.tgz#453bfa4142da9255581b061a8125c6d75ee6b6ee"
+  integrity sha512-sQnufSdQ5kJxaTxBisWYQjkunECuRymYRZYEZEEPpmLUzzZoS22tDLVumb3c1TV4MAlD3L1LTLpxLSXcFL+OZw==
   dependencies:
     "@fastify/static" "^6.0.0"
     fastify-plugin "^4.0.0"
