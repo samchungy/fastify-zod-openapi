@@ -15,9 +15,3 @@ node_modules*/
 npm-debug.log
 yarn-error.log
 # end managed by skuba
-
-# Ignore .npmrc. This is no longer managed by skuba as pnpm projects use a managed .npmrc.
-# IMPORTANT: if migrating to pnpm, remove this line and add an .npmrc IN THE SAME COMMIT.
-# You can use `skuba format` to generate the file or otherwise commit an empty file.
-# Doing so will conflict with a local .npmrc and make it more difficult to unintentionally commit auth secrets.
-.npmrc
