@@ -37,6 +37,7 @@ export type FastifyZodOpenApiSchema = Omit<
 };
 
 export const createParams = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   querystring: ZodObject<any, any, any, any, any>,
   type: keyof ZodOpenApiParameters,
   components: api.ComponentsObject,

@@ -38,7 +38,7 @@
     "build": "skuba build-package",
     "format": "skuba format",
     "lint": "skuba lint",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "start": "skuba node --port=5000 examples/openapi.ts",
     "test": "skuba test",
     "test:ci": "skuba test --coverage",
@@ -62,6 +62,7 @@
     "zod": "^3.21.4",
     "zod-openapi": "^2.6.3"
   },
+  "packageManager": "pnpm@8.15.1",
   "engines": {
     "node": ">=16.11"
   },
@@ -73,6 +74,6 @@
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "6.0.0"
+    "version": "7.4.1"
   }
 }
