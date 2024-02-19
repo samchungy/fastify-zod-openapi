@@ -16,12 +16,14 @@ Fastify <a href="https://fastify.dev/docs/latest/Reference/Type-Providers/">type
 
 ## Install
 
-Install via `npm` or `yarn`:
+Install via `npm`, `pnpm` or `pnpm`:
 
 ```bash
 npm install zod zod-openapi fastify-zod-openapi
 ## or
-yarn add zod zod-openapi fastify-zod-openapi
+pnpm add zod zod-openapi fastify-zod-openapi
+## or
+pnpm install zod-openapi fastify-zod-openapi
 ```
 
 ## Usage
@@ -170,27 +172,27 @@ Please note: the `responses`, `parameters` components do not appear to be suppor
 ### Prerequisites
 
 - Node.js LTS
-- Yarn 1.x
+- pnpm
 
 ```shell
-yarn
-yarn build
+pnpm install
+pnpm build
 ```
 
 ### Test
 
 ```shell
-yarn test
+pnpm test
 ```
 
 ### Lint
 
 ```shell
 # Fix issues
-yarn format
+pnpm format
 
 # Check for issues
-yarn lint
+pnpm lint
 ```
 
 ### Release

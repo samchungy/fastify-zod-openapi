@@ -1,22 +1,10 @@
 # managed by skuba
-.idea/*
-.vscode/*
-
-.cdk.staging/
-.serverless/
-cdk.out/
-node_modules*/
-
-/coverage*/
-/dist*/
-/lib*/
-/tmp*/
-
 # Gantry resource files support non-standard template syntax
 /.gantry/**/*.yaml
 /.gantry/**/*.yml
 gantry*.yaml
 gantry*.yml
+pnpm-lock.yaml
 # end managed by skuba
 
 examples/**/*.yml
