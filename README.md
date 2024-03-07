@@ -80,6 +80,8 @@ await app.listen({ port: 5000 });
 import { z } from 'zod';
 import { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 
+extendZodWithOpenApi(z);
+
 const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
   fastify.route({
     method: 'POST',
