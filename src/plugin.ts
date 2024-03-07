@@ -1,4 +1,11 @@
-import type { FastifyPluginAsync, FastifyTypeProvider } from 'fastify';
+import type {
+  FastifyPluginAsync,
+  FastifyPluginCallback,
+  FastifyPluginOptions,
+  FastifyTypeProvider,
+  RawServerBase,
+  RawServerDefault,
+} from 'fastify';
 import fp from 'fastify-plugin';
 import type { ZodType, z } from 'zod';
 import { api } from 'zod-openapi';
@@ -51,3 +58,36 @@ const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
 export const fastifyZodOpenApiPlugin = fp(fastifyZodOpenApi, {
   name: 'fastify-zod-openapi',
 });
+
+/**
+ * FastifyPluginCallbackZodOpenApi with Zod automatic type inference
+ *
+ * @example
+ * ```typescript
+ * import { FastifyPluginCallbackZodOpenApi } from "fastify-zod-openapi"
+ *
+ * const plugin: FastifyPluginCallbackZodOpenApi = (fastify, options, done) => {
+ *   done()
+ * }
+ * ```
+ */
+export type FastifyPluginCallbackZodOpenApi<
+  Options extends FastifyPluginOptions = Record<never, never>,
+  Server extends RawServerBase = RawServerDefault,
+> = FastifyPluginCallback<Options, Server, FastifyZodOpenApiTypeProvider>;
+
+/**
+ * FastifyPluginAsyncZodOpenApi with Zod automatic type inference
+ *
+ * @example
+ * ```typescript
+ * import { FastifyPluginAsyncZodOpenApi } from "fastify-zod-openapi"
+ *
+ * const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, options) => {
+ * }
+ * ```
+ */
+export type FastifyPluginAsyncZodOpenApi<
+  Options extends FastifyPluginOptions = Record<never, never>,
+  Server extends RawServerBase = RawServerDefault,
+> = FastifyPluginAsync<Options, Server, FastifyZodOpenApiTypeProvider>;
