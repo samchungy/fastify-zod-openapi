@@ -50,9 +50,11 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   method: 'POST',
   url: '/:jobId',
   schema: {
-    body: z.string().openapi({
-      description: 'Job ID',
-      example: '60002023',
+    body: z.object({
+      jobId: z.string().openapi({
+        description: 'Job ID',
+        example: '60002023',
+      }),
     }),
     response: {
       201: z.object({
@@ -63,14 +65,47 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
       }),
     },
   } satisfies FastifyZodOpenApiSchema,
-  handler: async (_req, res) =>
-    res.send({
-      jobId: '60002023',
-    }),
+  handler: async (req, res) => {
+    await res.send({ jobId: req.body.jobId });
+  },
 });
 
 await app.ready();
 await app.listen({ port: 5000 });
+```
+
+## Usage with plugins
+
+```ts
+import { z } from 'zod';
+import { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
+
+const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
+  fastify.route({
+    method: 'POST',
+    url: '/',
+    // Define your schema
+    schema: {
+      body: z.object({
+        jobId: z.string().openapi({
+          description: 'Job ID',
+          example: '60002023',
+        }),
+      }),
+      response: {
+        201: z.object({
+          jobId: z.string().openapi({
+            description: 'Job ID',
+            example: '60002023',
+          }),
+        }),
+      },
+    } satisfies FastifyZodOpenApiSchema,
+    handler: async (req, res) => {
+      await res.send({ jobId: req.body.jobId });
+    },
+  });
+};
 ```
 
 ## Usage with @fastify/swagger

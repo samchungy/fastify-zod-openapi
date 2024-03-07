@@ -4,7 +4,11 @@ import fastify from 'fastify';
 import { z } from 'zod';
 import { extendZodWithOpenApi } from 'zod-openapi';
 
-import type { FastifyZodOpenApiTypeProvider } from './plugin';
+import type {
+  FastifyPluginAsyncZodOpenApi,
+  FastifyPluginCallbackZodOpenApi,
+  FastifyZodOpenApiTypeProvider,
+} from './plugin';
 import { serializerCompiler } from './serializerCompiler';
 import type { FastifyZodOpenApiSchema } from './transformer';
 import { validatorCompiler } from './validatorCompiler';
@@ -128,5 +132,98 @@ describe('validatorCompiler', () => {
         "statusCode": 500,
       }
     `);
+  });
+});
+
+describe('FastifyPluginAsyncZodOpenApi', () => {
+  it('should work with an async plugin', async () => {
+    const plugin: FastifyPluginAsyncZodOpenApi = async (
+      fastifyInstance,
+      _opts,
+      // eslint-disable-next-line @typescript-eslint/require-await
+    ) => {
+      fastifyInstance.route({
+        method: 'POST',
+        url: '/',
+        // Define your schema
+        schema: {
+          body: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+          response: {
+            201: z.object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+          },
+        } satisfies FastifyZodOpenApiSchema,
+        handler: async (req, res) => {
+          await res.send({ jobId: req.body.jobId });
+        },
+      });
+    };
+
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+    await app.register(plugin);
+
+    await app.ready();
+
+    const result = await app.inject().post('/').body({ jobId: '60002023' });
+
+    expect(result.json()).toEqual({ jobId: '60002023' });
+  });
+
+  it('should work with a callback plugin', async () => {
+    const plugin: FastifyPluginCallbackZodOpenApi = (
+      fastifyInstance,
+      _opts,
+      done,
+    ) => {
+      fastifyInstance.route({
+        method: 'POST',
+        url: '/',
+        // Define your schema
+        schema: {
+          body: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+          response: {
+            201: z.object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+          },
+        } satisfies FastifyZodOpenApiSchema,
+        handler: async (req, res) => {
+          await res.send({ jobId: req.body.jobId });
+        },
+      });
+      done();
+    };
+
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+    await app.register(plugin);
+
+    await app.ready();
+
+    const result = await app.inject().post('/').body({ jobId: '60002023' });
+
+    expect(result.json()).toEqual({ jobId: '60002023' });
   });
 });
