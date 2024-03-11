@@ -77,8 +77,9 @@ await app.listen({ port: 5000 });
 ## Usage with plugins
 
 ```ts
-import { z } from 'zod';
 import { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
+import { z } from 'zod';
+import { extendZodWithOpenApi } from 'zod-openapi';
 
 extendZodWithOpenApi(z);
 
