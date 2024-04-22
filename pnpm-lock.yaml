@@ -32,8 +32,8 @@ devDependencies:
     specifier: 3.22.4
     version: 3.22.4
   zod-openapi:
-    specifier: 2.15.0
-    version: 2.15.0(zod@3.22.4)
+    specifier: 2.16.0
+    version: 2.16.0(zod@3.22.4)
 
 packages:
 
@@ -7349,8 +7349,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zod-openapi@2.15.0(zod@3.22.4):
-    resolution: {integrity: sha512-pISLVXyOtczrpZeXBDNLl4zYCvKMRbeWZNyEyiMGHpAvWQy9mXbfXAPPcTe6ejXHlgvTMu0y4OKX1dHnYosc6A==}
+  /zod-openapi@2.16.0(zod@3.22.4):
+    resolution: {integrity: sha512-dMcmJbvCZDwQ5uy2HGLMJtwHJxsLM+/F3wz5jcz0aC9E0c7l0sKG/MVvzpwR216BXKrFCD5EDKX6G8DDYmVzZA==}
     engines: {node: '>=16.11'}
     peerDependencies:
       zod: ^3.21.4
