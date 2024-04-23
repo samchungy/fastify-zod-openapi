@@ -29,6 +29,7 @@ pnpm install zod-openapi fastify-zod-openapi
 ## Usage
 
 ```ts
+import 'zod-openapi/extend';
 import fastify from 'fastify';
 import {
   type FastifyZodOpenApiSchema,
@@ -37,9 +38,6 @@ import {
   validatorCompiler,
 } from 'fastify-zod-openapi';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from 'zod-openapi';
-
-extendZodWithOpenApi(z);
 
 const app = fastify();
 
@@ -77,11 +75,9 @@ await app.listen({ port: 5000 });
 ## Usage with plugins
 
 ```ts
+import 'zod-openapi/extend';
 import { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from 'zod-openapi';
-
-extendZodWithOpenApi(z);
 
 const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
   fastify.route({
@@ -114,6 +110,7 @@ const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
 ## Usage with @fastify/swagger
 
 ```ts
+import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
@@ -127,9 +124,7 @@ import {
   validatorCompiler,
 } from 'fastify-zod-openapi';
 import { z } from 'zod';
-import { type ZodOpenApiVersion, extendZodWithOpenApi } from 'zod-openapi';
-
-extendZodWithOpenApi(z);
+import { type ZodOpenApiVersion } from 'zod-openapi';
 
 const app = fastify();
 
