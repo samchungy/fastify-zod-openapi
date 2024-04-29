@@ -105,6 +105,8 @@ const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
     },
   });
 };
+
+app.register(plugin);
 ```
 
 ## Usage with @fastify/swagger
