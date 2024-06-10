@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@fastify/swagger": "8.14.0",
-    "@fastify/swagger-ui": "3.0.0",
+    "@fastify/swagger-ui": "3.1.0",
     "@types/node": "20.14.2",
     "eslint-plugin-zod-openapi": "^0.2.0",
     "fastify": "4.27.0",
