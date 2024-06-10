@@ -39,7 +39,7 @@ declare module 'openapi-types' {
 }
 
 export interface FastifyZodOpenApiTypeProvider extends FastifyTypeProvider {
-  output: this['input'] extends ZodType ? z.infer<this['input']> : never;
+  output: this['input'] extends ZodType ? z.infer<this['input']> : unknown;
 }
 
 export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
