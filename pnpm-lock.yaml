@@ -14,8 +14,8 @@ devDependencies:
     specifier: 8.14.0
     version: 8.14.0
   '@fastify/swagger-ui':
-    specifier: 3.0.0
-    version: 3.0.0
+    specifier: 3.1.0
+    version: 3.1.0
   '@types/node':
     specifier: 20.14.2
     version: 20.14.2
@@ -788,8 +788,8 @@ packages:
       glob: 10.3.10
     dev: true
 
-  /@fastify/swagger-ui@3.0.0:
-    resolution: {integrity: sha512-8P5OwHVv6QR4XSE6cW4fsENeMbW4yWWWj6Dz/5tvQN2pwNyTiSWxYpsY3+VP+uiZucNaDrAE2xm11rqytqAocA==}
+  /@fastify/swagger-ui@3.1.0:
+    resolution: {integrity: sha512-68jm6k8VzvHXkEBT4Dakm/kkzUlPO4POIi0agWJSWxsYichPBqzjo+IpfqPl4pSJR1zCToQhEOo+cv+yJL2qew==}
     dependencies:
       '@fastify/static': 7.0.1
       fastify-plugin: 4.5.1
@@ -3804,13 +3804,14 @@ packages:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
-      minimatch: 9.0.3
+      minimatch: 9.0.4
       minipass: 7.0.4
       path-scurry: 1.10.1
     dev: true
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
