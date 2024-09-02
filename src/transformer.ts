@@ -166,7 +166,7 @@ export const createResponse = (
 export const fastifyZodOpenApiTransform: Transform = ({
   schema,
   url,
-  openapiObject,
+  ...opts
 }) => {
   if (!schema || schema.hide) {
     return {
@@ -178,8 +178,12 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const { response, headers, querystring, body, params } = schema;
   const components = schema[FASTIFY_ZOD_OPENAPI_COMPONENTS];
 
+  if (!('openapiObject' in opts)) {
+    throw new Error('openapiObject was not found in the options');
+  }
+
   // we need to access the components when we transform the document. Symbol's do not appear
-  openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
+  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
 
   if (!components) {
     throw new Error('Please register the fastify-zod-openapi plugin');
@@ -233,24 +237,21 @@ export const fastifyZodOpenApiTransform: Transform = ({
   };
 };
 
-export const fastifyZodOpenApiTransformObject: TransformObject = ({
-  swaggerObject,
-  openapiObject,
-}) => {
-  if (swaggerObject) {
-    return swaggerObject;
+export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
+  if ('swaggerObject' in opts) {
+    return opts.swaggerObject;
   }
 
-  const components = openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS];
+  const components = opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS];
 
   if (!components) {
-    return openapiObject;
+    return opts.openapiObject;
   }
 
   return {
-    ...openapiObject,
+    ...opts.openapiObject,
     components: api.createComponents(
-      (openapiObject.components ?? {}) as ZodOpenApiComponentsObject,
+      (opts.openapiObject.components ?? {}) as ZodOpenApiComponentsObject,
       components,
     ) as OpenAPIV3.ComponentsObject,
   };

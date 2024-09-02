@@ -11,8 +11,8 @@ dependencies:
 
 devDependencies:
   '@fastify/swagger':
-    specifier: 8.14.0
-    version: 8.14.0
+    specifier: 8.15.0
+    version: 8.15.0
   '@fastify/swagger-ui':
     specifier: 4.0.1
     version: 4.0.1
@@ -798,8 +798,8 @@ packages:
       yaml: 2.3.1
     dev: true
 
-  /@fastify/swagger@8.14.0:
-    resolution: {integrity: sha512-sGiznEb3rl6pKGGUZ+JmfI7ct5cwbTQGo+IjewaTvtzfrshnryu4dZwEsjw0YHABpBA+kCz3kpRaHB7qpa67jg==}
+  /@fastify/swagger@8.15.0:
+    resolution: {integrity: sha512-zy+HEEKFqPMS2sFUsQU5X0MHplhKJvWeohBwTCkBAJA/GDYGLGUWQaETEhptiqxK7Hs0fQB9B4MDb3pbwIiCwA==}
     dependencies:
       fastify-plugin: 4.5.1
       json-schema-resolver: 2.0.0
