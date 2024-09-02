@@ -1,4 +1,4 @@
-import { FastifySerializerCompiler } from 'fastify/types/schema';
+import type { FastifySerializerCompiler } from 'fastify/types/schema';
 import type { AnyZodObject, ZodType } from 'zod';
 
 import { ValidationError } from './validationError';
