@@ -67,11 +67,11 @@
     "zod-openapi": "2.19.0"
   },
   "peerDependencies": {
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^4.1.0",
     "fastify": "4",
     "zod": "^3.21.4",
-    "zod-openapi": "^2.6.3",
-    "@fastify/swagger": "^8.15.0",
-    "@fastify/swagger-ui": "^4.1.0"
+    "zod-openapi": "^2.6.3"
   },
   "peerDependenciesMeta": {
     "@fastify/swagger": {
