@@ -12,6 +12,7 @@ jobs:
     name: Lint & Test
     permissions:
       checks: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
