@@ -14,8 +14,8 @@ devDependencies:
     specifier: 8.15.0
     version: 8.15.0
   '@fastify/swagger-ui':
-    specifier: 4.0.1
-    version: 4.0.1
+    specifier: 4.1.0
+    version: 4.1.0
   '@types/node':
     specifier: 20.14.8
     version: 20.14.8
@@ -788,8 +788,8 @@ packages:
       glob: 10.3.10
     dev: true
 
-  /@fastify/swagger-ui@4.0.1:
-    resolution: {integrity: sha512-gG+T6ThV+uatmn5HsLA5TTnf6zOW5Ya+v7z9rFKQIclnJFK3rhgg4iIwEEi+kV6h8f32pj1kmBqD8ZeDefnd1Q==}
+  /@fastify/swagger-ui@4.1.0:
+    resolution: {integrity: sha512-Bqsd6VFQR7WoT6eRammOF8/gXf5GKywq2zYy8/3fj2rsZw43cmXdfsEKxVAmAwOW2Nv+dnyQaf5qM6kBqyXRlw==}
     dependencies:
       '@fastify/static': 7.0.1
       fastify-plugin: 4.5.1
