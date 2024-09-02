@@ -27,18 +27,20 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./lib-esm/index.mjs",
-      "require": "./lib-commonjs/index.js",
-      "types": "./lib-types/index.d.ts"
-    }
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.ts"
+      },
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
-  "main": "./lib-commonjs/index.js",
-  "module": "./lib-esm/index.mjs",
-  "types": "./lib-types/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
-    "lib*/**/*.d.ts",
-    "lib*/**/*.{js,mjs}{,.map}",
-    "lib*/**/*.json"
+    "dist"
   ],
   "scripts": {
     "build": "node esbuild.mjs && node esbuild.esm.mjs && tsc --allowJS false --declaration --emitDeclarationOnly --outDir lib-types --project tsconfig.build.json",
@@ -54,6 +56,7 @@
     "fastify-plugin": "^4.5.0"
   },
   "devDependencies": {
+    "@crackle/cli": "^0.15.5",
     "@fastify/swagger": "8.15.0",
     "@fastify/swagger-ui": "4.0.1",
     "@types/node": "20.14.8",
@@ -80,6 +83,6 @@
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "7.4.1"
+    "version": "8.2.1"
   }
 }
