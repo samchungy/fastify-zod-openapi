@@ -43,7 +43,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node esbuild.mjs && node esbuild.esm.mjs && tsc --allowJS false --declaration --emitDeclarationOnly --outDir lib-types --project tsconfig.build.json",
+    "build": "crackle package",
     "format": "skuba format",
     "lint": "skuba lint",
     "prepare": "pnpm build",
