@@ -59,7 +59,7 @@
     "@crackle/cli": "0.15.5",
     "@fastify/swagger": "8.15.0",
     "@fastify/swagger-ui": "4.1.0",
-    "@types/node": "22.5.2",
+    "@types/node": "22.5.4",
     "eslint-plugin-zod-openapi": "0.2.0",
     "fastify": "4.28.1",
     "skuba": "8.2.1",
