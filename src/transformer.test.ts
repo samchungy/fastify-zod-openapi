@@ -86,16 +86,17 @@ describe('fastifyZodOpenApiTransform', () => {
             "content": {
               "application/json": {
                 "schema": {
-                  "_cached": null,
-                  "_def": {
-                    "catchall": {
-                      "_def": {
-                        "typeName": "ZodNever",
-                      },
+                  "properties": {
+                    "jobId": {
+                      "description": "Job ID",
+                      "example": "60002023",
+                      "type": "string",
                     },
-                    "typeName": "ZodObject",
-                    "unknownKeys": "strip",
                   },
+                  "required": [
+                    "jobId",
+                  ],
+                  "type": "object",
                 },
               },
             },
@@ -569,6 +570,15 @@ describe('fastifyZodOpenApiTransformObject', () => {
 
     expect(result.json()).toMatchInlineSnapshot(`
 {
+  "components": {
+    "schemas": {
+      "jobId": {
+        "description": "Job ID",
+        "example": "60002023",
+        "type": "string",
+      },
+    },
+  },
   "info": {
     "title": "hello world",
     "version": "1.0.0",
@@ -582,16 +592,15 @@ describe('fastifyZodOpenApiTransformObject', () => {
             "content": {
               "application/json": {
                 "schema": {
-                  "_cached": null,
-                  "_def": {
-                    "catchall": {
-                      "_def": {
-                        "typeName": "ZodNever",
-                      },
+                  "properties": {
+                    "jobId": {
+                      "$ref": "#/components/schemas/jobId",
                     },
-                    "typeName": "ZodObject",
-                    "unknownKeys": "strip",
                   },
+                  "required": [
+                    "jobId",
+                  ],
+                  "type": "object",
                 },
               },
             },
@@ -684,16 +693,15 @@ describe('fastifyZodOpenApiTransformObject', () => {
             "content": {
               "application/json": {
                 "schema": {
-                  "_cached": null,
-                  "_def": {
-                    "catchall": {
-                      "_def": {
-                        "typeName": "ZodNever",
-                      },
+                  "properties": {
+                    "jobId": {
+                      "$ref": "#/components/schemas/jobId",
                     },
-                    "typeName": "ZodObject",
-                    "unknownKeys": "strip",
                   },
+                  "required": [
+                    "jobId",
+                  ],
+                  "type": "object",
                 },
               },
             },

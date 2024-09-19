@@ -1,5 +1,5 @@
 import type { FastifySerializerCompiler } from 'fastify/types/schema';
-import type { AnyZodObject, ZodType } from 'zod';
+import type { ZodType } from 'zod';
 
 import { ValidationError } from './validationError';
 
@@ -13,15 +13,10 @@ import { ValidationError } from './validationError';
  * const server = Fastify().setserializerCompiler(serializerCompiler)
  * ```
  */
-export const serializerCompiler: FastifySerializerCompiler<
-  ZodType | { properties: AnyZodObject }
-> =
+export const serializerCompiler: FastifySerializerCompiler<ZodType> =
   ({ schema }) =>
   (value) => {
-    const result =
-      'properties' in schema
-        ? schema.properties.safeParse(value)
-        : schema.safeParse(value);
+    const result = schema.safeParse(value);
 
     if (!result.success) {
       throw new ValidationError(result.error, 'response');

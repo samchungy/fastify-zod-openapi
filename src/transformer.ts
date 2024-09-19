@@ -16,10 +16,7 @@ type Transform = FastifyDynamicSwaggerOptions['transform'];
 
 type TransformObject = FastifyDynamicSwaggerOptions['transformObject'];
 
-interface FastifyResponseSchema {
-  type: string;
-  properties: ZodType | Record<string, unknown>;
-}
+type FastifyResponseSchema = ZodType | Record<string, unknown>;
 
 type FastifySwaggerSchemaObject = Omit<oas31.SchemaObject, 'required'> & {
   required?: string[] | boolean;
@@ -86,8 +83,8 @@ export const createResponseSchema = (
   components: api.ComponentsObject,
   path: string[],
 ): unknown => {
-  if (isZodType(schema.properties)) {
-    return api.createMediaTypeSchema(schema.properties, components, 'output', [
+  if (isZodType(schema)) {
+    return api.createMediaTypeSchema(schema, components, 'output', [
       ...path,
       'schema',
     ]);
