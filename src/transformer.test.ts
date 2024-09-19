@@ -69,45 +69,44 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-      {
-        "components": {
-          "schemas": {},
-        },
-        "info": {
-          "title": "hello world",
-          "version": "1.0.0",
-        },
-        "openapi": "3.1.0",
-        "paths": {
-          "/": {
-            "post": {
-              "responses": {
-                "200": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "properties": {
-                          "jobId": {
-                            "description": "Job ID",
-                            "example": "60002023",
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "jobId",
-                        ],
-                        "type": "object",
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "_cached": null,
+                  "_def": {
+                    "catchall": {
+                      "_def": {
+                        "typeName": "ZodNever",
                       },
                     },
+                    "typeName": "ZodObject",
+                    "unknownKeys": "strip",
                   },
-                  "description": "Default Response",
                 },
               },
             },
+            "description": "Default Response",
           },
         },
-      }
-    `);
+      },
+    },
+  },
+}
+`);
   });
 
   it('should support creating a shortcut openapi response', async () => {
@@ -569,49 +568,41 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-      {
-        "components": {
-          "schemas": {
-            "jobId": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
-            },
-          },
-        },
-        "info": {
-          "title": "hello world",
-          "version": "1.0.0",
-        },
-        "openapi": "3.1.0",
-        "paths": {
-          "/": {
-            "post": {
-              "responses": {
-                "200": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "properties": {
-                          "jobId": {
-                            "$ref": "#/components/schemas/jobId",
-                          },
-                        },
-                        "required": [
-                          "jobId",
-                        ],
-                        "type": "object",
+{
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "_cached": null,
+                  "_def": {
+                    "catchall": {
+                      "_def": {
+                        "typeName": "ZodNever",
                       },
                     },
+                    "typeName": "ZodObject",
+                    "unknownKeys": "strip",
                   },
-                  "description": "Default Response",
                 },
               },
             },
+            "description": "Default Response",
           },
         },
-      }
-    `);
+      },
+    },
+  },
+}
+`);
   });
 
   it('should support creating components using components option', async () => {
@@ -670,48 +661,49 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-      {
-        "components": {
-          "schemas": {
-            "jobId": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
-            },
-          },
-        },
-        "info": {
-          "title": "hello world",
-          "version": "1.0.0",
-        },
-        "openapi": "3.1.0",
-        "paths": {
-          "/": {
-            "post": {
-              "responses": {
-                "200": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "properties": {
-                          "jobId": {
-                            "$ref": "#/components/schemas/jobId",
-                          },
-                        },
-                        "required": [
-                          "jobId",
-                        ],
-                        "type": "object",
+{
+  "components": {
+    "schemas": {
+      "jobId": {
+        "description": "Job ID",
+        "example": "60002023",
+        "type": "string",
+      },
+    },
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "_cached": null,
+                  "_def": {
+                    "catchall": {
+                      "_def": {
+                        "typeName": "ZodNever",
                       },
                     },
+                    "typeName": "ZodObject",
+                    "unknownKeys": "strip",
                   },
-                  "description": "Default Response",
                 },
               },
             },
+            "description": "Default Response",
           },
         },
-      }
-    `);
+      },
+    },
+  },
+}
+`);
   });
 });
