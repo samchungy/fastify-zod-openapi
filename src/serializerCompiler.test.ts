@@ -1,7 +1,7 @@
 import 'zod-openapi/extend';
 import fastify from 'fastify';
 import { z } from 'zod';
-import { type ZodOpenApiResponsesObject } from 'zod-openapi';
+import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { serializerCompiler } from './serializerCompiler';
