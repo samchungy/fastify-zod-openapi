@@ -1,14 +1,10 @@
+import 'zod-openapi/extend';
 import fastify from 'fastify';
 import { z } from 'zod';
-import {
-  type ZodOpenApiResponsesObject,
-  extendZodWithOpenApi,
-} from 'zod-openapi';
+import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { serializerCompiler } from './serializerCompiler';
-
-extendZodWithOpenApi(z);
 
 describe('validatorCompiler', () => {
   it('should pass a valid response', async () => {
