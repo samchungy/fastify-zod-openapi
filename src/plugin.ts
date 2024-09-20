@@ -41,7 +41,7 @@ declare module 'openapi-types' {
 export interface FastifyZodOpenApiTypeProvider extends FastifyTypeProvider {
   validator: this['schema'] extends ZodType ? z.infer<this['schema']> : unknown;
   serializer: this['schema'] extends ZodType
-    ? z.infer<this['schema']>
+    ? z.input<this['schema']>
     : unknown;
 }
 
