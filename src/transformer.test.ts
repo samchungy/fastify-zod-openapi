@@ -1,8 +1,8 @@
+import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from 'zod-openapi';
 
 import {
   type FastifyZodOpenApiTypeProvider,
@@ -15,8 +15,6 @@ import {
   fastifyZodOpenApiTransform,
   fastifyZodOpenApiTransformObject,
 } from '../src/transformer';
-
-extendZodWithOpenApi(z);
 
 describe('fastifyZodOpenApiTransform', () => {
   it('should support creating an openapi response', async () => {

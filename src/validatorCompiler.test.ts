@@ -1,11 +1,9 @@
+import 'zod-openapi/extend';
 import fastify from 'fastify';
 import { z } from 'zod';
-import { extendZodWithOpenApi } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { validatorCompiler } from './validatorCompiler';
-
-extendZodWithOpenApi(z);
 
 describe('validatorCompiler', () => {
   describe('querystring', () => {
