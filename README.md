@@ -7,7 +7,7 @@ Fastify <a href="https://fastify.dev/docs/latest/Reference/Type-Providers/">type
 <div align="center">
 <a href="https://www.npmjs.com/package/fastify-zod-openapi"><img src="https://img.shields.io/npm/v/fastify-zod-openapi"/><a>
 <a href="https://www.npmjs.com/package/fastify-zod-openapi"><img src="https://img.shields.io/npm/dm/fastify-zod-openapi"/><a>
-<a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/node-%3E%3D%2016.11-brightgreen"/><a>
+<a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/node-%3E%3D%2020-brightgreen"/><a>
 <a href="https://github.com/samchungy/fastify-zod-openapi/actions/workflows/test.yml"><img src="https://github.com/samchungy/fastify-zod-openapi/actions/workflows/test.yml/badge.svg"/><a>
 <a href="https://github.com/samchungy/fastify-zod-openapi/actions/workflows/release.yml"><img src="https://github.com/samchungy/fastify-zod-openapi/actions/workflows/release.yml/badge.svg"/><a>
 <a href="https://github.com/seek-oss/skuba"><img src="https://img.shields.io/badge/🤿%20skuba-powered-009DC4"/><a>
