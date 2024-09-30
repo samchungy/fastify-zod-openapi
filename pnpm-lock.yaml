@@ -16,8 +16,8 @@ importers:
         specifier: 0.15.5
         version: 0.15.5(@types/node@22.5.5)(terser@5.31.6)(typescript@5.5.4)(webpack@5.94.0(@swc/core@1.7.22)(esbuild@0.23.1))
       '@fastify/swagger':
-        specifier: 9.0.0
-        version: 9.0.0
+        specifier: 9.1.0
+        version: 9.1.0
       '@fastify/swagger-ui':
         specifier: 5.0.1
         version: 5.0.1
@@ -643,8 +643,8 @@ packages:
   '@fastify/swagger-ui@5.0.1':
     resolution: {integrity: sha512-nCDV5l0OTziK8nIeHaLZ30ENFFftZ4Pcs7GHDcqOO6Jp3qSnyOsqBg1/EosM+d1mrCvH4vSlM09xolkjrbuJQQ==}
 
-  '@fastify/swagger@9.0.0':
-    resolution: {integrity: sha512-E7TQbBCbhvS2djGLxJ7t2OFbhc2F+KCsOZCNhh6xQIlJxq9H4ZR5KuLKG+vn6COVqkLxRVUOZ9qtbbzdf5Jfqw==}
+  '@fastify/swagger@9.1.0':
+    resolution: {integrity: sha512-4q3OgaqoNngsbXcld8MAZX2N7Mf4hGp0OFZ6m8q+PZ1IcEeixjnfsdLDjJaRgJnYlGrSDkKgrWNGFG1+s4CiOA==}
 
   '@finsit/eslint-plugin-cypress@3.1.1':
     resolution: {integrity: sha512-cowFcoYNYOjg/yxKlQ7f26uiGl7FK2Sksvo0KaBnRF0EZbIJTv3apSRLB1RqaTg1N5bhLL9EpVwXqXRpcICNQg==}
@@ -4981,10 +4981,6 @@ packages:
     resolution: {integrity: sha512-OmuvQd5lyIJWfFALc39K5fGqp0aWNc+EtyhVgcQIPZaUKMnTb7An3RMp+QJizJ/x0F4kpgTNe6BL/ctdvoIwIg==}
     engines: {node: ^14.17.0 || >=16.0.0}
 
-  yaml@2.3.1:
-    resolution: {integrity: sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==}
-    engines: {node: '>= 14'}
-
   yaml@2.5.1:
     resolution: {integrity: sha512-bLQOjaX/ADgQ20isPJRvF0iRUHIxVhYvr53Of7wGcWlO2jvtUlH5m87DsmulFVxRpNLOnI4tB6p/oh8D7kpn9Q==}
     engines: {node: '>= 14'}
@@ -5615,7 +5611,7 @@ snapshots:
       rfdc: 1.4.1
       yaml: 2.5.1
 
-  '@fastify/swagger@9.0.0':
+  '@fastify/swagger@9.1.0':
     dependencies:
       fastify-plugin: 5.0.1
       json-schema-resolver: 2.0.0
@@ -10689,9 +10685,7 @@ snapshots:
     dependencies:
       eslint-visitor-keys: 3.4.3
       lodash: 4.17.21
-      yaml: 2.3.1
-
-  yaml@2.3.1: {}
+      yaml: 2.5.1
 
   yaml@2.5.1: {}
 
