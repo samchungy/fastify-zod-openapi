@@ -65,7 +65,6 @@ export const createParams = (
         value,
         components,
         [...path, key],
-        {},
         type,
         key,
       );
