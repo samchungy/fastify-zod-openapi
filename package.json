@@ -62,7 +62,7 @@
     "@types/node": "22.7.4",
     "eslint-plugin-zod-openapi": "1.0.0",
     "fastify": "5.0.0",
-    "skuba": "8.2.1",
+    "skuba": "9.0.1",
     "zod": "3.23.8",
     "zod-openapi": "3.0.1"
   },
@@ -93,6 +93,6 @@
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "8.2.1"
+    "version": "9.0.1"
   }
 }
