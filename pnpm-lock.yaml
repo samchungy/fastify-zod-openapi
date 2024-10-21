@@ -19,8 +19,8 @@ importers:
         specifier: 9.2.0
         version: 9.2.0
       '@fastify/swagger-ui':
-        specifier: 5.0.1
-        version: 5.0.1
+        specifier: 5.1.0
+        version: 5.1.0
       '@types/node':
         specifier: 22.7.5
         version: 22.7.5
@@ -868,8 +868,8 @@ packages:
   '@fastify/static@8.0.0':
     resolution: {integrity: sha512-VKGn1PQslB2VqzspyMKPu9xasF9vj+YuyGhVLb1ih6V60VVcRvcf0fFRcl3opt6c6YWwhKKdTUTfVE6COnpw6A==}
 
-  '@fastify/swagger-ui@5.0.1':
-    resolution: {integrity: sha512-nCDV5l0OTziK8nIeHaLZ30ENFFftZ4Pcs7GHDcqOO6Jp3qSnyOsqBg1/EosM+d1mrCvH4vSlM09xolkjrbuJQQ==}
+  '@fastify/swagger-ui@5.1.0':
+    resolution: {integrity: sha512-XWb+zWz0vlP4QIXbF2xo/n9XuOjNF5aRdQ+0AiBXY9nlIuoTYU1ZXCkXNStdnM/sOdnDy8Q1vsxZ2RsN7XivQA==}
 
   '@fastify/swagger@9.2.0':
     resolution: {integrity: sha512-tuy78fW3G4z8EhTdopAu6gXbllFrQBkcYduOmPiEVESZNaLnxR8N80YVu7F6WuMwk7sd9rYGnGo9bxDQChCFjg==}
@@ -1562,9 +1562,6 @@ packages:
 
   '@types/node@20.16.10':
     resolution: {integrity: sha512-vQUKgWTjEIRFCvK6CyriPH3MZYiYlNy0fKiEYHWbcoWLEgs4opurGGKlebrTLqdSMIbXImH6XExNiIyNUv3WpA==}
-
-  '@types/node@22.7.4':
-    resolution: {integrity: sha512-y+NPi1rFzDs1NdQHHToqeiX2TIS79SWEAw9GYhkkx8bD0ChpfqC+n2j5OXOCpzfojBEBt6DnEnnG9MY0zk1XLg==}
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -6501,7 +6498,7 @@ snapshots:
       fastq: 1.17.1
       glob: 11.0.0
 
-  '@fastify/swagger-ui@5.0.1':
+  '@fastify/swagger-ui@5.1.0':
     dependencies:
       '@fastify/static': 8.0.0
       fastify-plugin: 5.0.1
@@ -6765,7 +6762,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
       '@types/yargs': 17.0.33
       chalk: 4.1.2
     optional: true
@@ -7315,7 +7312,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
     optional: true
 
   '@types/istanbul-lib-coverage@2.0.4': {}
@@ -7354,10 +7351,6 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/node@20.16.10':
-    dependencies:
-      undici-types: 6.19.8
-
-  '@types/node@22.7.4':
     dependencies:
       undici-types: 6.19.8
 
@@ -7505,7 +7498,7 @@ snapshots:
       debug: 4.3.7
       fast-glob: 3.3.2
       is-glob: 4.0.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       semver: 7.6.0
       ts-api-utils: 1.3.0(typescript@5.6.2)
     optionalDependencies:
@@ -8907,7 +8900,7 @@ snapshots:
       eslint-import-resolver-node: 0.3.9
       get-tsconfig: 4.8.0
       is-glob: 4.0.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       semver: 7.6.3
       stable-hash: 0.0.4
       tslib: 2.7.0
@@ -9451,7 +9444,7 @@ snapshots:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.1.2
       path-scurry: 1.10.1
 
@@ -10078,7 +10071,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -10242,7 +10235,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -10282,7 +10275,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -10295,7 +10288,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 22.7.4
+      '@types/node': 22.7.5
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -10600,7 +10593,6 @@ snapshots:
   minimatch@9.0.5:
     dependencies:
       brace-expansion: 2.0.1
-    optional: true
 
   minimist@1.2.8: {}
 
