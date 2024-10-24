@@ -62,7 +62,7 @@
     "@types/node": "22.7.5",
     "eslint-plugin-zod-openapi": "1.0.0",
     "fastify": "5.0.0",
-    "skuba": "9.0.1",
+    "skuba": "9.1.0",
     "zod": "3.23.8",
     "zod-openapi": "3.1.1"
   },
