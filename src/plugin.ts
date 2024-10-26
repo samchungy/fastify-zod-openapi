@@ -268,6 +268,8 @@ const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
         [url, 'headers'],
       );
     }
+
+    schema[FASTIFY_ZOD_OPENAPI_RESULTS] = transformedSchema;
   });
 };
 
