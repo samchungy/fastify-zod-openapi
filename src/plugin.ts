@@ -213,14 +213,14 @@ const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
   const components = getDefaultComponents(opts.components, opts.openapi);
 
   fastify.addHook('onRoute', ({ schema, url }) => {
+    if (!schema || schema.hide) {
+      return;
+    }
+
     const transformedSchema: FastifyZodOpenApiResults = {
       results: {},
       components,
     };
-
-    if (!schema || schema.hide) {
-      return;
-    }
 
     const { response, headers, querystring, body, params } = schema;
 
