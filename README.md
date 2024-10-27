@@ -198,6 +198,89 @@ await app.register(fastifyZodOpenApiPlugin, {
 
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
+### Error Handling
+
+To handle errors differently, you may follow the [fastify error handling](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#error-handling) advice.
+
+#### Request Errors
+
+This library throws a `RequestValidationError` when a request fails to validate against your Zod Schemas
+
+```ts
+fastify.setErrorHandler(function (error, request, reply) {
+  if (error.validation) {
+    const zodValidationErrors = error.validation.filter(
+      (err) => err instanceof RequestValidationError,
+    );
+    const zodIssues = zodValidationErrors.map((err) => err.params.issue);
+    const originalError = zodValidationErrors?.[0]?.params.error;
+    return reply.status(422).send({
+      zodIssues
+      originalError
+    });
+  }
+});
+
+fastify.setSchemaErrorFormatter(function (errors, dataVar) {
+  let message = `${dataVar}:`;
+  for (const error of errors) {
+    if (error instanceof RequestValidationError) {
+      message += ` ${error.instancePath} ${error.keyword}`;
+    }
+  }
+
+  return new Error(message);
+})
+
+// {
+//   code: 'FST_ERR_VALIDATION',
+//   error: 'Bad Request',
+//   message: 'querystring: /jobId invalid_type',
+//   statusCode: 400,
+// }
+
+app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+  '/',
+  {
+    schema: {
+      querystring: z.object({
+        jobId: z.string().openapi({
+          description: 'Job ID',
+          example: '60002023',
+        }),
+      }),
+    },
+    attachValidation: true,
+  },
+  (req, res) => {
+    if (req.validationError) {
+      const zodValidationErrors = error.validation.filter(
+        (err) => err instanceof RequestValidationError,
+      );
+      console.error(zodValidationErrors);
+    }
+
+    return res.send(req.query);
+  },
+);
+```
+
+#### Response Errors
+
+```ts
+app.setErrorHandler((error, _req, res) => {
+  if (error instanceof ResponseSerializationError) {
+    return res.status(500).send({
+      error: 'Bad response',
+    });
+  }
+});
+
+// {
+//   error: 'Bad response';
+// }
+```
+
 ## Credits
 
 [fastify-type-provider-zod](https://github.com/turkerdev/fastify-type-provider-zod): Big kudos to this library for lighting the way with how to create type providers, validators and serializers. fastify-zod-openapi is just an extension to this library whilst adding support for the functionality of zod-openapi.
