@@ -712,4 +712,188 @@ describe('fastifyZodOpenApiTransformObject', () => {
 }
 `);
   });
+
+  it('should support setting a custom openapi version', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+
+    const jobId = z.string().nullable().openapi({
+      description: 'Job ID',
+      example: '60002023',
+      ref: 'jobId',
+    });
+
+    await app.register(fastifyZodOpenApiPlugin, {
+      components: { schemas: { jobId } },
+    });
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.0.3',
+      },
+      transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    jobId,
+                  }),
+                },
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {
+      "jobId": {
+        "description": "Job ID",
+        "example": "60002023",
+        "nullable": true,
+        "type": "string",
+      },
+    },
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "jobId": {
+                      "$ref": "#/components/schemas/jobId",
+                    },
+                  },
+                  "required": [
+                    "jobId",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
+  it('should support create document options', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin, {
+      documentOpts: {
+        unionOneOf: true,
+      },
+    });
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.0.3',
+      },
+      transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.union([z.string(), z.number()]),
+                },
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.send('foo'),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                    },
+                    {
+                      "type": "number",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
 });

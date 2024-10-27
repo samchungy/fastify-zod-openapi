@@ -3,9 +3,11 @@ import type { FastifySchema } from 'fastify';
 import type { OpenAPIV3 } from 'openapi-types';
 import type { AnyZodObject, ZodObject, ZodRawShape, ZodType } from 'zod';
 import type {
+  CreateDocumentOptions,
   ZodOpenApiComponentsObject,
   ZodOpenApiParameters,
   ZodOpenApiResponsesObject,
+  ZodOpenApiVersion,
   oas31,
 } from 'zod-openapi';
 import {
@@ -15,7 +17,10 @@ import {
   createParamOrRef,
 } from 'zod-openapi/api';
 
-import { FASTIFY_ZOD_OPENAPI_COMPONENTS } from './plugin';
+import {
+  FASTIFY_ZOD_OPENAPI_COMPONENTS,
+  FASTIFY_ZOD_OPENAPI_CONFIG,
+} from './plugin';
 
 type Transform = FastifyDynamicSwaggerOptions['transform'];
 
@@ -58,6 +63,7 @@ export const createParams = (
   type: keyof ZodOpenApiParameters,
   components: ComponentsObject,
   path: string[],
+  doucmentOpts?: CreateDocumentOptions,
 ): Record<string, FastifySwaggerSchemaObject | oas31.ReferenceObject> =>
   Object.entries(querystring.shape as ZodRawShape).reduce(
     (acc, [key, value]: [string, ZodType]) => {
@@ -67,6 +73,7 @@ export const createParams = (
         [...path, key],
         type,
         key,
+        doucmentOpts,
       );
 
       if ('$ref' in parameter || !parameter.schema) {
@@ -87,12 +94,16 @@ export const createResponseSchema = (
   schema: FastifyResponseSchema,
   components: ComponentsObject,
   path: string[],
+  documentOpts?: CreateDocumentOptions,
 ): unknown => {
   if (isZodType(schema)) {
-    return createMediaTypeSchema(schema, components, 'output', [
-      ...path,
-      'schema',
-    ]);
+    return createMediaTypeSchema(
+      schema,
+      components,
+      'output',
+      [...path, 'schema'],
+      documentOpts,
+    );
   }
   return schema;
 };
@@ -101,6 +112,7 @@ export const createContent = (
   content: unknown,
   components: ComponentsObject,
   path: string[],
+  documentOpts?: CreateDocumentOptions,
 ): unknown => {
   if (typeof content !== 'object' || content == null) {
     return content;
@@ -113,6 +125,7 @@ export const createContent = (
           value.schema as FastifyResponseSchema,
           components,
           [...path, 'schema'],
+          documentOpts,
         );
         acc[key] = {
           ...value,
@@ -131,6 +144,7 @@ export const createResponse = (
   response: unknown,
   components: ComponentsObject,
   path: string[],
+  documentOpts?: CreateDocumentOptions,
 ): unknown => {
   if (typeof response !== 'object' || response == null) {
     return response;
@@ -139,18 +153,23 @@ export const createResponse = (
   return Object.entries(response).reduce(
     (acc, [key, value]: [string, unknown]) => {
       if (isZodType(value)) {
-        acc[key] = createMediaTypeSchema(value, components, 'output', [
-          ...path,
-          key,
-        ]);
+        acc[key] = createMediaTypeSchema(
+          value,
+          components,
+          'output',
+          [...path, key],
+          documentOpts,
+        );
         return acc;
       }
 
       if (typeof value === 'object' && value !== null && 'content' in value) {
-        const content = createContent(value.content, components, [
-          ...path,
-          'content',
-        ]);
+        const content = createContent(
+          value.content,
+          components,
+          [...path, 'content'],
+          documentOpts,
+        );
         acc[key] = {
           ...value,
           content,
@@ -178,31 +197,48 @@ export const fastifyZodOpenApiTransform: Transform = ({
   }
 
   const { response, headers, querystring, body, params } = schema;
-  const components = schema[FASTIFY_ZOD_OPENAPI_COMPONENTS];
 
   if (!('openapiObject' in opts)) {
     throw new Error('openapiObject was not found in the options');
   }
 
-  // we need to access the components when we transform the document. Symbol's do not appear
-  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
+  const config = schema[FASTIFY_ZOD_OPENAPI_CONFIG];
 
-  if (!components) {
+  if (!config) {
     throw new Error('Please register the fastify-zod-openapi plugin');
   }
 
-  const maybeResponse = createResponse(response, components, [url, 'response']);
+  const { components, documentOpts } = config;
+
+  // we need to access the components when we transform the document. Symbol's do not appear
+  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= config.components;
+
+  if (opts.openapiObject.openapi) {
+    components.openapi = opts.openapiObject.openapi as ZodOpenApiVersion;
+  }
+
+  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
 
   const transformedSchema: FastifySchema = {
     ...schema,
   };
 
   if (isZodType(body)) {
-    transformedSchema.body = createMediaTypeSchema(body, components, 'input', [
-      url,
-      'body',
-    ]);
+    transformedSchema.body = createMediaTypeSchema(
+      body,
+      components,
+      'input',
+      [url, 'body'],
+      documentOpts,
+    );
   }
+
+  const maybeResponse = createResponse(
+    response,
+    components,
+    [url, 'response'],
+    documentOpts,
+  );
 
   if (maybeResponse) {
     transformedSchema.response = maybeResponse;
@@ -214,6 +250,7 @@ export const fastifyZodOpenApiTransform: Transform = ({
       'query',
       components,
       [url, 'querystring'],
+      documentOpts,
     );
   }
 

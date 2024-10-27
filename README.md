@@ -133,16 +133,14 @@ const app = fastify();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-const openapi: ZodOpenApiVersion = '3.0.3'; // If this is not specified, it will default to 3.1.0
-
-await app.register(fastifyZodOpenApiPlugin, { openapi });
+await app.register(fastifyZodOpenApiPlugin);
 await app.register(fastifySwagger, {
   openapi: {
     info: {
       title: 'hello world',
       version: '1.0.0',
     },
-    openapi,
+    openapi: '3.0.3' satisfies ZodOpenApiVersion; // If this is not specified, it will default to 3.1.0
   },
   transform: fastifyZodOpenApiTransform,
   transformObject: fastifyZodOpenApiTransformObject,
@@ -191,12 +189,23 @@ If you wish to declare the components manually you will need to do so via the pl
 
 ```ts
 await app.register(fastifyZodOpenApiPlugin, {
-  openapi,
   components: { schema: mySchema },
 });
 ```
 
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
+
+### Create Document Options
+
+If you wish to use [CreateDocumentOptions](https://github.com/samchungy/zod-openapi#createdocumentoptions), pass it in via the plugin options:
+
+```ts
+await app.register(fastifyZodOpenApiPlugin, {
+  documentOpts: {
+    unionOneOf: true,
+  },
+});
+```
 
 ## Credits
 

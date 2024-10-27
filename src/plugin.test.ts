@@ -13,7 +13,7 @@ import { serializerCompiler } from './serializerCompiler';
 import type { FastifyZodOpenApiSchema } from './transformer';
 import { validatorCompiler } from './validatorCompiler';
 
-describe('validatorCompiler', () => {
+describe('plugin basics', () => {
   it('should pass a valid response', async () => {
     const app = fastify();
 
