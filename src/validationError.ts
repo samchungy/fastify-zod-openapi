@@ -1,18 +1,37 @@
-import type { ZodError } from 'zod';
+import { createError } from '@fastify/error';
+import {} from 'fastify';
+import type { FastifySchemaValidationError } from 'fastify/types/schema';
+import type { ZodError, ZodIssue, ZodIssueCode } from 'zod';
 
-export type ValidationErrorDetails = Record<string, ZodError['issues']>;
-
-export class ValidationError extends Error {
+export class RequestValidationError
+  extends Error
+  implements FastifySchemaValidationError
+{
+  cause!: ZodIssue;
   constructor(
-    public zodError: ZodError,
-    public httpPart: string | undefined,
+    public keyword: ZodIssueCode,
+    public instancePath: string,
+    public schemaPath: string,
+    public message: string,
+    public params: { issue: ZodIssue; error: ZodError },
   ) {
-    super(
-      httpPart
-        ? JSON.stringify({
-            [httpPart]: zodError.issues,
-          } satisfies ValidationErrorDetails)
-        : zodError.message,
-    );
+    super(message, {
+      cause: params.issue,
+    });
+  }
+}
+
+export class ResponseSerializationError extends createError(
+  'FST_ERR_RESPONSE_SERIALIZATION',
+  'Response does not match the schema',
+  500,
+) {
+  cause!: ZodError;
+  constructor(
+    public method: string,
+    public url: string,
+    options: { cause: ZodError },
+  ) {
+    super(options);
   }
 }

@@ -1,7 +1,7 @@
 import type { FastifySerializerCompiler } from 'fastify/types/schema';
 import type { ZodType } from 'zod';
 
-import { ValidationError } from './validationError';
+import { ResponseSerializationError } from './validationError';
 
 /**
  * Enables zod-openapi schema response validation
@@ -14,12 +14,14 @@ import { ValidationError } from './validationError';
  * ```
  */
 export const serializerCompiler: FastifySerializerCompiler<ZodType> =
-  ({ schema }) =>
+  ({ schema, url, method }) =>
   (value) => {
     const result = schema.safeParse(value);
 
     if (!result.success) {
-      throw new ValidationError(result.error, 'response');
+      throw new ResponseSerializationError(method, url, {
+        cause: result.error,
+      });
     }
 
     return JSON.stringify(result.data);

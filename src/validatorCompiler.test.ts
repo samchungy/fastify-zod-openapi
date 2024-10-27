@@ -3,6 +3,7 @@ import fastify from 'fastify';
 import { z } from 'zod';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
+import { RequestValidationError } from './validationError';
 import { validatorCompiler } from './validatorCompiler';
 
 describe('validatorCompiler', () => {
@@ -59,7 +60,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{"querystring":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
+          "message": "querystring/jobId Expected number, received nan",
           "statusCode": 400,
         }
       `);
@@ -119,7 +120,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{"body":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
+          "message": "body/jobId Expected number, received nan",
           "statusCode": 400,
         }
       `);
@@ -182,7 +183,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{"headers":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
+          "message": "headers/jobId Expected number, received nan",
           "statusCode": 400,
         }
       `);
@@ -242,10 +243,282 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "{"params":[{"code":"invalid_type","expected":"number","received":"nan","path":["jobId"],"message":"Expected number, received nan"}]}",
+          "message": "params/jobId Expected number, received nan",
           "statusCode": 400,
         }
       `);
     });
+  });
+});
+
+describe('attachValidation', () => {
+  it('should support handling validationError in requests', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+        },
+        attachValidation: true,
+      },
+      (req, res) => {
+        if (req.validationError) {
+          for (const error of req.validationError.validation) {
+            if (error instanceof RequestValidationError) {
+              return res.status(400).send({
+                custom: 'message',
+                instancePath: error.instancePath,
+                validationContext: req.validationError.validationContext,
+              });
+            }
+          }
+        }
+
+        return res.send(req.query);
+      },
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toEqual({
+      custom: 'message',
+      instancePath: '/jobId',
+      validationContext: 'querystring',
+    });
+  });
+});
+
+describe('setSchemaErrorFormatter', () => {
+  it('should support setting a setSchemaErrorFormatter', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+        },
+      },
+      (req, res) => res.send(req.query),
+    );
+
+    app.setSchemaErrorFormatter((errors, dataVar) => {
+      let message = dataVar;
+      for (const error of errors) {
+        if (error instanceof RequestValidationError) {
+          message += ` ${error.instancePath} ${error.keyword}`;
+        }
+      }
+
+      return new Error(message);
+    });
+
+    await app.ready();
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toEqual({
+      code: 'FST_ERR_VALIDATION',
+      error: 'Bad Request',
+      message: 'querystring /jobId invalid_type',
+      statusCode: 400,
+    });
+  });
+});
+
+describe('setErrorHandler', () => {
+  it('should support setting a custom error handler', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+        },
+      },
+      (req, res) => res.send(req.query),
+    );
+    app.setErrorHandler((error, _req, res) => {
+      if (error.validation) {
+        for (const err of error.validation) {
+          if (err instanceof RequestValidationError) {
+            return res.status(400).send({
+              custom: 'message',
+              instancePath: err.instancePath,
+              validationContext: error.validationContext,
+            });
+          }
+        }
+      }
+      return res.status(500).send({
+        message: 'Unhandled error',
+      });
+    });
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toEqual({
+      custom: 'message',
+      instancePath: '/jobId',
+      validationContext: 'querystring',
+    });
+  });
+
+  it('should surface the original zod error and zod issue', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          }),
+        },
+      },
+      (req, res) => res.send(req.query),
+    );
+    app.setErrorHandler((error, _req, res) => {
+      if (error.validation) {
+        for (const err of error.validation) {
+          if (err instanceof RequestValidationError) {
+            return res.status(400).send({
+              zodIssue: err.params.issue,
+              zodError: err.params.error,
+            });
+          }
+        }
+      }
+      return res.status(500).send({
+        message: 'Unhandled error',
+      });
+    });
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "zodError": {
+    "issues": [
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "message": "Required",
+        "path": [
+          "jobId",
+        ],
+        "received": "undefined",
+      },
+    ],
+    "name": "ZodError",
+  },
+  "zodIssue": {
+    "code": "invalid_type",
+    "expected": "string",
+    "message": "Required",
+    "path": [
+      "jobId",
+    ],
+    "received": "undefined",
+  },
+}
+`);
+  });
+
+  it('should map Zod Issues as RequestValidationError errors', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: z.object({
+            jobId: z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+            jobTitle: z.string(),
+          }),
+        },
+      },
+      (req, res) => res.send(req.query),
+    );
+    app.setErrorHandler((error, _req, res) => {
+      if (error.validation) {
+        const errs = error.validation.map((err) => {
+          if (err instanceof RequestValidationError) {
+            return {
+              zodIssue: err.params.issue,
+            };
+          }
+          return err;
+        });
+        return res.status(400).send({
+          errors: errs,
+        });
+      }
+      return res.status(500).send({
+        message: 'Unhandled error',
+      });
+    });
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "errors": [
+    {
+      "zodIssue": {
+        "code": "invalid_type",
+        "expected": "string",
+        "message": "Required",
+        "path": [
+          "jobId",
+        ],
+        "received": "undefined",
+      },
+    },
+    {
+      "zodIssue": {
+        "code": "invalid_type",
+        "expected": "string",
+        "message": "Required",
+        "path": [
+          "jobTitle",
+        ],
+        "received": "undefined",
+      },
+    },
+  ],
+}
+`);
   });
 });

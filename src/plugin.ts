@@ -21,6 +21,8 @@ import {
   getDefaultComponents,
 } from 'zod-openapi/api';
 
+import type { RequestValidationError } from './validationError';
+
 type FastifyResponseSchema = ZodType | Record<string, unknown>;
 
 type FastifySwaggerSchemaObject = Omit<oas31.SchemaObject, 'required'> & {
@@ -60,6 +62,10 @@ export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
 declare module 'fastify' {
   interface FastifySchema {
     [FASTIFY_ZOD_OPENAPI_RESULTS]?: FastifyZodOpenApiResults;
+  }
+
+  interface FastifyValidationResult {
+    errors?: RequestValidationError[];
   }
 }
 
