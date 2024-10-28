@@ -284,8 +284,8 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     attachValidation: true,
   },
   (req, res) => {
-    if (req.validationError) {
-      const zodValidationErrors = error.validation.filter(
+    if (req.validationError?.validation) {
+      const zodValidationErrors = req.validationError.validation.filter(
         (err) => err instanceof RequestValidationError,
       );
       console.error(zodValidationErrors);
