@@ -19,12 +19,6 @@ import {
 
 import type { RequestValidationError } from './validationError';
 
-type FastifyResponseSchema = ZodType | Record<string, unknown>;
-
-type FastifySwaggerSchemaObject = Omit<oas31.SchemaObject, 'required'> & {
-  required?: string[] | boolean;
-};
-
 export const FASTIFY_ZOD_OPENAPI_CONFIG = Symbol('fastify-zod-openapi-config');
 export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
   'fastify-zod-openapi-components',
