@@ -896,4 +896,124 @@ describe('fastifyZodOpenApiTransformObject', () => {
 }
 `);
   });
+
+  it('should support required fields for objects that use custom unions', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin, {
+      documentOpts: {
+        unionOneOf: true,
+      },
+    });
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.0.3',
+      },
+      transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    const zodDate = z
+      .union([
+        z.custom<Date>((val) => val instanceof Date),
+        z.string().transform((str: string, ctx: z.RefinementCtx): Date => {
+          try {
+            return new Date(str);
+          } catch (_e) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Unable to parse ${str} as a Date`,
+            });
+            return z.NEVER;
+          }
+        }),
+      ])
+      .openapi({
+        type: 'string',
+        format: 'date',
+        description: 'Awesome!',
+        example: new Date('2023-10-01'),
+      });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z
+                    .object({ date: zodDate, name: z.string().min(5) })
+                    .strict(),
+                },
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          date: new Date('2023-10-01'),
+          name: 'John Doe',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "date": {
+                      "description": "Awesome!",
+                      "example": {},
+                      "format": "date",
+                      "type": "string",
+                    },
+                    "name": {
+                      "minLength": 5,
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "name",
+                    "date",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
 });
