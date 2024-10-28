@@ -186,7 +186,7 @@ await app.listen({ port: 5000 });
 To declare components follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
 
 If you wish to declare the components manually you will need to do so via the plugin's options. You will also need
-to create a customSerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
+to create a custom SerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
 
 ```ts
 await app.register(fastifyZodOpenApiPlugin, {
