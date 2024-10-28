@@ -4,9 +4,12 @@ import { z } from 'zod';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
-import { serializerCompiler } from './serializerCompiler';
+import {
+  createSerializerCompiler,
+  serializerCompiler,
+} from './serializerCompiler';
 
-describe('validatorCompiler', () => {
+describe('serializerCompiler', () => {
   it('should pass a valid response', async () => {
     const app = fastify();
 
@@ -135,5 +138,72 @@ describe('validatorCompiler', () => {
     const result = await app.inject().post('/');
 
     expect(result.json()).toEqual({ jobId: 'foo' });
+  });
+});
+
+describe('createSerializerCompiler', () => {
+  it('should create a custom serializer', async () => {
+    const app = fastify();
+
+    const customSerializerCompiler = createSerializerCompiler({
+      stringify: JSON.stringify,
+    });
+    app.setSerializerCompiler(customSerializerCompiler);
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: z.object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+          },
+        },
+      },
+      async (_req, res) => res.send({ jobId: '123' }),
+    );
+    await app.ready();
+
+    const result = await app.inject().post('/');
+
+    expect(result.json()).toEqual({ jobId: '123' });
+  });
+
+  it('should support custom components', async () => {
+    const app = fastify();
+
+    const jobId = z.string().openapi({
+      description: 'Job ID',
+      example: '60002023',
+    });
+    const customSerializerCompiler = createSerializerCompiler({
+      components: {
+        jobId,
+      },
+    });
+    app.setSerializerCompiler(customSerializerCompiler);
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: z.object({
+              jobId,
+            }),
+          },
+        },
+      },
+      async (_req, res) => res.send({ jobId: '123' }),
+    );
+    await app.ready();
+
+    const result = await app.inject().post('/');
+
+    expect(result.json()).toEqual({ jobId: '123' });
   });
 });

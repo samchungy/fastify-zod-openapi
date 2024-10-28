@@ -13,7 +13,7 @@ interface SerializerOptions {
   stringify?: (value: unknown) => string;
 }
 
-const createSerializerCompiler =
+export const createSerializerCompiler =
   (opts?: SerializerOptions): FastifySerializerCompiler<ZodType> =>
   ({ schema }) => {
     let stringify = opts?.stringify;
