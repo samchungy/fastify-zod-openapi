@@ -197,11 +197,37 @@ Please note: the `responses`, `parameters` components do not appear to be suppor
 
 ### Error Handling
 
-To handle errors differently, you may follow the [fastify error handling](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#error-handling) advice.
+By default, `fastify-zod-openapi` emits request validation errors in a similar manner to `fastify` when used in conjunction with it's native JSON Schema error handling.
+
+As an example:
+
+```json
+{
+  "code": "FST_ERR_VALIDATION",
+  "error": "Bad Request",
+  "message": "params/jobId Expected number, received string",
+  "statusCode": 400
+}
+```
+
+For responses, it will emit a 500 error along with a vague error which will protect your implementation details
+
+```json
+{
+  "code": "FST_ERR_RESPONSE_SERIALIZATION",
+  "error": "Internal Server Error",
+  "message": "Response does not match the schema",
+  "statusCode": 500
+}
+```
+
+To customise this behaviour, you may follow the [fastify error handling](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#error-handling) guidance.
 
 #### Request Errors
 
 This library throws a `RequestValidationError` when a request fails to validate against your Zod Schemas
+
+##### setErrorHandler
 
 ```ts
 fastify.setErrorHandler(function (error, request, reply) {
@@ -217,7 +243,11 @@ fastify.setErrorHandler(function (error, request, reply) {
     });
   }
 });
+```
 
+##### setSchemaErrorFormatter
+
+```ts
 fastify.setSchemaErrorFormatter(function (errors, dataVar) {
   let message = `${dataVar}:`;
   for (const error of errors) {
@@ -227,15 +257,19 @@ fastify.setSchemaErrorFormatter(function (errors, dataVar) {
   }
 
   return new Error(message);
-})
+});
 
 // {
-//   code: 'FST_ERR_VALIDATION',
-//   error: 'Bad Request',
-//   message: 'querystring: /jobId invalid_type',
-//   statusCode: 400,
+// code: 'FST_ERR_VALIDATION',
+// error: 'Bad Request',
+// message: 'querystring: /jobId invalid_type',
+// statusCode: 400,
 // }
+```
 
+##### attachValidation
+
+```ts
 app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
   '/',
   {
