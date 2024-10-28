@@ -1,8 +1,9 @@
+import 'zod-openapi/extend';
+
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
 import { z } from 'zod';
-import { type ZodOpenApiVersion, extendZodWithOpenApi } from 'zod-openapi';
 
 import {
   type FastifyZodOpenApiSchema,
@@ -14,23 +15,19 @@ import {
   validatorCompiler,
 } from '../src';
 
-extendZodWithOpenApi(z);
-
 const createApp = async () => {
   const app = fastify();
 
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  const openapi: ZodOpenApiVersion = '3.1.0';
-  await app.register(fastifyZodOpenApiPlugin, { openapi });
+  await app.register(fastifyZodOpenApiPlugin);
   await app.register(fastifySwagger, {
     openapi: {
       info: {
         title: 'hello world',
         version: '1.0.0',
       },
-      openapi,
     },
     transform: fastifyZodOpenApiTransform,
     transformObject: fastifyZodOpenApiTransformObject,
