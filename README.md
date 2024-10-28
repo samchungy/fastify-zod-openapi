@@ -185,11 +185,24 @@ await app.listen({ port: 5000 });
 
 To declare components follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
 
-If you wish to declare the components manually you will need to do so via the plugin's options.
+If you wish to declare the components manually you will need to do so via the plugin's options. You will also need
+to create a customSerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
 
 ```ts
 await app.register(fastifyZodOpenApiPlugin, {
   components: { schema: mySchema },
+});
+
+const customSerializerCompiler = createSerializerCompiler({
+  components,
+});
+```
+
+Alternatively, you can use `JSON.stringify` instead.
+
+```ts
+const customSerializerCompiler = createSerializerCompiler({
+  stringify: JSON.stringify,
 });
 ```
 
@@ -199,29 +212,11 @@ Please note: the `responses`, `parameters` components do not appear to be suppor
 
 The default response serializer `serializerCompiler` uses [fast-json-stringify](https://github.com/fastify/fast-json-stringify) under the hood.
 
-#### Stringify
-
 If you wish to customise this or use the native `JSON.stringify` you can create your own with the `createSerializerCompiler` function.
 
 ```ts
 const customSerializerCompiler = createSerializerCompiler({
   stringify: JSON.stringify,
-});
-```
-
-If you declare components manually you will also need to pass the schema components into a createSerializerCompiler function here in addition to the plugin options. Auto registered components are automatically supported.
-
-#### Manual Components
-
-```ts
-const components = { schema: mySchema };
-await app.register(fastifyZodOpenApiPlugin, {
-  components,
-});
-
-const customSerializerCompiler = createSerializerCompiler({
-  stringify: JSON.stringify,
-  components,
 });
 ```
 
