@@ -8,7 +8,7 @@ import { createSchema } from 'zod-openapi';
 
 import { ValidationError } from './validationError';
 
-interface SerializerOptions {
+export interface SerializerOptions {
   components?: Record<string, ZodTypeAny>;
   stringify?: (value: unknown) => string;
 }
