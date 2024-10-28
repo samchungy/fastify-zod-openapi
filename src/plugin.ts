@@ -9,26 +9,32 @@ import type {
 import fp from 'fastify-plugin';
 import type { ZodType, z } from 'zod';
 import type {
+  CreateDocumentOptions,
   ZodOpenApiComponentsObject,
-  ZodOpenApiVersion,
 } from 'zod-openapi';
 import {
   type ComponentsObject as ApiComponentsObject,
   getDefaultComponents,
 } from 'zod-openapi/api';
 
+export const FASTIFY_ZOD_OPENAPI_CONFIG = Symbol('fastify-zod-openapi-config');
 export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
   'fastify-zod-openapi-components',
 );
 
-type FastifyZodOpenApiOpts = {
-  openapi?: ZodOpenApiVersion;
+export interface FastifyZodOpenApiOpts {
   components?: ZodOpenApiComponentsObject;
-};
+  documentOpts?: CreateDocumentOptions;
+}
+
+interface FastifyZodOpenApiConfig {
+  components: ApiComponentsObject;
+  documentOpts?: CreateDocumentOptions;
+}
 
 declare module 'fastify' {
   interface FastifySchema {
-    [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: ApiComponentsObject;
+    [FASTIFY_ZOD_OPENAPI_CONFIG]?: FastifyZodOpenApiConfig;
   }
 }
 
@@ -52,12 +58,17 @@ export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
-  const components = getDefaultComponents(opts.components, opts.openapi);
+  const components = getDefaultComponents(opts.components);
 
-  fastify.addHook('onRoute', (routeOptions) => {
-    if (routeOptions.schema) {
-      routeOptions.schema[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
+  fastify.addHook('onRoute', ({ schema }) => {
+    if (!schema || schema.hide) {
+      return;
     }
+
+    schema[FASTIFY_ZOD_OPENAPI_CONFIG] ??= {
+      components,
+      documentOpts: opts.documentOpts,
+    };
   });
 };
 
