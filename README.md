@@ -183,7 +183,23 @@ await app.listen({ port: 5000 });
 
 ### Declaring Components
 
-To declare components follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
+This library allows you to easily declare components. As an example:
+
+```typescript
+const title = z.string().openapi({
+  description: 'Job title',
+  example: 'My job',
+  ref: 'jobTitle', // <- new field
+});
+```
+
+Wherever `title` is used in your request/response schemas across your application, it will instead be created as a reference.
+
+```json
+{ "$ref": "#/components/schemas/jobTitle" }
+```
+
+For a further dive please follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
 
 If you wish to declare the components manually you will need to do so via the plugin's options. You will also need
 to create a custom SerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
