@@ -199,7 +199,7 @@ Wherever `title` is used in your request/response schemas across your applicatio
 { "$ref": "#/components/schemas/jobTitle" }
 ```
 
-For a further dive please follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
+For a further dive please follow the documentation [here](https://github.com/samchungy/zod-openapi#creating-components).
 
 If you wish to declare the components manually you will need to do so via the plugin's options. You will also need
 to create a custom SerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
