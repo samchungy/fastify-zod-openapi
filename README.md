@@ -185,15 +185,52 @@ await app.listen({ port: 5000 });
 
 To declare components follow the documentation as declared [here](https://github.com/samchungy/zod-openapi#creating-components).
 
-If you wish to declare the components manually you will need to do so via the plugin's options.
+If you wish to declare the components manually you will need to do so via the plugin's options. You will also need
+to create a custom SerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
 
 ```ts
 await app.register(fastifyZodOpenApiPlugin, {
   components: { schema: mySchema },
 });
+
+const customSerializerCompiler = createSerializerCompiler({
+  components,
+});
+```
+
+Alternatively, you can use `JSON.stringify` instead.
+
+```ts
+const customSerializerCompiler = createSerializerCompiler({
+  stringify: JSON.stringify,
+});
 ```
 
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
+
+### Create Document Options
+
+If you wish to use [CreateDocumentOptions](https://github.com/samchungy/zod-openapi#createdocumentoptions), pass it in via the plugin options:
+
+```ts
+await app.register(fastifyZodOpenApiPlugin, {
+  documentOpts: {
+    unionOneOf: true,
+  },
+});
+```
+
+### Custom Response Serializer
+
+The default response serializer `serializerCompiler` uses [fast-json-stringify](https://github.com/fastify/fast-json-stringify). Under the hood, the schema passed to the response is transformed using OpenAPI 3.1.0 and passed to `fast-json-stringify` as a JSON Schema.
+
+If you wish are running into any compatibility issues or wish to restore the previous `JSON.stringify` functionality, you can use the `createSerializerCompiler` function.
+
+```ts
+const customSerializerCompiler = createSerializerCompiler({
+  stringify: JSON.stringify,
+});
+```
 
 ### Error Handling
 
