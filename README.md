@@ -189,7 +189,7 @@ If you wish to declare the components manually you will need to do so via the pl
 to create a custom SerializerCompiler to make use of [fast-json-stringify](https://github.com/fastify/fast-json-stringify).
 
 ```ts
-const components = { schema: mySchema };
+const components: ZodOpenApiComponentsObject = { schemas: { mySchema } };
 await app.register(fastifyZodOpenApiPlugin, {
   components,
 });
