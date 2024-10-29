@@ -210,9 +210,9 @@ Please note: the `responses`, `parameters` components do not appear to be suppor
 
 ### Custom Response Serializer
 
-The default response serializer `serializerCompiler` uses [fast-json-stringify](https://github.com/fastify/fast-json-stringify) under the hood.
+The default response serializer `serializerCompiler` uses [fast-json-stringify](https://github.com/fastify/fast-json-stringify). Under the hood, the schema passed to the response is transformed using OpenAPI 3.1.0 and passed to `fast-json-stringify` as a JSON Schema.
 
-If you wish to customise this or use the native `JSON.stringify` you can create your own with the `createSerializerCompiler` function.
+If you wish are running into any compatibility issues or wish to restore the previous `JSON.stringify` functionality, you can use the `createSerializerCompiler` function.
 
 ```ts
 const customSerializerCompiler = createSerializerCompiler({
