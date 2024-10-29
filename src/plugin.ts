@@ -17,6 +17,8 @@ import {
   getDefaultComponents,
 } from 'zod-openapi/api';
 
+import type { RequestValidationError } from './validationError';
+
 export const FASTIFY_ZOD_OPENAPI_CONFIG = Symbol('fastify-zod-openapi-config');
 export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
   'fastify-zod-openapi-components',
@@ -35,6 +37,10 @@ interface FastifyZodOpenApiConfig {
 declare module 'fastify' {
   interface FastifySchema {
     [FASTIFY_ZOD_OPENAPI_CONFIG]?: FastifyZodOpenApiConfig;
+  }
+
+  interface FastifyValidationResult {
+    errors?: RequestValidationError[];
   }
 }
 

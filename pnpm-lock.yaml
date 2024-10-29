@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fastify/error':
+        specifier: ^4.0.0
+        version: 4.0.0
       fast-json-stringify:
         specifier: ^6.0.0
         version: 6.0.0

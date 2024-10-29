@@ -208,6 +208,18 @@ const customSerializerCompiler = createSerializerCompiler({
 
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
+### Create Document Options
+
+If you wish to use [CreateDocumentOptions](https://github.com/samchungy/zod-openapi#createdocumentoptions), pass it in via the plugin options:
+
+```ts
+await app.register(fastifyZodOpenApiPlugin, {
+  documentOpts: {
+    unionOneOf: true,
+  },
+});
+```
+
 ### Custom Response Serializer
 
 The default response serializer `serializerCompiler` uses [fast-json-stringify](https://github.com/fastify/fast-json-stringify). Under the hood, the schema passed to the response is transformed using OpenAPI 3.1.0 and passed to `fast-json-stringify` as a JSON Schema.
@@ -220,16 +232,121 @@ const customSerializerCompiler = createSerializerCompiler({
 });
 ```
 
-### Create Document Options
+### Error Handling
 
-If you wish to use [CreateDocumentOptions](https://github.com/samchungy/zod-openapi#createdocumentoptions), pass it in via the plugin options:
+By default, `fastify-zod-openapi` emits request validation errors in a similar manner to `fastify` when used in conjunction with it's native JSON Schema error handling.
+
+As an example:
+
+```json
+{
+  "code": "FST_ERR_VALIDATION",
+  "error": "Bad Request",
+  "message": "params/jobId Expected number, received string",
+  "statusCode": 400
+}
+```
+
+For responses, it will emit a 500 error along with a vague error which will protect your implementation details
+
+```json
+{
+  "code": "FST_ERR_RESPONSE_SERIALIZATION",
+  "error": "Internal Server Error",
+  "message": "Response does not match the schema",
+  "statusCode": 500
+}
+```
+
+To customise this behaviour, you may follow the [fastify error handling](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#error-handling) guidance.
+
+#### Request Errors
+
+This library throws a `RequestValidationError` when a request fails to validate against your Zod Schemas
+
+##### setErrorHandler
 
 ```ts
-await app.register(fastifyZodOpenApiPlugin, {
-  documentOpts: {
-    unionOneOf: true,
-  },
+fastify.setErrorHandler(function (error, request, reply) {
+  if (error.validation) {
+    const zodValidationErrors = error.validation.filter(
+      (err) => err instanceof RequestValidationError,
+    );
+    const zodIssues = zodValidationErrors.map((err) => err.params.issue);
+    const originalError = zodValidationErrors?.[0]?.params.error;
+    return reply.status(422).send({
+      zodIssues
+      originalError
+    });
+  }
 });
+```
+
+##### setSchemaErrorFormatter
+
+```ts
+fastify.setSchemaErrorFormatter(function (errors, dataVar) {
+  let message = `${dataVar}:`;
+  for (const error of errors) {
+    if (error instanceof RequestValidationError) {
+      message += ` ${error.instancePath} ${error.keyword}`;
+    }
+  }
+
+  return new Error(message);
+});
+
+// {
+// code: 'FST_ERR_VALIDATION',
+// error: 'Bad Request',
+// message: 'querystring: /jobId invalid_type',
+// statusCode: 400,
+// }
+```
+
+##### attachValidation
+
+```ts
+app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+  '/',
+  {
+    schema: {
+      querystring: z.object({
+        jobId: z.string().openapi({
+          description: 'Job ID',
+          example: '60002023',
+        }),
+      }),
+    },
+    attachValidation: true,
+  },
+  (req, res) => {
+    if (req.validationError?.validation) {
+      const zodValidationErrors = req.validationError.validation.filter(
+        (err) => err instanceof RequestValidationError,
+      );
+      console.error(zodValidationErrors);
+    }
+
+    return res.send(req.query);
+  },
+);
+```
+
+#### Response Errors
+
+```ts
+app.setErrorHandler((error, _req, res) => {
+  if (error instanceof ResponseSerializationError) {
+    return res.status(500).send({
+      error: 'Bad response',
+    });
+  }
+});
+
+// {
+//   error: 'Bad response';
+// }
 ```
 
 ## Credits

@@ -1,7 +1,7 @@
 import type { FastifySchemaCompiler } from 'fastify';
 import type { ZodType } from 'zod';
 
-import { ValidationError } from './validationError';
+import { RequestValidationError } from './validationError';
 
 /**
  * Enables zod-openapi schema validation
@@ -14,12 +14,26 @@ import { ValidationError } from './validationError';
  * ```
  */
 export const validatorCompiler: FastifySchemaCompiler<ZodType> =
-  ({ schema, httpPart }) =>
+  ({ schema }) =>
   (value) => {
     const result = schema.safeParse(value);
 
     if (!result.success) {
-      return { error: new ValidationError(result.error, httpPart) };
+      return {
+        error: result.error.errors.map(
+          (issue) =>
+            new RequestValidationError(
+              issue.code,
+              `/${issue.path.join('/')}`,
+              `#/${issue.path.join('/')}/${issue.code}`,
+              issue.message,
+              {
+                issue,
+                error: result.error,
+              },
+            ),
+        ) as unknown as Error, // Types are wrong https://github.com/fastify/fastify/pull/5787
+      };
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

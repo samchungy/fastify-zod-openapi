@@ -8,6 +8,7 @@ import {
   createSerializerCompiler,
   serializerCompiler,
 } from './serializerCompiler';
+import { ResponseSerializationError } from './validationError';
 
 describe('serializerCompiler', () => {
   it('should pass a valid response', async () => {
@@ -106,8 +107,9 @@ describe('serializerCompiler', () => {
     expect(result.statusCode).toBe(500);
     expect(result.json()).toMatchInlineSnapshot(`
       {
+        "code": "FST_ERR_RESPONSE_SERIALIZATION",
         "error": "Internal Server Error",
-        "message": "{"response":[{"code":"invalid_type","expected":"string","received":"number","path":["jobId"],"message":"Expected string, received number"}]}",
+        "message": "Response does not match the schema",
         "statusCode": 500,
       }
     `);
@@ -344,5 +346,46 @@ describe('createSerializerCompiler', () => {
     const result = await app.inject().post('/');
 
     expect(result.json()).toEqual({ jobId: '123' });
+  });
+});
+
+describe('setErrorHandler', () => {
+  it('should handle ResponseSerializationError errors', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.setErrorHandler((error, _req, res) => {
+      if (error instanceof ResponseSerializationError) {
+        return res.status(500).send({
+          error: 'Bad response',
+        });
+      }
+      return res.status(500).send({
+        error: 'Unknown error',
+      });
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: z.object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+          },
+        },
+      },
+      async (_req, res) =>
+        res.send({ a: 'bad' } as unknown as { jobId: string }),
+    );
+    await app.ready();
+
+    const result = await app.inject().post('/');
+    expect(result.statusCode).toBe(500);
+    expect(result.json()).toEqual({ error: 'Bad response' });
   });
 });

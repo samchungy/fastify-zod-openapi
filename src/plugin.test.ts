@@ -125,8 +125,9 @@ describe('plugin basics', () => {
     expect(result.statusCode).toBe(500);
     expect(result.json()).toMatchInlineSnapshot(`
       {
+        "code": "FST_ERR_RESPONSE_SERIALIZATION",
         "error": "Internal Server Error",
-        "message": "{"response":[{"code":"invalid_type","expected":"string","received":"number","path":["jobId"],"message":"Expected string, received number"}]}",
+        "message": "Response does not match the schema",
         "statusCode": 500,
       }
     `);

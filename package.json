@@ -53,6 +53,7 @@
     "test:watch": "skuba test --watch"
   },
   "dependencies": {
+    "@fastify/error": "^4.0.0",
     "fast-json-stringify": "^6.0.0",
     "fastify-plugin": "^5.0.0"
   },
