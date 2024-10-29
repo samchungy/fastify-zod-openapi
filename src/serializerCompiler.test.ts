@@ -4,11 +4,11 @@ import { z } from 'zod';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
-import { ResponseSerializationError } from './validationError';
 import {
   createSerializerCompiler,
   serializerCompiler,
 } from './serializerCompiler';
+import { ResponseSerializationError } from './validationError';
 
 describe('serializerCompiler', () => {
   it('should pass a valid response', async () => {
