@@ -1,5 +1,4 @@
 import { createError } from '@fastify/error';
-import {} from 'fastify';
 import type { FastifySchemaValidationError } from 'fastify/types/schema';
 import type { ZodError, ZodIssue, ZodIssueCode } from 'zod';
 
@@ -32,6 +31,7 @@ export class ResponseSerializationError extends createError(
     public url: string,
     options: { cause: ZodError },
   ) {
-    super(options);
+    super();
+    this.cause = options.cause;
   }
 }
