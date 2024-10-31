@@ -140,7 +140,7 @@ await app.register(fastifySwagger, {
       title: 'hello world',
       version: '1.0.0',
     },
-    openapi: '3.0.3' satisfies ZodOpenApiVersion; // If this is not specified, it will default to 3.1.0
+    openapi: '3.0.3' satisfies ZodOpenApiVersion, // If this is not specified, it will default to 3.1.0
   },
   transform: fastifyZodOpenApiTransform,
   transformObject: fastifyZodOpenApiTransformObject,
