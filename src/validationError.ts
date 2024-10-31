@@ -31,7 +31,6 @@ export class ResponseSerializationError extends createError(
     public url: string,
     options: { cause: ZodError },
   ) {
-    super();
-    this.cause = options.cause;
+    super(options);
   }
 }
