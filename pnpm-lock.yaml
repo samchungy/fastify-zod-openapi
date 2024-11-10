@@ -43,8 +43,8 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
       zod-openapi:
-        specifier: 3.3.0
-        version: 3.3.0(zod@3.23.8)
+        specifier: 4.0.0
+        version: 4.0.0(zod@3.23.8)
 
 packages:
 
@@ -5516,8 +5516,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod-openapi@3.3.0:
-    resolution: {integrity: sha512-9CouRzPrmKU4Rggb8dPgVrNq6SZTUjdMO+6TvpE2ylkDYlap/Agjce2LZwG4ZwEVEVyZ1s5KnkiL4hn//G3gIA==}
+  zod-openapi@4.0.0:
+    resolution: {integrity: sha512-X/YT3VTYMon10rdTGApBIMPpSm17l/sxyVz3cao9M6ynv348ctYi62TDwdnDO+Po1YxA0KiguIW1gIGVRRGqvA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.21.4
@@ -11798,7 +11798,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-openapi@3.3.0(zod@3.23.8):
+  zod-openapi@4.0.0(zod@3.23.8):
     dependencies:
       zod: 3.23.8
 
