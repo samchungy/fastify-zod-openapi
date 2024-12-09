@@ -25,8 +25,8 @@ importers:
         specifier: 9.4.0
         version: 9.4.0
       '@fastify/swagger-ui':
-        specifier: 5.1.0
-        version: 5.1.0
+        specifier: 5.2.0
+        version: 5.2.0
       '@types/node':
         specifier: 22.10.1
         version: 22.10.1
@@ -870,8 +870,8 @@ packages:
   '@fastify/static@8.0.0':
     resolution: {integrity: sha512-VKGn1PQslB2VqzspyMKPu9xasF9vj+YuyGhVLb1ih6V60VVcRvcf0fFRcl3opt6c6YWwhKKdTUTfVE6COnpw6A==}
 
-  '@fastify/swagger-ui@5.1.0':
-    resolution: {integrity: sha512-XWb+zWz0vlP4QIXbF2xo/n9XuOjNF5aRdQ+0AiBXY9nlIuoTYU1ZXCkXNStdnM/sOdnDy8Q1vsxZ2RsN7XivQA==}
+  '@fastify/swagger-ui@5.2.0':
+    resolution: {integrity: sha512-oxL9bcL/ad8J1zXAvG2kMmj9d9mHQSM7Mx92yUk90IhvsTns9xy+GK2wXaNyv8/DFg6HpJOL2NrBAzuUt80j8g==}
 
   '@fastify/swagger@9.4.0':
     resolution: {integrity: sha512-3hF7asqyNfu41aeDA/ATlIG0RY4XizgaDqPR0nc1Unt3EiXWjkVMiELLaH5WZKNvB4BA/5Wovxdin7N4ii7YHw==}
@@ -1536,9 +1536,6 @@ packages:
 
   '@types/node@22.10.1':
     resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
-
-  '@types/node@22.9.4':
-    resolution: {integrity: sha512-d9RWfoR7JC/87vj7n+PVTzGg9hDyuFjir3RxUHbjFSKNd9mpxbxwMEyaCim/ddCmy4IuW7HjTzF3g9p3EtWEOg==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -6317,7 +6314,7 @@ snapshots:
       fastq: 1.17.1
       glob: 11.0.0
 
-  '@fastify/swagger-ui@5.1.0':
+  '@fastify/swagger-ui@5.2.0':
     dependencies:
       '@fastify/static': 8.0.0
       fastify-plugin: 5.0.1
@@ -7100,10 +7097,6 @@ snapshots:
   '@types/node@22.10.1':
     dependencies:
       undici-types: 6.20.0
-
-  '@types/node@22.9.4':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -9814,7 +9807,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.9.4
+      '@types/node': 22.10.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
