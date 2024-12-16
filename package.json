@@ -60,7 +60,7 @@
   "devDependencies": {
     "@crackle/cli": "0.15.5",
     "@fastify/swagger": "9.4.0",
-    "@fastify/swagger-ui": "5.1.0",
+    "@fastify/swagger-ui": "5.2.0",
     "@types/node": "22.10.2",
     "eslint-plugin-zod-openapi": "1.0.0",
     "fastify": "5.2.0",
