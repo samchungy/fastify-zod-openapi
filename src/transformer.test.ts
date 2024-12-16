@@ -435,6 +435,150 @@ describe('fastifyZodOpenApiTransform', () => {
     `);
   });
 
+  it('should support creating parameters using Zod Effects', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      transform: fastifyZodOpenApiTransform,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z
+            .object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            })
+            .refine(() => true),
+          querystring: z
+            .object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            })
+            .refine(() => true),
+          params: z
+            .object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            })
+            .refine(() => true),
+          headers: z
+            .object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            })
+            .refine(() => true),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Job ID",
+            "in": "query",
+            "name": "jobId",
+            "required": true,
+            "schema": {
+              "example": "60002023",
+              "type": "string",
+            },
+          },
+          {
+            "description": "Job ID",
+            "in": "path",
+            "name": "jobId",
+            "required": true,
+            "schema": {
+              "example": "60002023",
+              "type": "string",
+            },
+          },
+          {
+            "description": "Job ID",
+            "in": "header",
+            "name": "jobId",
+            "required": true,
+            "schema": {
+              "example": "60002023",
+              "type": "string",
+            },
+          },
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "jobId": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "jobId",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating an openapi header parameter', async () => {
     const app = fastify();
 
