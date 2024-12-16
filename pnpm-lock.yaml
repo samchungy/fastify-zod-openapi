@@ -43,8 +43,8 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
       zod-openapi:
-        specifier: 4.1.0
-        version: 4.1.0(zod@3.23.8)
+        specifier: 4.2.0
+        version: 4.2.0(zod@3.23.8)
 
 packages:
 
@@ -1536,9 +1536,6 @@ packages:
 
   '@types/node@22.10.1':
     resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
-
-  '@types/node@22.9.4':
-    resolution: {integrity: sha512-d9RWfoR7JC/87vj7n+PVTzGg9hDyuFjir3RxUHbjFSKNd9mpxbxwMEyaCim/ddCmy4IuW7HjTzF3g9p3EtWEOg==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -5522,8 +5519,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod-openapi@4.1.0:
-    resolution: {integrity: sha512-bRCwRYhEO9CmFLyKgJX8h6j1dRtRiwOe+TLzMVPyV0pRW5vRIgb1rLgIGcuRZ5z3MmSVrZqbv3yva4IJrtZK4g==}
+  zod-openapi@4.2.0:
+    resolution: {integrity: sha512-lnm1e2X5/Ymox5mYxdspy/y52Hb4rPxG1bcwOuHS+YIpxQNEt9s8G4zo34jm0M3+q71TAxgqzcbPLiBXrsfsGA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.21.4
@@ -7100,10 +7097,6 @@ snapshots:
   '@types/node@22.10.1':
     dependencies:
       undici-types: 6.20.0
-
-  '@types/node@22.9.4':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -9814,7 +9807,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.9.4
+      '@types/node': 22.10.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -11810,7 +11803,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-openapi@4.1.0(zod@3.23.8):
+  zod-openapi@4.2.0(zod@3.23.8):
     dependencies:
       zod: 3.23.8
 

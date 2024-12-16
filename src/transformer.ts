@@ -1,9 +1,10 @@
 import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 import type { FastifySchema } from 'fastify';
 import type { OpenAPIV3 } from 'openapi-types';
-import type { AnyZodObject, ZodObject, ZodRawShape, ZodType } from 'zod';
+import type { ZodObject, ZodRawShape, ZodType } from 'zod';
 import type {
   CreateDocumentOptions,
+  ZodObjectInputType,
   ZodOpenApiComponentsObject,
   ZodOpenApiParameters,
   ZodOpenApiResponsesObject,
@@ -15,6 +16,7 @@ import {
   createComponents,
   createMediaTypeSchema,
   createParamOrRef,
+  getZodObject,
 } from 'zod-openapi/api';
 
 import {
@@ -37,10 +39,10 @@ export type FastifyZodOpenApiSchema = Omit<
   'response' | 'headers' | 'querystring' | 'body' | 'params'
 > & {
   response?: ZodOpenApiResponsesObject;
-  headers?: AnyZodObject;
-  querystring?: AnyZodObject;
-  body?: AnyZodObject;
-  params?: AnyZodObject;
+  headers?: ZodObjectInputType;
+  querystring?: ZodObjectInputType;
+  body?: ZodObjectInputType;
+  params?: ZodObjectInputType;
 };
 
 export const isZodType = (object: unknown): object is ZodType =>
@@ -244,9 +246,13 @@ export const fastifyZodOpenApiTransform: Transform = ({
     transformedSchema.response = maybeResponse;
   }
 
-  if (isZodObject(querystring)) {
+  if (isZodType(querystring)) {
+    const queryStringSchema = getZodObject(
+      querystring as ZodObjectInputType,
+      'input',
+    );
     transformedSchema.querystring = createParams(
-      querystring,
+      queryStringSchema,
       'query',
       components,
       [url, 'querystring'],
@@ -254,18 +260,22 @@ export const fastifyZodOpenApiTransform: Transform = ({
     );
   }
 
-  if (isZodObject(params)) {
-    transformedSchema.params = createParams(params, 'path', components, [
+  if (isZodType(params)) {
+    const paramsSchema = getZodObject(params as ZodObjectInputType, 'input');
+    transformedSchema.params = createParams(paramsSchema, 'path', components, [
       url,
       'params',
     ]);
   }
 
-  if (isZodObject(headers)) {
-    transformedSchema.headers = createParams(headers, 'header', components, [
-      url,
-      'headers',
-    ]);
+  if (isZodType(headers)) {
+    const headersSchema = getZodObject(headers as ZodObjectInputType, 'input');
+    transformedSchema.headers = createParams(
+      headersSchema,
+      'header',
+      components,
+      [url, 'headers'],
+    );
   }
 
   return {
