@@ -66,7 +66,7 @@
     "fastify": "5.2.0",
     "skuba": "9.1.0",
     "zod": "3.24.1",
-    "zod-openapi": "4.2.0"
+    "zod-openapi": "4.2.1"
   },
   "peerDependencies": {
     "@fastify/swagger": "^9.0.0",
