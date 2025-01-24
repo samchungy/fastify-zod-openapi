@@ -74,6 +74,31 @@ describe('serializerCompiler', () => {
     expect(result.json()).toEqual({ jobId: '60002023' });
   });
 
+  it('should handle a route without a schema', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {},
+          },
+        },
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().post('/');
+
+    expect(result.json()).toEqual({ jobId: '60002023' });
+  });
+
   it('should fail an invalid response', async () => {
     const app = fastify();
 

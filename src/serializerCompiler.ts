@@ -6,6 +6,7 @@ import type { FastifySerializerCompiler } from 'fastify/types/schema';
 import type { ZodType, ZodTypeAny } from 'zod';
 import { createSchema } from 'zod-openapi';
 
+import { isZodType } from './transformer';
 import { ResponseSerializationError } from './validationError';
 
 export interface SerializerOptions {
@@ -16,6 +17,10 @@ export interface SerializerOptions {
 export const createSerializerCompiler =
   (opts?: SerializerOptions): FastifySerializerCompiler<ZodType> =>
   ({ schema, method, url }) => {
+    if (!isZodType(schema)) {
+      return opts?.stringify ?? JSON.stringify;
+    }
+
     let stringify = opts?.stringify;
     if (!stringify) {
       const { schema: jsonSchema, components } = createSchema(schema, {
