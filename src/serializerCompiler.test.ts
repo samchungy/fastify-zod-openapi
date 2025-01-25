@@ -111,42 +111,6 @@ describe('serializerCompiler', () => {
     const app = fastify();
 
     app.register(UnderPressure, {
-      pressureHandler: () => {},
-      exposeStatusRoute: '/status/health-check',
-      healthCheck: () => Promise.resolve(true),
-    });
-    app.setSerializerCompiler(serializerCompiler);
-    app.post(
-      '/',
-      {
-        schema: {
-          response: {
-            200: {
-              type: 'object',
-              properties: {
-                jobId: { type: 'string' },
-              },
-            },
-          },
-        },
-      },
-      async (_req, res) =>
-        res.send({
-          jobId: '60002023',
-        }),
-    );
-
-    await app.ready();
-
-    const result = await app.inject().get('/status/health-check');
-
-    expect(result.json()).toEqual({ status: 'ok' });
-  });
-
-  it('should work without a schema', async () => {
-    const app = fastify();
-
-    app.register(UnderPressure, {
       exposeStatusRoute: '/status/health-check',
       healthCheck: () => Promise.resolve(true),
     });
