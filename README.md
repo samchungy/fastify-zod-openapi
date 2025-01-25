@@ -223,6 +223,16 @@ const customSerializerCompiler = createSerializerCompiler({
 });
 ```
 
+By default, this library assumes that if a response schema provided is not a Zod Schema, it is a JSON Schema and will naively pass it straight into `fast-json-stringify`. This will not work in conjunction with Fastify's schema registration.
+
+If you have other routes with response schemas which are not Zod Schemas, you can supply a `fallbackSerializer` to `createSerializerCompiler`.
+
+```ts
+const customSerializerCompiler = createSerializerCompiler({
+  fallbackSerializer: ({ schema, url, method }) => customSerializer(schema),
+});
+```
+
 Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
 ### Create Document Options

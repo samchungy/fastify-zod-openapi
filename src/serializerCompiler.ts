@@ -12,13 +12,17 @@ import { ResponseSerializationError } from './validationError';
 export interface SerializerOptions {
   components?: Record<string, ZodTypeAny>;
   stringify?: (value: unknown) => string;
+  fallbackSerializer?: FastifySerializerCompiler<ZodType>;
 }
 
 export const createSerializerCompiler =
   (opts?: SerializerOptions): FastifySerializerCompiler<ZodType> =>
-  ({ schema, method, url }) => {
+  (routeSchema) => {
+    const { schema, url, method } = routeSchema;
     if (!isZodType(schema)) {
-      return opts?.stringify ?? JSON.stringify;
+      return opts?.fallbackSerializer
+        ? opts.fallbackSerializer(routeSchema)
+        : fastJsonStringify(schema);
     }
 
     let stringify = opts?.stringify;
