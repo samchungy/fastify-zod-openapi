@@ -1,4 +1,6 @@
 import 'zod-openapi/extend';
+
+import UnderPressure from '@fastify/under-pressure';
 import fastify from 'fastify';
 import { z } from 'zod';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
@@ -72,6 +74,72 @@ describe('serializerCompiler', () => {
     const result = await app.inject().post('/');
 
     expect(result.json()).toEqual({ jobId: '60002023' });
+  });
+
+  it('should handle a route with a JSON schema', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                jobId: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+
+    await app.ready();
+
+    const result = await app.inject().post('/');
+
+    expect(result.json()).toEqual({ jobId: '60002023' });
+  });
+
+  it('should work with under pressure', async () => {
+    const app = fastify();
+
+    app.register(UnderPressure, {
+      exposeStatusRoute: '/status/health-check',
+      healthCheck: () => Promise.resolve(true),
+    });
+    app.setSerializerCompiler(serializerCompiler);
+    app.post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              type: 'object',
+              properties: {
+                jobId: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/status/health-check');
+
+    expect(result.json()).toEqual({ status: 'ok' });
   });
 
   it('should fail an invalid response', async () => {

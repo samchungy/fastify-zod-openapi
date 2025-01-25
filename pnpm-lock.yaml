@@ -27,6 +27,9 @@ importers:
       '@fastify/swagger-ui':
         specifier: 5.2.1
         version: 5.2.1
+      '@fastify/under-pressure':
+        specifier: 9.0.3
+        version: 9.0.3
       '@types/node':
         specifier: 22.10.7
         version: 22.10.7
@@ -885,6 +888,9 @@ packages:
 
   '@fastify/swagger@9.4.2':
     resolution: {integrity: sha512-WjSUu6QnmysLx1GeX7+oQAQUG/vBK5L8Qzcsht2SEpZiykpHURefMZpf+u3XbwSuH7TjeWOPgGIJIsEgj8AvxQ==}
+
+  '@fastify/under-pressure@9.0.3':
+    resolution: {integrity: sha512-uWzyFn9ThgGgynxyoX/kqgLtPtNBXXvQgN3U8fSRPNBS1y5mEZC/uCBRx03hXm9PDsQwTGN7qt83ItsHVQ0L4A==}
 
   '@formatjs/ecma402-abstract@2.0.0':
     resolution: {integrity: sha512-rRqXOqdFmk7RYvj4khklyqzcfQl9vEL/usogncBHRZfZBDOwMGuSRNFl02fu5KGHXdbinju+YXyuR+Nk8xlr/g==}
@@ -6677,6 +6683,11 @@ snapshots:
       yaml: 2.7.0
     transitivePeerDependencies:
       - supports-color
+
+  '@fastify/under-pressure@9.0.3':
+    dependencies:
+      '@fastify/error': 4.0.0
+      fastify-plugin: 5.0.1
 
   '@formatjs/ecma402-abstract@2.0.0':
     dependencies:
