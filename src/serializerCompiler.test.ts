@@ -147,8 +147,6 @@ describe('serializerCompiler', () => {
     const app = fastify();
 
     app.register(UnderPressure, {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      pressureHandler: () => {},
       exposeStatusRoute: '/status/health-check',
       healthCheck: () => Promise.resolve(true),
     });
