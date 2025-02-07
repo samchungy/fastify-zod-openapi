@@ -24,9 +24,11 @@ import {
   FASTIFY_ZOD_OPENAPI_CONFIG,
 } from './plugin';
 
-type Transform = FastifyDynamicSwaggerOptions['transform'];
+type Transform = NonNullable<FastifyDynamicSwaggerOptions['transform']>;
 
-type TransformObject = FastifyDynamicSwaggerOptions['transformObject'];
+type TransformObject = NonNullable<
+  FastifyDynamicSwaggerOptions['transformObject']
+>;
 
 type FastifyResponseSchema = ZodType | Record<string, unknown>;
 
