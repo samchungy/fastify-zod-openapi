@@ -157,7 +157,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
       jobId: z.string().openapi({
         description: 'Job ID',
         example: '60002023',
-      })
+      }),
     }),
     response: {
       201: {
