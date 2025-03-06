@@ -153,9 +153,11 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   method: 'POST',
   url: '/',
   schema: {
-    body: z.string().openapi({
-      description: 'Job ID',
-      example: '60002023',
+    body: z.object({
+      jobId: z.string().openapi({
+        description: 'Job ID',
+        example: '60002023',
+      })
     }),
     response: {
       201: {
