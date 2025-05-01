@@ -43,7 +43,7 @@ export type FastifyZodOpenApiSchema = Omit<
   response?: ZodOpenApiResponsesObject;
   headers?: ZodObjectInputType;
   querystring?: ZodObjectInputType;
-  body?: ZodObjectInputType;
+  body?: ZodType;
   params?: ZodObjectInputType;
 };
 
@@ -54,12 +54,6 @@ export const isZodType = (object: unknown): object is ZodType =>
       Object.getPrototypeOf((object as ZodType)?.constructor)?.name ===
         'ZodType',
   );
-
-export const isZodObject = (
-  object: unknown,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): object is ZodObject<any, any, any, any, any> =>
-  Boolean(object && (object as ZodType)?.constructor?.name === 'ZodObject');
 
 export const createParams = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
