@@ -279,6 +279,83 @@ describe('fastifyZodOpenApiTransform', () => {
     `);
   });
 
+  it('should support creating an openapi array body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      transform: fastifyZodOpenApiTransform,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z.array(
+            z.string().openapi({
+              description: 'Job ID',
+              example: '60002023',
+            }),
+          ),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.send(['60002023']),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {
+                  "description": "Job ID",
+                  "example": "60002023",
+                  "type": "string",
+                },
+                "type": "array",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating an openapi path parameter', async () => {
     const app = fastify();
 
