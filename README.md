@@ -76,8 +76,19 @@ await app.listen({ port: 5000 });
 
 ```ts
 import 'zod-openapi/extend';
-import { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
+import fastify from 'fastify';
+import {
+  type FastifyPluginAsyncZodOpenApi,
+  type FastifyZodOpenApiSchema,
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-zod-openapi';
 import { z } from 'zod';
+
+const app = fastify();
+
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
   fastify.route({
