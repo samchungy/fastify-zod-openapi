@@ -279,6 +279,116 @@ describe('fastifyZodOpenApiTransform', () => {
     `);
   });
 
+  it('should support creating an openapi union body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      transform: fastifyZodOpenApiTransform,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z.union([
+            z.object({
+              jobId: z.string().openapi({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+            z.object({
+              jobId: z.number().openapi({
+                description: 'Job ID',
+                example: 60002023,
+              }),
+            }),
+          ]),
+        },
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "jobId": {
+                        "description": "Job ID",
+                        "example": "60002023",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "jobId",
+                    ],
+                    "type": "object",
+                  },
+                  {
+                    "properties": {
+                      "jobId": {
+                        "description": "Job ID",
+                        "example": 60002023,
+                        "type": "number",
+                      },
+                    },
+                    "required": [
+                      "jobId",
+                    ],
+                    "type": "object",
+                  },
+                ],
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating an openapi array body', async () => {
     const app = fastify();
 
