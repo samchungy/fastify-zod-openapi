@@ -58,7 +58,7 @@
     "fastify-plugin": "^5.0.0"
   },
   "devDependencies": {
-    "@crackle/cli": "0.15.5",
+    "@crackle/cli": "0.16.0",
     "@fastify/swagger": "9.4.2",
     "@fastify/swagger-ui": "5.2.1",
     "@fastify/under-pressure": "9.0.3",
