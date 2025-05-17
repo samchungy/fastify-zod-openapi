@@ -466,6 +466,89 @@ describe('fastifyZodOpenApiTransform', () => {
 `);
   });
 
+  it('should support creating an openapi plaintext body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      transform: fastifyZodOpenApiTransform,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: {
+            content: {
+              'text/plain': {
+                schema: z.string(),
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.send(['60002023']),
+    );
+    await app.ready();
+
+    const endpointResponse = await app
+      .inject()
+      .headers({
+        'content-type': 'text/plain',
+      })
+      .post('/')
+      .body('60002023');
+    expect(endpointResponse.body).toMatch(JSON.stringify(['60002023']));
+    expect(endpointResponse.statusCode).toBe(200);
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating an openapi path parameter', async () => {
     const app = fastify();
 
