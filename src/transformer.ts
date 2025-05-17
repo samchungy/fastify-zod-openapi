@@ -7,6 +7,7 @@ import type {
   ZodObjectInputType,
   ZodOpenApiComponentsObject,
   ZodOpenApiParameters,
+  ZodOpenApiRequestBodyObject,
   ZodOpenApiResponsesObject,
   ZodOpenApiVersion,
   oas31,
@@ -43,7 +44,7 @@ export type FastifyZodOpenApiSchema = Omit<
   response?: ZodOpenApiResponsesObject;
   headers?: ZodObjectInputType;
   querystring?: ZodObjectInputType;
-  body?: ZodType;
+  body?: ZodType | ZodOpenApiRequestBodyObject;
   params?: ZodObjectInputType;
 };
 
@@ -54,6 +55,11 @@ export const isZodType = (object: unknown): object is ZodType =>
       Object.getPrototypeOf((object as ZodType)?.constructor)?.name ===
         'ZodType',
   );
+
+export const isZodOpenApiRequestBodyObject = (
+  object: unknown,
+): object is ZodOpenApiRequestBodyObject =>
+  object !== null && typeof object === 'object' && 'content' in object;
 
 export const createParams = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -229,6 +235,20 @@ export const fastifyZodOpenApiTransform: Transform = ({
       [url, 'body'],
       documentOpts,
     );
+  } else if (isZodOpenApiRequestBodyObject(transformedSchema.body)) {
+    // take every item in and transform
+    for (const contentType of Object.keys(transformedSchema.body.content)) {
+      if (transformedSchema.body.content[contentType]) {
+        transformedSchema.body.content[contentType].schema =
+          createMediaTypeSchema(
+            transformedSchema.body.content[contentType].schema,
+            components,
+            'input',
+            [url, 'body'],
+            documentOpts,
+          );
+      }
+    }
   }
 
   const maybeResponse = createResponse(
