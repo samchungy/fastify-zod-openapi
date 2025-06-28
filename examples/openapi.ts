@@ -37,7 +37,7 @@ const createApp = async () => {
   const JobIdSchema = z.string().meta({
     description: 'Job ID',
     example: '60002023',
-    ref: 'jobId',
+    id: 'jobId',
   });
 
   app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
