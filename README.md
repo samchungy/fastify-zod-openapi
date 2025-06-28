@@ -19,11 +19,11 @@ Fastify <a href="https://fastify.dev/docs/latest/Reference/Type-Providers/">type
 Install via `npm`, `pnpm` or `pnpm`:
 
 ```bash
-npm install zod zod-openapi fastify-zod-openapi
+npm install zod fastify-zod-openapi
 ## or
-pnpm add zod zod-openapi fastify-zod-openapi
+yarn add zod fastify-zod-openapi
 ## or
-pnpm install zod-openapi fastify-zod-openapi
+pnpm install zod fastify-zod-openapi
 ```
 
 ## Usage
@@ -134,7 +134,6 @@ import {
   validatorCompiler,
 } from 'fastify-zod-openapi';
 import { z } from 'zod/v4';
-import { type ZodOpenApiVersion } from 'zod-openapi';
 
 const app = fastify();
 
@@ -148,7 +147,7 @@ await app.register(fastifySwagger, {
       title: 'hello world',
       version: '1.0.0',
     },
-    openapi: '3.0.3' satisfies ZodOpenApiVersion, // If this is not specified, it will default to 3.1.0
+    openapi: '3.1.0',
   },
   transform: fastifyZodOpenApiTransform,
   transformObject: fastifyZodOpenApiTransformObject,
