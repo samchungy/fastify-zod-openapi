@@ -59,7 +59,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "querystring/jobId Expected number, received nan",
+          "message": "querystring/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -119,7 +119,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "body/jobId Expected number, received nan",
+          "message": "body/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -182,7 +182,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "headers/jobId Expected number, received nan",
+          "message": "headers/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -242,7 +242,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "params/jobId Expected number, received nan",
+          "message": "params/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -425,27 +425,25 @@ describe('setErrorHandler', () => {
     expect(result.json()).toMatchInlineSnapshot(`
 {
   "zodError": {
-    "issues": [
-      {
-        "code": "invalid_type",
-        "expected": "string",
-        "message": "Required",
-        "path": [
-          "jobId",
-        ],
-        "received": "undefined",
-      },
+    "message": "[
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "jobId"
     ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]",
     "name": "ZodError",
   },
   "zodIssue": {
     "code": "invalid_type",
     "expected": "string",
-    "message": "Required",
+    "message": "Invalid input: expected string, received undefined",
     "path": [
       "jobId",
     ],
-    "received": "undefined",
   },
 }
 `);
@@ -498,22 +496,20 @@ describe('setErrorHandler', () => {
       "zodIssue": {
         "code": "invalid_type",
         "expected": "string",
-        "message": "Required",
+        "message": "Invalid input: expected string, received undefined",
         "path": [
           "jobId",
         ],
-        "received": "undefined",
       },
     },
     {
       "zodIssue": {
         "code": "invalid_type",
         "expected": "string",
-        "message": "Required",
+        "message": "Invalid input: expected string, received undefined",
         "path": [
           "jobTitle",
         ],
-        "received": "undefined",
       },
     },
   ],

@@ -63,14 +63,9 @@ export const createParams = (
       throw new Error('References not supported');
     }
 
-    parameter.schema = {
-      type: 'string',
-      description: parameter.description,
-    };
+    const { in: inLocation, name, schema, ...rest } = parameter;
 
-    params[key] = parameter as
-      | FastifySwaggerSchemaObject
-      | oas31.ReferenceObject;
+    params[key] = rest as FastifySwaggerSchemaObject;
   }
   return params;
 };
@@ -145,12 +140,16 @@ export const createResponse = (
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
-      responseObject[key] = registry.addSchema(unknownValue, [...path, key], {
-        io: 'output',
-        source: {
-          type: 'mediaType',
+      responseObject[key] = registry.addSchema(
+        unknownValue,
+        [...path, key, 'content', 'application/json', 'schema'],
+        {
+          io: 'output',
+          source: {
+            type: 'mediaType',
+          },
         },
-      });
+      );
       continue;
     }
 
@@ -232,34 +231,46 @@ export const fastifyZodOpenApiTransform: Transform = ({
     fastifySchema.response = maybeResponse;
   }
 
+  const parameterPath = [...routePath, 'parameters'];
+
   if (isAnyZodType(querystring)) {
-    const path = [...routePath, 'parameters', 'query'];
-    const queryStringSchema = unwrapZodObject(querystring, 'input', path);
+    const queryStringSchema = unwrapZodObject(querystring, 'input', [
+      ...parameterPath,
+      'query',
+    ]);
 
     fastifySchema.querystring = createParams(
       queryStringSchema,
       'query',
       registry,
-      path,
+      parameterPath,
     );
   }
 
   if (isAnyZodType(params)) {
-    const path = [url, 'params'];
-    const paramsSchema = unwrapZodObject(params, 'input', path);
+    const paramsSchema = unwrapZodObject(params, 'input', [
+      ...parameterPath,
+      'path',
+    ]);
 
-    fastifySchema.params = createParams(paramsSchema, 'path', registry, path);
+    fastifySchema.params = createParams(
+      paramsSchema,
+      'path',
+      registry,
+      parameterPath,
+    );
   }
 
   if (isAnyZodType(headers)) {
-    const path = [url, 'headers'];
-
-    const headersSchema = unwrapZodObject(headers, 'input', path);
+    const headersSchema = unwrapZodObject(headers, 'input', [
+      ...parameterPath,
+      'header',
+    ]);
     fastifySchema.headers = createParams(
       headersSchema,
       'header',
       registry,
-      path,
+      parameterPath,
     );
   }
 
@@ -273,9 +284,24 @@ type SchemaSource = NonNullable<
   ReturnType<ComponentRegistry['components']['schemas']['input']['get']>
 >['source'];
 
+export const resolveSchemaComponent = (
+  object: oas31.SchemaObject | oas31.ReferenceObject,
+  registry: ComponentRegistry,
+  io: 'input' | 'output',
+): oas31.SchemaObject => {
+  if (typeof object.$ref === 'string') {
+    const id = object.$ref.replace('#/components/schemas/', '');
+    return registry.components.schemas[io].get(id) as oas31.SchemaObject;
+  }
+
+  return object as oas31.SchemaObject;
+};
+
 export const traverseObject = (
   openapiObject: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>,
   source: SchemaSource,
+  schemaObject: oas31.SchemaObject | oas31.ReferenceObject,
+  registry: ComponentRegistry,
 ): OpenAPIV3_1.SchemaObject | undefined => {
   let index = 0;
   let current: unknown = openapiObject;
@@ -285,6 +311,28 @@ export const traverseObject = (
       return undefined;
     }
     current = current[key];
+
+    if (key === 'requestBody' && typeof current === 'object') {
+      const requestBody = current as OpenAPIV3_1.RequestBodyObject;
+      const schema = requestBody.content?.['application/json']?.schema;
+
+      if (schema) {
+        const resolved = resolveSchemaComponent(
+          schemaObject,
+          registry,
+          'input',
+        );
+        if (resolved?.required?.length) {
+          requestBody.required = true;
+        }
+        const description = schemaObject.description ?? resolved.description;
+        if (description) {
+          requestBody.description = description;
+        }
+        return Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+      }
+      return undefined;
+    }
 
     if (
       key === 'parameters' &&
@@ -297,10 +345,19 @@ export const traverseObject = (
           param.name === source.location.name &&
           param.in === source.location.in,
       );
-      return parameter?.schema as OpenAPIV3_1.SchemaObject | undefined;
+
+      if (parameter?.schema) {
+        return Object.assign(
+          parameter.schema,
+          schemaObject,
+        ) as OpenAPIV3_1.SchemaObject;
+      }
+
+      return undefined;
     }
   }
-  return current as OpenAPIV3_1.SchemaObject;
+
+  return Object.assign(current as OpenAPIV3_1.SchemaObject, schemaObject);
 };
 
 export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
@@ -320,23 +377,31 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
   );
 
   for (const [, value] of config.registry.components.schemas.input) {
-    const schema = traverseObject(opts.openapiObject, value.source);
+    const schema = traverseObject(
+      opts.openapiObject,
+      value.source,
+      value.schemaObject,
+      config.registry,
+    );
     if (!schema) {
       throw new Error(
-        `Schema not found in OpenAPI object: ${value.source.path.join('.')}`,
+        `Schema not found in OpenAPI object: ${value.source.path.join(' > ')}`,
       );
     }
-    Object.assign(schema, value.schemaObject);
   }
 
   for (const [, value] of config.registry.components.schemas.output) {
-    const schema = traverseObject(opts.openapiObject, value.source);
+    const schema = traverseObject(
+      opts.openapiObject,
+      value.source,
+      value.schemaObject,
+      config.registry,
+    );
     if (!schema) {
       throw new Error(
         `Schema not found in OpenAPI object: ${value.source.path.join('.')}`,
       );
     }
-    Object.assign(schema, value.schemaObject);
   }
 
   return {
@@ -345,7 +410,7 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
   };
 };
 
-export const fastifyZodOpenApiTransforms = {
+export const fastifyZodOpenApiTransformers = {
   transform: fastifyZodOpenApiTransform,
   transformObject: fastifyZodOpenApiTransformObject,
 };
