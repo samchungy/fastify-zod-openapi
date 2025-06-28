@@ -1,5 +1,5 @@
 import type { FastifySchemaCompiler } from 'fastify';
-import type { ZodType } from 'zod';
+import type { ZodType } from 'zod/v4';
 
 import { RequestValidationError } from './validationError';
 
@@ -20,7 +20,7 @@ export const validatorCompiler: FastifySchemaCompiler<ZodType> =
 
     if (!result.success) {
       return {
-        error: result.error.errors.map(
+        error: result.error.issues.map(
           (issue) =>
             new RequestValidationError(
               issue.code,
@@ -36,6 +36,5 @@ export const validatorCompiler: FastifySchemaCompiler<ZodType> =
       };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     return { value: result.data };
   };

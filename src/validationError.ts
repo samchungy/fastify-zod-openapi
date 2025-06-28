@@ -1,18 +1,18 @@
 import { createError } from '@fastify/error';
 import type { FastifySchemaValidationError } from 'fastify/types/schema';
-import type { ZodError, ZodIssue, ZodIssueCode } from 'zod';
+import type { ZodError, core } from 'zod/v4';
 
 export class RequestValidationError
   extends Error
   implements FastifySchemaValidationError
 {
-  cause!: ZodIssue;
+  cause!: core.$ZodIssue;
   constructor(
-    public keyword: ZodIssueCode,
+    public keyword: core.$ZodIssueCode,
     public instancePath: string,
     public schemaPath: string,
     public message: string,
-    public params: { issue: ZodIssue; error: ZodError },
+    public params: { issue: core.$ZodIssue; error: ZodError },
   ) {
     super(message, {
       cause: params.issue,

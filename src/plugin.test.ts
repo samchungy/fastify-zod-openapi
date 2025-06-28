@@ -1,8 +1,7 @@
-import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import type {
   FastifyPluginAsyncZodOpenApi,
@@ -29,7 +28,7 @@ describe('plugin basics', () => {
       {
         schema: {
           body: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -39,7 +38,7 @@ describe('plugin basics', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
@@ -72,7 +71,7 @@ describe('plugin basics', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -105,7 +104,7 @@ describe('plugin basics', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
@@ -147,14 +146,14 @@ describe('FastifyPluginAsyncZodOpenApi', () => {
         // Define your schema
         schema: {
           body: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
           }),
           response: {
             201: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -192,14 +191,14 @@ describe('FastifyPluginAsyncZodOpenApi', () => {
         // Define your schema
         schema: {
           body: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
           }),
           response: {
             201: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),

@@ -1,28 +1,21 @@
 import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 import type { FastifySchema } from 'fastify';
-import type { OpenAPIV3 } from 'openapi-types';
-import type { ZodObject, ZodRawShape, ZodType } from 'zod';
+import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
+import type { $ZodObject, $ZodType } from 'zod/v4/core';
 import type {
-  CreateDocumentOptions,
-  ZodObjectInputType,
-  ZodOpenApiComponentsObject,
+  ZodObjectInput,
   ZodOpenApiParameters,
   ZodOpenApiResponsesObject,
-  ZodOpenApiVersion,
   oas31,
 } from 'zod-openapi';
 import {
-  type ComponentsObject,
+  type ComponentRegistry,
   createComponents,
-  createMediaTypeSchema,
-  createParamOrRef,
-  getZodObject,
+  isAnyZodType,
+  unwrapZodObject,
 } from 'zod-openapi/api';
 
-import {
-  FASTIFY_ZOD_OPENAPI_COMPONENTS,
-  FASTIFY_ZOD_OPENAPI_CONFIG,
-} from './plugin';
+import { FASTIFY_ZOD_OPENAPI_CONFIG } from './plugin';
 
 type Transform = NonNullable<FastifyDynamicSwaggerOptions['transform']>;
 
@@ -30,7 +23,7 @@ type TransformObject = NonNullable<
   FastifyDynamicSwaggerOptions['transformObject']
 >;
 
-type FastifyResponseSchema = ZodType | Record<string, unknown>;
+type FastifyResponseSchema = $ZodType | Record<string, unknown>;
 
 type FastifySwaggerSchemaObject = Omit<oas31.SchemaObject, 'required'> & {
   required?: string[] | boolean;
@@ -41,145 +34,143 @@ export type FastifyZodOpenApiSchema = Omit<
   'response' | 'headers' | 'querystring' | 'body' | 'params'
 > & {
   response?: ZodOpenApiResponsesObject;
-  headers?: ZodObjectInputType;
-  querystring?: ZodObjectInputType;
-  body?: ZodType;
-  params?: ZodObjectInputType;
+  headers?: ZodObjectInput;
+  querystring?: ZodObjectInput;
+  body?: $ZodType;
+  params?: ZodObjectInput;
 };
 
-export const isZodType = (object: unknown): object is ZodType =>
-  Boolean(
-    object &&
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      Object.getPrototypeOf((object as ZodType)?.constructor)?.name ===
-        'ZodType',
-  );
-
 export const createParams = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  querystring: ZodObject<any, any, any, any, any>,
+  parameters: $ZodObject,
   type: keyof ZodOpenApiParameters,
-  components: ComponentsObject,
+  registry: ComponentRegistry,
   path: string[],
-  doucmentOpts?: CreateDocumentOptions,
-): Record<string, FastifySwaggerSchemaObject | oas31.ReferenceObject> =>
-  Object.entries(querystring.shape as ZodRawShape).reduce(
-    (acc, [key, value]: [string, ZodType]) => {
-      const parameter = createParamOrRef(
-        value,
-        components,
-        [...path, key],
-        type,
-        key,
-        doucmentOpts,
-      );
+): Record<string, FastifySwaggerSchemaObject | oas31.ReferenceObject> => {
+  const params: Record<
+    string,
+    FastifySwaggerSchemaObject | oas31.ReferenceObject
+  > = {};
 
-      if ('$ref' in parameter || !parameter.schema) {
-        throw new Error('References not supported');
-      }
+  for (const [key, value] of Object.entries(parameters._zod.def.shape)) {
+    const parameter = registry.addParameter(value, path, {
+      location: {
+        in: type,
+        name: key,
+      },
+    });
 
-      acc[key] = {
-        ...parameter.schema,
-        ...(parameter.required && { required: true }),
-      };
+    if ('$ref' in parameter || !parameter.schema) {
+      throw new Error('References not supported');
+    }
 
-      return acc;
-    },
-    {} as Record<string, FastifySwaggerSchemaObject | oas31.ReferenceObject>,
-  );
+    parameter.schema = {};
+
+    params[key] = parameter as
+      | FastifySwaggerSchemaObject
+      | oas31.ReferenceObject;
+  }
+  return params;
+};
 
 export const createResponseSchema = (
   schema: FastifyResponseSchema,
-  components: ComponentsObject,
+  registry: ComponentRegistry,
   path: string[],
-  documentOpts?: CreateDocumentOptions,
 ): unknown => {
-  if (isZodType(schema)) {
-    return createMediaTypeSchema(
-      schema,
-      components,
-      'output',
-      [...path, 'schema'],
-      documentOpts,
-    );
+  if (isAnyZodType(schema)) {
+    return registry.addSchema(schema, path, {
+      io: 'output',
+      source: {
+        type: 'mediaType',
+      },
+    });
   }
   return schema;
 };
 
 export const createContent = (
   content: unknown,
-  components: ComponentsObject,
+  ctx: {
+    registry: ComponentRegistry;
+    io: 'input' | 'output';
+  },
   path: string[],
-  documentOpts?: CreateDocumentOptions,
 ): unknown => {
   if (typeof content !== 'object' || content == null) {
     return content;
   }
 
-  return Object.entries(content).reduce(
-    (acc, [key, value]: [string, unknown]) => {
-      if (typeof value === 'object' && value !== null && 'schema' in value) {
-        const schema = createResponseSchema(
-          value.schema as FastifyResponseSchema,
-          components,
-          [...path, 'schema'],
-          documentOpts,
-        );
-        acc[key] = {
-          ...value,
-          schema,
-        };
-        return acc;
-      }
-      acc[key] = value;
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
+  const contentObject: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(content)) {
+    const unknownValue = value as unknown;
+    if (
+      typeof unknownValue === 'object' &&
+      unknownValue !== null &&
+      'schema' in unknownValue
+    ) {
+      const schemaPath = [...path, key, 'schema'];
+      const schema = isAnyZodType(unknownValue.schema)
+        ? ctx.registry.addSchema(unknownValue.schema, schemaPath, {
+            io: ctx.io,
+            source: {
+              type: 'mediaType',
+            },
+          })
+        : unknownValue.schema;
+
+      contentObject[key] = {
+        ...unknownValue,
+        schema,
+      };
+      continue;
+    }
+    contentObject[key] = unknownValue;
+  }
+  return contentObject;
 };
 
 export const createResponse = (
   response: unknown,
-  components: ComponentsObject,
+  registry: ComponentRegistry,
   path: string[],
-  documentOpts?: CreateDocumentOptions,
 ): unknown => {
   if (typeof response !== 'object' || response == null) {
     return response;
   }
 
-  return Object.entries(response).reduce(
-    (acc, [key, value]: [string, unknown]) => {
-      if (isZodType(value)) {
-        acc[key] = createMediaTypeSchema(
-          value,
-          components,
-          'output',
-          [...path, key],
-          documentOpts,
-        );
-        return acc;
-      }
+  const responseObject: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(response)) {
+    const unknownValue = value as unknown;
+    if (isAnyZodType(unknownValue)) {
+      responseObject[key] = registry.addSchema(unknownValue, [...path, key], {
+        io: 'output',
+        source: {
+          type: 'mediaType',
+        },
+      });
+      continue;
+    }
 
-      if (typeof value === 'object' && value !== null && 'content' in value) {
-        const content = createContent(
-          value.content,
-          components,
-          [...path, 'content'],
-          documentOpts,
-        );
-        acc[key] = {
-          ...value,
-          content,
-        };
-        return acc;
-      }
+    if (
+      typeof unknownValue === 'object' &&
+      unknownValue !== null &&
+      'content' in unknownValue
+    ) {
+      const content = createContent(
+        unknownValue.content,
+        { registry, io: 'output' },
+        [...path, key, 'content'],
+      );
+      responseObject[key] = {
+        ...unknownValue,
+        content,
+      };
+      continue;
+    }
+    responseObject[key] = unknownValue;
+  }
 
-      acc[key] = value;
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
+  return responseObject;
 };
 
 export const fastifyZodOpenApiTransform: Transform = ({
@@ -194,7 +185,7 @@ export const fastifyZodOpenApiTransform: Transform = ({
     };
   }
 
-  const { response, headers, querystring, body, params } = schema;
+  const { response, headers, querystring, body, params, ...rest } = schema;
 
   if (!('openapiObject' in opts)) {
     throw new Error('openapiObject was not found in the options');
@@ -206,78 +197,107 @@ export const fastifyZodOpenApiTransform: Transform = ({
     throw new Error('Please register the fastify-zod-openapi plugin');
   }
 
-  const { components, documentOpts } = config;
+  const { registry } = config;
 
   // we need to access the components when we transform the document. Symbol's do not appear
-  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= config.components;
+  opts.openapiObject[FASTIFY_ZOD_OPENAPI_CONFIG] ??= config;
 
-  if (opts.openapiObject.openapi) {
-    components.openapi = opts.openapiObject.openapi as ZodOpenApiVersion;
-  }
+  const fastifySchema: FastifySchema = rest;
 
-  opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS] ??= components;
+  const routeMethod = (opts.route.method as string).toLowerCase();
+  const routePath = ['paths', url, routeMethod];
 
-  const transformedSchema: FastifySchema = {
-    ...schema,
-  };
-
-  if (isZodType(body)) {
-    transformedSchema.body = createMediaTypeSchema(
+  if (isAnyZodType(body)) {
+    fastifySchema.body = registry.addSchema(
       body,
-      components,
-      'input',
-      [url, 'body'],
-      documentOpts,
+      [...routePath, 'requestBody', 'content', 'application/json', 'schema'],
+      {
+        io: 'input',
+        source: {
+          type: 'mediaType',
+        },
+      },
     );
   }
 
-  const maybeResponse = createResponse(
-    response,
-    components,
-    [url, 'response'],
-    documentOpts,
-  );
+  const maybeResponse = createResponse(response, registry, [
+    ...routePath,
+    'responses',
+  ]);
 
   if (maybeResponse) {
-    transformedSchema.response = maybeResponse;
+    fastifySchema.response = maybeResponse;
   }
 
-  if (isZodType(querystring)) {
-    const queryStringSchema = getZodObject(
-      querystring as ZodObjectInputType,
-      'input',
-    );
-    transformedSchema.querystring = createParams(
+  if (isAnyZodType(querystring)) {
+    const path = [...routePath, 'parameters', 'query'];
+    const queryStringSchema = unwrapZodObject(querystring, 'input', path);
+
+    fastifySchema.querystring = createParams(
       queryStringSchema,
       'query',
-      components,
-      [url, 'querystring'],
-      documentOpts,
+      registry,
+      path,
     );
   }
 
-  if (isZodType(params)) {
-    const paramsSchema = getZodObject(params as ZodObjectInputType, 'input');
-    transformedSchema.params = createParams(paramsSchema, 'path', components, [
-      url,
-      'params',
-    ]);
+  if (isAnyZodType(params)) {
+    const path = [url, 'params'];
+    const paramsSchema = unwrapZodObject(params, 'input', path);
+
+    fastifySchema.params = createParams(paramsSchema, 'path', registry, path);
   }
 
-  if (isZodType(headers)) {
-    const headersSchema = getZodObject(headers as ZodObjectInputType, 'input');
-    transformedSchema.headers = createParams(
+  if (isAnyZodType(headers)) {
+    const path = [url, 'headers'];
+
+    const headersSchema = unwrapZodObject(headers, 'input', path);
+    fastifySchema.headers = createParams(
       headersSchema,
       'header',
-      components,
-      [url, 'headers'],
+      registry,
+      path,
     );
   }
 
   return {
-    schema: transformedSchema,
+    schema: fastifySchema,
     url,
   };
+};
+
+type SchemaSource = NonNullable<
+  ReturnType<ComponentRegistry['components']['schemas']['input']['get']>
+>['source'];
+
+export const traverseObject = (
+  openapiObject: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>,
+  source: SchemaSource,
+): OpenAPIV3_1.SchemaObject | undefined => {
+  let index = 0;
+  let current: unknown = openapiObject;
+  while (index < source.path.length) {
+    const key = source.path[index++] as keyof typeof current;
+    if (typeof current !== 'object' || current === null || !(key in current)) {
+      return undefined;
+    }
+    current = current[key];
+
+    if (
+      key === 'parameters' &&
+      typeof current === 'object' &&
+      Array.isArray(current) &&
+      source.type === 'parameter'
+    ) {
+      const parameter = (current as OpenAPIV3_1.ParameterObject[]).find(
+        (param) =>
+          param.name === source.location.name &&
+          param.in === source.location.in,
+      );
+      return parameter?.schema as OpenAPIV3_1.SchemaObject | undefined;
+    }
+  }
+  return current as OpenAPIV3_1.SchemaObject;
 };
 
 export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
@@ -285,17 +305,44 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
     return opts.swaggerObject;
   }
 
-  const components = opts.openapiObject[FASTIFY_ZOD_OPENAPI_COMPONENTS];
+  const config = opts.openapiObject[FASTIFY_ZOD_OPENAPI_CONFIG];
 
-  if (!components) {
+  if (!config) {
     return opts.openapiObject;
+  }
+
+  const components = createComponents(
+    config.registry,
+    config.documentOpts ?? {},
+  );
+
+  for (const [, value] of config.registry.components.schemas.input) {
+    const schema = traverseObject(opts.openapiObject, value.source);
+    if (!schema) {
+      throw new Error(
+        `Schema not found in OpenAPI object: ${value.source.path.join('.')}`,
+      );
+    }
+    Object.assign(schema, value.schemaObject);
+  }
+
+  for (const [, value] of config.registry.components.schemas.output) {
+    const schema = traverseObject(opts.openapiObject, value.source);
+    if (!schema) {
+      throw new Error(
+        `Schema not found in OpenAPI object: ${value.source.path.join('.')}`,
+      );
+    }
+    Object.assign(schema, value.schemaObject);
   }
 
   return {
     ...opts.openapiObject,
-    components: createComponents(
-      (opts.openapiObject.components ?? {}) as ZodOpenApiComponentsObject,
-      components,
-    ) as OpenAPIV3.ComponentsObject,
+    components: components as OpenAPIV3.ComponentsObject,
   };
+};
+
+export const fastifyZodOpenApiTransforms = {
+  transform: fastifyZodOpenApiTransform,
+  transformObject: fastifyZodOpenApiTransformObject,
 };

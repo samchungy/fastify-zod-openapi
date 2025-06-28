@@ -63,18 +63,18 @@
     "@fastify/swagger-ui": "5.2.1",
     "@fastify/under-pressure": "9.0.3",
     "@types/node": "22.13.1",
-    "eslint-plugin-zod-openapi": "1.0.0",
+    "eslint-plugin-zod-openapi": "2.0.0-beta.0",
     "fastify": "5.2.1",
     "skuba": "9.1.0",
-    "zod": "3.24.1",
-    "zod-openapi": "4.2.3"
+    "zod": "3.25.67",
+    "zod-openapi": "5.0.0-beta.13"
   },
   "peerDependencies": {
     "@fastify/swagger": "^9.0.0",
     "@fastify/swagger-ui": "^5.0.1",
     "fastify": "5",
-    "zod": "^3.21.4",
-    "zod-openapi": "^4.2.0"
+    "zod": "^3.25.67",
+    "zod-openapi": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "@fastify/swagger": {

@@ -29,7 +29,6 @@ pnpm install zod-openapi fastify-zod-openapi
 ## Usage
 
 ```ts
-import 'zod-openapi/extend';
 import fastify from 'fastify';
 import {
   type FastifyZodOpenApiSchema,
@@ -37,7 +36,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 const app = fastify();
 
@@ -49,14 +48,14 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   url: '/:jobId',
   schema: {
     body: z.object({
-      jobId: z.string().openapi({
+      jobId: z.string().meta({
         description: 'Job ID',
         example: '60002023',
       }),
     }),
     response: {
       201: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),
@@ -75,7 +74,6 @@ await app.listen({ port: 5000 });
 ## Usage with plugins
 
 ```ts
-import 'zod-openapi/extend';
 import fastify from 'fastify';
 import {
   type FastifyPluginAsyncZodOpenApi,
@@ -83,7 +81,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 const app = fastify();
 
@@ -97,14 +95,14 @@ const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
     // Define your schema
     schema: {
       body: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),
       }),
       response: {
         201: z.object({
-          jobId: z.string().openapi({
+          jobId: z.string().meta({
             description: 'Job ID',
             example: '60002023',
           }),
@@ -123,7 +121,6 @@ app.register(plugin);
 ## Usage with @fastify/swagger
 
 ```ts
-import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
@@ -136,7 +133,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { type ZodOpenApiVersion } from 'zod-openapi';
 
 const app = fastify();
@@ -165,7 +162,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   url: '/',
   schema: {
     body: z.object({
-      jobId: z.string().openapi({
+      jobId: z.string().meta({
         description: 'Job ID',
         example: '60002023',
       }),
@@ -175,7 +172,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
         content: {
           'application/json': {
             schema: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -199,7 +196,7 @@ await app.listen({ port: 5000 });
 This library allows you to easily declare components. As an example:
 
 ```typescript
-const title = z.string().openapi({
+const title = z.string().meta({
   description: 'Job title',
   example: 'My job',
   ref: 'jobTitle', // <- new field
@@ -352,7 +349,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
   {
     schema: {
       querystring: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),

@@ -1,9 +1,7 @@
-import 'zod-openapi/extend';
-
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import {
   type FastifyZodOpenApiSchema,
@@ -36,7 +34,7 @@ const createApp = async () => {
     routePrefix: '/documentation',
   });
 
-  const JobIdSchema = z.string().openapi({
+  const JobIdSchema = z.string().meta({
     description: 'Job ID',
     example: '60002023',
     ref: 'jobId',
@@ -47,13 +45,13 @@ const createApp = async () => {
     url: '/:jobId',
     schema: {
       params: z.object({
-        foo: z.string().openapi({
+        foo: z.string().meta({
           description: 'path parameter example',
           example: 'bar',
         }),
       }),
       querystring: z.object({
-        baz: z.string().openapi({
+        baz: z.string().meta({
           description: 'query string example',
           example: 'quz',
         }),
@@ -62,7 +60,7 @@ const createApp = async () => {
         jobId: JobIdSchema,
       }),
       headers: z.object({
-        'my-header': z.string().openapi({
+        'my-header': z.string().meta({
           description: 'header string example',
           example: 'xyz',
         }),
@@ -76,7 +74,7 @@ const createApp = async () => {
             'application/json': {
               example: { jobId: '123' },
               schema: z.object({
-                jobId: z.string().openapi({
+                jobId: z.string().meta({
                   description: 'Job ID',
                   example: '60002023',
                 }),

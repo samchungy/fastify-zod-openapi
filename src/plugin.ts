@@ -7,21 +7,18 @@ import type {
   RawServerDefault,
 } from 'fastify';
 import fp from 'fastify-plugin';
-import type { ZodType, z } from 'zod';
+import type { ZodType, z } from 'zod/v4';
 import type {
   CreateDocumentOptions,
   ZodOpenApiComponentsObject,
 } from 'zod-openapi';
-import {
-  type ComponentsObject as ApiComponentsObject,
-  getDefaultComponents,
-} from 'zod-openapi/api';
+import { type ComponentRegistry, createRegistry } from 'zod-openapi/api';
 
 import type { RequestValidationError } from './validationError';
 
 export const FASTIFY_ZOD_OPENAPI_CONFIG = Symbol('fastify-zod-openapi-config');
-export const FASTIFY_ZOD_OPENAPI_COMPONENTS = Symbol(
-  'fastify-zod-openapi-components',
+export const FASTIFY_ZOD_OPENAPI_REGISTRY = Symbol(
+  'fastify-zod-openapi-registry',
 );
 
 export interface FastifyZodOpenApiOpts {
@@ -30,7 +27,7 @@ export interface FastifyZodOpenApiOpts {
 }
 
 interface FastifyZodOpenApiConfig {
-  components: ApiComponentsObject;
+  registry: ComponentRegistry;
   documentOpts?: CreateDocumentOptions;
 }
 
@@ -48,7 +45,7 @@ declare module 'openapi-types' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace OpenAPIV3 {
     interface Document {
-      [FASTIFY_ZOD_OPENAPI_COMPONENTS]?: ApiComponentsObject;
+      [FASTIFY_ZOD_OPENAPI_CONFIG]?: FastifyZodOpenApiConfig;
     }
   }
 }
@@ -64,7 +61,7 @@ export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
 
 // eslint-disable-next-line @typescript-eslint/require-await
 const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
-  const components = getDefaultComponents(opts.components);
+  const registry = createRegistry(opts.components);
 
   fastify.addHook('onRoute', ({ schema }) => {
     if (!schema || schema.hide) {
@@ -72,7 +69,7 @@ const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
     }
 
     schema[FASTIFY_ZOD_OPENAPI_CONFIG] ??= {
-      components,
+      registry,
       documentOpts: opts.documentOpts,
     };
   });

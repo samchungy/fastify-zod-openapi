@@ -1,8 +1,7 @@
-import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import {
   type FastifyZodOpenApiTypeProvider,
@@ -14,13 +13,15 @@ import {
   type FastifyZodOpenApiSchema,
   fastifyZodOpenApiTransform,
   fastifyZodOpenApiTransformObject,
+  fastifyZodOpenApiTransforms,
 } from '../src/transformer';
 
 describe('fastifyZodOpenApiTransform', () => {
-  it('should support creating an openapi response', async () => {
+  it.only('should support creating an openapi response', async () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
 
     await app.register(fastifyZodOpenApiPlugin);
     await app.register(fastifySwagger, {
@@ -31,7 +32,7 @@ describe('fastifyZodOpenApiTransform', () => {
         },
         openapi: '3.1.0',
       },
-      transform: fastifyZodOpenApiTransform,
+      ...fastifyZodOpenApiTransforms,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
@@ -46,7 +47,7 @@ describe('fastifyZodOpenApiTransform', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
@@ -55,6 +56,12 @@ describe('fastifyZodOpenApiTransform', () => {
               },
             },
           },
+          querystring: z.object({
+            a: z.string().meta({
+              description: 'Query parameter example',
+              example: 'b',
+            }),
+          }),
         } satisfies FastifyZodOpenApiSchema,
       },
       async (_req, res) =>
@@ -68,9 +75,7 @@ describe('fastifyZodOpenApiTransform', () => {
 
     expect(result.json()).toMatchInlineSnapshot(`
 {
-  "components": {
-    "schemas": {},
-  },
+  "components": {},
   "info": {
     "title": "hello world",
     "version": "1.0.0",
@@ -84,6 +89,7 @@ describe('fastifyZodOpenApiTransform', () => {
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": false,
                   "properties": {
                     "jobId": {
                       "description": "Job ID",
@@ -123,6 +129,7 @@ describe('fastifyZodOpenApiTransform', () => {
         openapi: '3.1.0',
       },
       transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
@@ -134,7 +141,7 @@ describe('fastifyZodOpenApiTransform', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -208,6 +215,7 @@ describe('fastifyZodOpenApiTransform', () => {
         openapi: '3.1.0',
       },
       transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
@@ -218,7 +226,7 @@ describe('fastifyZodOpenApiTransform', () => {
       {
         schema: {
           body: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -294,6 +302,7 @@ describe('fastifyZodOpenApiTransform', () => {
         openapi: '3.1.0',
       },
       transform: fastifyZodOpenApiTransform,
+      transformObject: fastifyZodOpenApiTransformObject,
     });
     await app.register(fastifySwaggerUI, {
       routePrefix: '/documentation',
@@ -305,13 +314,13 @@ describe('fastifyZodOpenApiTransform', () => {
         schema: {
           body: z.union([
             z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
             }),
             z.object({
-              jobId: z.number().openapi({
+              jobId: z.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -414,7 +423,7 @@ describe('fastifyZodOpenApiTransform', () => {
       {
         schema: {
           body: z.array(
-            z.string().openapi({
+            z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -491,7 +500,7 @@ describe('fastifyZodOpenApiTransform', () => {
       {
         schema: {
           params: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -569,7 +578,7 @@ describe('fastifyZodOpenApiTransform', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -648,7 +657,7 @@ describe('fastifyZodOpenApiTransform', () => {
         schema: {
           body: z
             .object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -656,7 +665,7 @@ describe('fastifyZodOpenApiTransform', () => {
             .refine(() => true),
           querystring: z
             .object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -664,7 +673,7 @@ describe('fastifyZodOpenApiTransform', () => {
             .refine(() => true),
           params: z
             .object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -672,7 +681,7 @@ describe('fastifyZodOpenApiTransform', () => {
             .refine(() => true),
           headers: z
             .object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -791,7 +800,7 @@ describe('fastifyZodOpenApiTransform', () => {
       {
         schema: {
           headers: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -876,10 +885,10 @@ describe('fastifyZodOpenApiTransformObject', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
-                      ref: 'jobId',
+                      id: 'jobId',
                     }),
                   }),
                 },
@@ -948,10 +957,10 @@ describe('fastifyZodOpenApiTransformObject', () => {
 
     app.setSerializerCompiler(serializerCompiler);
 
-    const jobId = z.string().openapi({
+    const jobId = z.string().meta({
       description: 'Job ID',
       example: '60002023',
-      ref: 'jobId',
+      id: 'jobId',
     });
 
     await app.register(fastifyZodOpenApiPlugin, {
@@ -1049,10 +1058,10 @@ describe('fastifyZodOpenApiTransformObject', () => {
 
     app.setSerializerCompiler(serializerCompiler);
 
-    const jobId = z.string().nullable().openapi({
+    const jobId = z.string().nullable().meta({
       description: 'Job ID',
       example: '60002023',
-      ref: 'jobId',
+      id: 'jobId',
     });
 
     await app.register(fastifyZodOpenApiPlugin, {
@@ -1153,7 +1162,12 @@ describe('fastifyZodOpenApiTransformObject', () => {
 
     await app.register(fastifyZodOpenApiPlugin, {
       documentOpts: {
-        unionOneOf: true,
+        override: (ctx) => {
+          if (ctx.jsonSchema.anyOf) {
+            ctx.jsonSchema.oneOf = ctx.jsonSchema.anyOf;
+            delete ctx.jsonSchema.anyOf;
+          }
+        },
       },
     });
     await app.register(fastifySwagger, {

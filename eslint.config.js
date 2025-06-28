@@ -15,10 +15,10 @@ module.exports = [
     files: ['examples/**/*/types/**/*.ts'],
 
     rules: {
-      'zod-openapi/require-openapi': 'error',
+      'zod-openapi/require-meta': 'error',
       'zod-openapi/require-comment': 'error',
       'zod-openapi/require-example': 'error',
-      'zod-openapi/prefer-openapi-last': 'error',
+      'zod-openapi/prefer-meta-last': 'error',
       'zod-openapi/prefer-zod-default': 'error',
     },
   },

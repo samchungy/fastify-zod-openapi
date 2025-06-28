@@ -1,6 +1,5 @@
-import 'zod-openapi/extend';
 import fastify from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { RequestValidationError } from './validationError';
@@ -17,7 +16,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             querystring: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -42,7 +41,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             querystring: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -77,7 +76,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             body: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -102,7 +101,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             body: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -137,7 +136,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             headers: z.object({
-              'job-id': z.string().openapi({
+              'job-id': z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -165,7 +164,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             headers: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -200,7 +199,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             params: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -225,7 +224,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             params: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -261,7 +260,7 @@ describe('attachValidation', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -308,7 +307,7 @@ describe('setSchemaErrorFormatter', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -352,7 +351,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -396,7 +395,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -461,7 +460,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
