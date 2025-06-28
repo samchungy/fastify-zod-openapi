@@ -63,7 +63,10 @@ export const createParams = (
       throw new Error('References not supported');
     }
 
-    parameter.schema = {};
+    parameter.schema = {
+      type: 'string',
+      description: parameter.description,
+    };
 
     params[key] = parameter as
       | FastifySwaggerSchemaObject
