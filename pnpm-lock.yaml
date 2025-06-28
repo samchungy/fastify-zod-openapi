@@ -17,6 +17,9 @@ importers:
       fastify-plugin:
         specifier: ^5.0.0
         version: 5.0.1
+      zod-openapi:
+        specifier: ^5.0.0-beta.13
+        version: 5.0.0-beta.13(zod@3.25.67)
     devDependencies:
       '@crackle/cli':
         specifier: 0.15.5
@@ -45,9 +48,6 @@ importers:
       zod:
         specifier: 3.25.67
         version: 3.25.67
-      zod-openapi:
-        specifier: 5.0.0-beta.13
-        version: 5.0.0-beta.13(zod@3.25.67)
 
 packages:
 
