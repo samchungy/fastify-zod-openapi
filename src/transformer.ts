@@ -6,6 +6,7 @@ import type {
   ZodObjectInput,
   ZodOpenApiParameters,
   ZodOpenApiRequestBodyObject,
+  ZodOpenApiResponseObject,
   ZodOpenApiResponsesObject,
   oas31,
 } from 'zod-openapi';
@@ -69,47 +70,6 @@ const createParams = (
   return params;
 };
 
-const createContent = (
-  content: unknown,
-  ctx: {
-    registry: ComponentRegistry;
-    io: 'input' | 'output';
-  },
-  path: string[],
-): unknown => {
-  if (typeof content !== 'object' || content == null) {
-    return content;
-  }
-
-  const contentObject: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(content)) {
-    const unknownValue = value as unknown;
-    if (
-      typeof unknownValue === 'object' &&
-      unknownValue !== null &&
-      'schema' in unknownValue
-    ) {
-      const schemaPath = [...path, key, 'schema'];
-      const schema = isAnyZodType(unknownValue.schema)
-        ? ctx.registry.addSchema(unknownValue.schema, schemaPath, {
-            io: ctx.io,
-            source: {
-              type: 'mediaType',
-            },
-          })
-        : unknownValue.schema;
-
-      contentObject[key] = {
-        ...unknownValue,
-        schema,
-      };
-      continue;
-    }
-    contentObject[key] = unknownValue;
-  }
-  return contentObject;
-};
-
 const createResponse = (
   response: unknown,
   registry: ComponentRegistry,
@@ -136,31 +96,17 @@ const createResponse = (
       continue;
     }
 
-    if (
-      typeof unknownValue === 'object' &&
-      unknownValue !== null &&
-      'content' in unknownValue
-    ) {
-      const content = createContent(
-        unknownValue.content,
-        { registry, io: 'output' },
-        [...path, key, 'content'],
-      );
-      responseObject[key] = {
-        ...unknownValue,
-        content,
-      };
-      continue;
-    }
-    responseObject[key] = unknownValue;
+    responseObject[key] = registry.addResponse(
+      unknownValue as ZodOpenApiResponseObject,
+      [...path, key],
+    );
   }
 
   return responseObject;
 };
 
-const setBody = (
+const createBody = (
   body: unknown,
-  fastifySchema: FastifySchema,
   routePath: string[],
   registry: ComponentRegistry,
 ) => {
@@ -181,16 +127,13 @@ const setBody = (
     );
     (bodySchema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] =
       body._zod.optin === 'optional';
-    fastifySchema.body = bodySchema;
-    return;
+    return bodySchema;
   }
 
-  const requestBody = registry.addRequestBody(
-    body as ZodOpenApiRequestBodyObject,
-    [...routePath, 'requestBody'],
-  );
-
-  fastifySchema.body = requestBody;
+  return registry.addRequestBody(body as ZodOpenApiRequestBodyObject, [
+    ...routePath,
+    'requestBody',
+  ]);
 };
 
 export const fastifyZodOpenApiTransform: Transform = ({
@@ -227,7 +170,11 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const routeMethod = (opts.route.method as string).toLowerCase();
   const routePath = ['paths', url, routeMethod];
 
-  setBody(body, fastifySchema, routePath, registry);
+  const maybeBody = createBody(body, routePath, registry);
+
+  if (maybeBody) {
+    fastifySchema.body = maybeBody;
+  }
 
   const maybeResponse = createResponse(response, registry, [
     ...routePath,
@@ -415,7 +362,7 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
     );
     if (!schema) {
       throw new Error(
-        `Schema not found in OpenAPI object: ${value.source.path.join('.')}`,
+        `Schema not found in OpenAPI object: ${value.source.path.join(' > ')}`,
       );
     }
   }
