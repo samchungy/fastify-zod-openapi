@@ -106,6 +106,110 @@ describe('fastifyZodOpenApiTransform', () => {
 `);
   });
 
+  it('should support creating a registered openapi response', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              id: 'JobResponse',
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    jobId: z.string().meta({
+                      description: 'Job ID',
+                      example: '60002023',
+                    }),
+                  }),
+                },
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "responses": {
+      "JobResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "jobId": {
+                  "description": "Job ID",
+                  "example": "60002023",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "jobId",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      },
+    },
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/JobResponse",
+                },
+              },
+            },
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating a shortcut openapi response', async () => {
     const app = fastify();
 
@@ -362,6 +466,109 @@ describe('fastifyZodOpenApiTransform', () => {
         },
       }
     `);
+  });
+
+  it('should support creating a registered request body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: {
+            id: 'JobRequest',
+            content: {
+              'application/json': {
+                schema: z.object({
+                  jobId: z.string().meta({
+                    description: 'Job ID',
+                    example: '60002023',
+                  }),
+                }),
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (req, res) => {
+        res.send({
+          jobId: req.body.jobId,
+        });
+      },
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "requestBodies": {
+      "JobRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "jobId": {
+                  "description": "Job ID",
+                  "example": "60002023",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "jobId",
+              ],
+              "type": "object",
+            },
+          },
+        },
+      },
+    },
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/requestBodies/JobRequest",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
   });
 
   it('should support creating an openapi union body', async () => {
@@ -927,7 +1134,7 @@ describe('fastifyZodOpenApiTransform', () => {
 });
 
 describe('fastifyZodOpenApiTransformObject', () => {
-  it('should support creating components using ref key', async () => {
+  it('should support creating components using the id key', async () => {
     const app = fastify();
 
     app.setSerializerCompiler(serializerCompiler);

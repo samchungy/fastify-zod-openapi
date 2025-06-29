@@ -320,6 +320,10 @@ const traverseObject = (
     }
   }
 
+  if (typeof current === 'object' && current !== null && '$ref' in current) {
+    return current as OpenAPIV3_1.SchemaObject;
+  }
+
   return Object.assign(current as OpenAPIV3_1.SchemaObject, schemaObject);
 };
 
