@@ -24,8 +24,6 @@ type TransformObject = NonNullable<
   FastifyDynamicSwaggerOptions['transformObject']
 >;
 
-type FastifyResponseSchema = $ZodType | Record<string, unknown>;
-
 type FastifySwaggerSchemaObject = Omit<oas31.SchemaObject, 'required'> & {
   required?: string[] | boolean;
 };
@@ -41,7 +39,7 @@ export type FastifyZodOpenApiSchema = Omit<
   params?: ZodObjectInput;
 };
 
-export const createParams = (
+const createParams = (
   parameters: $ZodObject,
   type: keyof ZodOpenApiParameters,
   registry: ComponentRegistry,
@@ -71,23 +69,7 @@ export const createParams = (
   return params;
 };
 
-export const createResponseSchema = (
-  schema: FastifyResponseSchema,
-  registry: ComponentRegistry,
-  path: string[],
-): unknown => {
-  if (isAnyZodType(schema)) {
-    return registry.addSchema(schema, path, {
-      io: 'output',
-      source: {
-        type: 'mediaType',
-      },
-    });
-  }
-  return schema;
-};
-
-export const createContent = (
+const createContent = (
   content: unknown,
   ctx: {
     registry: ComponentRegistry;
@@ -128,7 +110,7 @@ export const createContent = (
   return contentObject;
 };
 
-export const createResponse = (
+const createResponse = (
   response: unknown,
   registry: ComponentRegistry,
   path: string[],
@@ -176,7 +158,7 @@ export const createResponse = (
   return responseObject;
 };
 
-export const setBody = (
+const setBody = (
   body: unknown,
   fastifySchema: FastifySchema,
   routePath: string[],
@@ -309,7 +291,7 @@ type SchemaSource = NonNullable<
   ReturnType<ComponentRegistry['components']['schemas']['input']['get']>
 >['source'];
 
-export const resolveSchemaComponent = (
+const resolveSchemaComponent = (
   object: oas31.SchemaObject | oas31.ReferenceObject,
   registry: ComponentRegistry,
   io: 'input' | 'output',
@@ -322,7 +304,7 @@ export const resolveSchemaComponent = (
   return object as oas31.SchemaObject;
 };
 
-export const traverseObject = (
+const traverseObject = (
   openapiObject: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>,
   source: SchemaSource,
   schemaObject: oas31.SchemaObject | oas31.ReferenceObject,
