@@ -459,6 +459,7 @@ describe('fastifyZodOpenApiTransform', () => {
               },
             },
           },
+          "required": true,
         },
         "responses": {
           "200": {
@@ -534,6 +535,7 @@ describe('fastifyZodOpenApiTransform', () => {
               },
             },
           },
+          "required": true,
         },
         "responses": {
           "200": {

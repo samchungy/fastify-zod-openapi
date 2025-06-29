@@ -340,7 +340,7 @@ export const traverseObject = (
     if (
       key === 'requestBody' &&
       typeof current === 'object' &&
-      source.path[index + 1] === 'shortForm'
+      source.path[index] === 'shortForm'
     ) {
       const requestBody = current as OpenAPIV3_1.RequestBodyObject;
       const schema = requestBody.content?.['application/json']?.schema;
@@ -351,6 +351,12 @@ export const traverseObject = (
 
       const resolved = resolveSchemaComponent(schemaObject, registry, 'input');
 
+      const description = schemaObject.description ?? resolved.description;
+      if (description) {
+        requestBody.description = description;
+      }
+      Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+
       if (
         (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] ===
         false
@@ -359,11 +365,7 @@ export const traverseObject = (
         delete (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'];
       }
 
-      const description = schemaObject.description ?? resolved.description;
-      if (description) {
-        requestBody.description = description;
-      }
-      return Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+      return schema;
     }
 
     if (
