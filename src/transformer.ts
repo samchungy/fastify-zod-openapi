@@ -5,6 +5,7 @@ import type { $ZodObject, $ZodType } from 'zod/v4/core';
 import type {
   ZodObjectInput,
   ZodOpenApiParameters,
+  ZodOpenApiRequestBodyObject,
   ZodOpenApiResponsesObject,
   oas31,
 } from 'zod-openapi';
@@ -36,7 +37,7 @@ export type FastifyZodOpenApiSchema = Omit<
   response?: ZodOpenApiResponsesObject;
   headers?: ZodObjectInput;
   querystring?: ZodObjectInput;
-  body?: $ZodType;
+  body?: $ZodType | ZodOpenApiRequestBodyObject;
   params?: ZodObjectInput;
 };
 
@@ -175,6 +176,41 @@ export const createResponse = (
   return responseObject;
 };
 
+export const setBody = (
+  body: unknown,
+  fastifySchema: FastifySchema,
+  routePath: string[],
+  registry: ComponentRegistry,
+) => {
+  if (!body) {
+    return undefined;
+  }
+
+  if (isAnyZodType(body)) {
+    const bodySchema = registry.addSchema(
+      body,
+      [...routePath, 'requestBody', 'shortForm'],
+      {
+        io: 'input',
+        source: {
+          type: 'mediaType',
+        },
+      },
+    );
+    (bodySchema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] =
+      body._zod.optin === 'optional';
+    fastifySchema.body = bodySchema;
+    return;
+  }
+
+  const requestBody = registry.addRequestBody(
+    body as ZodOpenApiRequestBodyObject,
+    [...routePath, 'requestBody'],
+  );
+
+  fastifySchema.body = requestBody;
+};
+
 export const fastifyZodOpenApiTransform: Transform = ({
   schema,
   url,
@@ -209,18 +245,7 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const routeMethod = (opts.route.method as string).toLowerCase();
   const routePath = ['paths', url, routeMethod];
 
-  if (isAnyZodType(body)) {
-    fastifySchema.body = registry.addSchema(
-      body,
-      [...routePath, 'requestBody', 'content', 'application/json', 'schema'],
-      {
-        io: 'input',
-        source: {
-          type: 'mediaType',
-        },
-      },
-    );
-  }
+  setBody(body, fastifySchema, routePath, registry);
 
   const maybeResponse = createResponse(response, registry, [
     ...routePath,
@@ -312,26 +337,33 @@ export const traverseObject = (
     }
     current = current[key];
 
-    if (key === 'requestBody' && typeof current === 'object') {
+    if (
+      key === 'requestBody' &&
+      typeof current === 'object' &&
+      source.path[index + 1] === 'shortForm'
+    ) {
       const requestBody = current as OpenAPIV3_1.RequestBodyObject;
       const schema = requestBody.content?.['application/json']?.schema;
 
-      if (schema) {
-        const resolved = resolveSchemaComponent(
-          schemaObject,
-          registry,
-          'input',
-        );
-        if (resolved?.required?.length) {
-          requestBody.required = true;
-        }
-        const description = schemaObject.description ?? resolved.description;
-        if (description) {
-          requestBody.description = description;
-        }
-        return Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+      if (!schema) {
+        return undefined;
       }
-      return undefined;
+
+      const resolved = resolveSchemaComponent(schemaObject, registry, 'input');
+
+      if (
+        (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] ===
+        false
+      ) {
+        requestBody.required = true;
+        delete (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'];
+      }
+
+      const description = schemaObject.description ?? resolved.description;
+      if (description) {
+        requestBody.description = description;
+      }
+      return Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
     }
 
     if (

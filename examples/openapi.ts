@@ -13,6 +13,12 @@ import {
   validatorCompiler,
 } from '../src';
 
+const JobIdSchema = z.string().meta({
+  description: 'Job ID',
+  example: '60002023',
+  id: 'jobId',
+});
+
 const createApp = async () => {
   const app = fastify();
 
@@ -34,15 +40,9 @@ const createApp = async () => {
     routePrefix: '/documentation',
   });
 
-  const JobIdSchema = z.string().meta({
-    description: 'Job ID',
-    example: '60002023',
-    id: 'jobId',
-  });
-
   app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
     method: 'POST',
-    url: '/:jobId',
+    url: '/{jobId}',
     schema: {
       params: z.object({
         foo: z.string().meta({
@@ -74,10 +74,7 @@ const createApp = async () => {
             'application/json': {
               example: { jobId: '123' },
               schema: z.object({
-                jobId: z.string().meta({
-                  description: 'Job ID',
-                  example: '60002023',
-                }),
+                jobId: JobIdSchema,
               }),
             },
           },

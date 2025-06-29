@@ -47,7 +47,7 @@
     "format": "skuba format",
     "lint": "skuba lint",
     "prepare": "pnpm build",
-    "start": "skuba node --port=5000 examples/openapi.ts",
+    "start": "skuba node --port=5678 examples/openapi.ts",
     "test": "skuba test",
     "test:ci": "skuba test --coverage",
     "test:watch": "skuba test --watch"
@@ -66,7 +66,7 @@
     "@types/node": "22.13.1",
     "eslint-plugin-zod-openapi": "2.0.0-beta.0",
     "fastify": "5.2.1",
-    "skuba": "9.1.0",
+    "skuba": "11.0.1",
     "zod": "3.25.67"
   },
   "peerDependencies": {
@@ -83,7 +83,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@9.10.0",
+  "packageManager": "pnpm@10.12.4",
   "engines": {
     "node": ">=20"
   },
@@ -95,6 +95,6 @@
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "9.0.1"
+    "version": "11.0.1"
   }
 }
