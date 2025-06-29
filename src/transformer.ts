@@ -320,7 +320,11 @@ const traverseObject = (
     }
   }
 
-  if (typeof current === 'object' && current !== null && '$ref' in current) {
+  if (
+    typeof current === 'object' &&
+    current !== null &&
+    Object.keys(current).length !== 0
+  ) {
     return current as OpenAPIV3_1.SchemaObject;
   }
 
