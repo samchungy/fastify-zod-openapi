@@ -36,7 +36,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod/v4';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
@@ -81,7 +81,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod/v4';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
@@ -133,7 +133,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod/v4';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
