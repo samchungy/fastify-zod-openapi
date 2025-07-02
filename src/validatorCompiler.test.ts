@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import { z } from 'zod/v4';
+import * as z from 'zod/v4';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { RequestValidationError } from './validationError';

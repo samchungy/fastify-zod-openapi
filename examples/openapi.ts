@@ -1,7 +1,7 @@
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
-import { z } from 'zod/v4';
+import * as z from 'zod/v4';
 
 import {
   type FastifyZodOpenApiSchema,
