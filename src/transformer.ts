@@ -75,6 +75,7 @@ const createParams = (
 
 const createResponse = (
   response: unknown,
+  contentTypes: readonly string[] | undefined,
   registry: ComponentRegistry,
   path: string[],
 ): unknown => {
@@ -86,16 +87,34 @@ const createResponse = (
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
-      responseObject[key] = registry.addSchema(
-        unknownValue,
-        [...path, key, 'content', 'application/json', 'schema'],
-        {
-          io: 'output',
-          source: {
-            type: 'mediaType',
+      if (!contentTypes?.length) {
+        responseObject[key] = registry.addSchema(
+          unknownValue,
+          [...path, key, 'content', 'application/json', 'schema'],
+          {
+            io: 'output',
+            source: {
+              type: 'mediaType',
+            },
           },
-        },
+        );
+        continue;
+      }
+
+      const contentSchemas = contentTypes.map((contentType) =>
+        registry.addSchema(
+          unknownValue,
+          [...path, key, 'content', contentType, 'schema'],
+          {
+            io: 'output',
+            source: {
+              type: 'mediaType',
+            },
+          },
+        ),
       );
+
+      responseObject[key] = contentSchemas[0];
       continue;
     }
 
@@ -110,6 +129,7 @@ const createResponse = (
 
 const createBody = (
   body: unknown,
+  contentTypes: readonly string[] | undefined,
   routePath: string[],
   registry: ComponentRegistry,
 ) => {
@@ -118,19 +138,39 @@ const createBody = (
   }
 
   if (isAnyZodType(body)) {
-    const bodySchema = registry.addSchema(
-      body,
-      [...routePath, 'requestBody', 'shortForm'],
-      {
-        io: 'input',
-        source: {
-          type: 'mediaType',
+    if (!contentTypes?.length) {
+      const bodySchema = registry.addSchema(
+        body,
+        [...routePath, 'requestBody', 'content', 'application/json', 'schema'],
+        {
+          io: 'input',
+          source: {
+            type: 'mediaType',
+          },
         },
-      },
-    );
-    (bodySchema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] =
-      body._zod.optin === 'optional';
-    return bodySchema;
+      );
+      (bodySchema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] =
+        body._zod.optin === 'optional';
+      return bodySchema;
+    }
+
+    const bodySchemas = contentTypes.map((contentType) => {
+      const schema = registry.addSchema(
+        body,
+        [...routePath, 'requestBody', 'content', contentType, 'schema'],
+        {
+          io: 'input',
+          source: {
+            type: 'mediaType',
+          },
+        },
+      );
+      (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] =
+        body._zod.optin === 'optional';
+      return schema;
+    });
+
+    return bodySchemas[0];
   }
 
   return registry.addRequestBody(body as ZodOpenApiRequestBodyObject, [
@@ -173,13 +213,13 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const routeMethod = (opts.route.method as string).toLowerCase();
   const routePath = ['paths', formatParamUrl(url), routeMethod];
 
-  const maybeBody = createBody(body, routePath, registry);
+  const maybeBody = createBody(body, rest.consumes, routePath, registry);
 
   if (maybeBody) {
     fastifySchema.body = maybeBody;
   }
 
-  const maybeResponse = createResponse(response, registry, [
+  const maybeResponse = createResponse(response, rest.produces, registry, [
     ...routePath,
     'responses',
   ]);
@@ -269,16 +309,22 @@ const traverseObject = (
     }
     current = current[key];
 
-    if (
-      key === 'requestBody' &&
-      typeof current === 'object' &&
-      source.path[index] === 'shortForm'
-    ) {
+    if (key === 'requestBody' && typeof current === 'object') {
       const requestBody = current as OpenAPIV3_1.RequestBodyObject;
-      const schema = requestBody.content?.['application/json']?.schema;
+      const contentType = source.path?.[index + 1];
+
+      if (!contentType) {
+        return undefined;
+      }
+
+      const schema = requestBody.content?.[contentType]?.schema;
 
       if (!schema) {
         return undefined;
+      }
+
+      if ('$ref' in schema && schema.$ref) {
+        return schema;
       }
 
       const resolved = resolveSchemaComponent(schemaObject, registry, 'input');
