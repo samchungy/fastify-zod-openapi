@@ -777,7 +777,7 @@ describe('fastifyZodOpenApiTransform', () => {
     });
 
     app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
-      '/',
+      '/:jobId',
       {
         schema: {
           params: z.object({
@@ -806,7 +806,7 @@ describe('fastifyZodOpenApiTransform', () => {
         },
         "openapi": "3.1.0",
         "paths": {
-          "/": {
+          "/{jobId}": {
             "post": {
               "parameters": [
                 {
