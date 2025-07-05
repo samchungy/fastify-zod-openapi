@@ -468,6 +468,81 @@ describe('fastifyZodOpenApiTransform', () => {
     `);
   });
 
+  it('should support creating a full openapi text body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: {
+            content: {
+              'plain/text': {
+                schema: z.string(),
+              },
+            },
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (req, res) => {
+        res.send({
+          jobId: req.body,
+        });
+      },
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {},
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "plain/text": {
+              "schema": {
+                "type": "string",
+              },
+            },
+          },
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
   it('should support creating a registered request body', async () => {
     const app = fastify();
 
