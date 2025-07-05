@@ -294,6 +294,91 @@ describe('fastifyZodOpenApiTransform', () => {
     `);
   });
 
+  it('should support creating a shortcut openapi response with produces', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          produces: ['multipart/form-data'],
+          response: {
+            200: z.object({
+              jobId: z.string().meta({
+                description: 'Job ID',
+                example: '60002023',
+              }),
+            }),
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {},
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "multipart/form-data": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
+                    },
+                  },
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
+  });
+
   it('should support creating an openapi body', async () => {
     const app = fastify();
 
@@ -614,7 +699,7 @@ describe('fastifyZodOpenApiTransform', () => {
 `);
   });
 
-  it.only('should support creating a registered request body', async () => {
+  it('should support creating a registered request body', async () => {
     const app = fastify();
 
     app.setValidatorCompiler(validatorCompiler);

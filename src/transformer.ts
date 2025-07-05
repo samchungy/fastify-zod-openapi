@@ -75,6 +75,7 @@ const createParams = (
 
 const createResponse = (
   response: unknown,
+  contentTypes: readonly string[] | undefined,
   registry: ComponentRegistry,
   path: string[],
 ): unknown => {
@@ -86,16 +87,34 @@ const createResponse = (
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
-      responseObject[key] = registry.addSchema(
-        unknownValue,
-        [...path, key, 'content', 'application/json', 'schema'],
-        {
-          io: 'output',
-          source: {
-            type: 'mediaType',
+      if (!contentTypes?.length) {
+        responseObject[key] = registry.addSchema(
+          unknownValue,
+          [...path, key, 'content', 'application/json', 'schema'],
+          {
+            io: 'output',
+            source: {
+              type: 'mediaType',
+            },
           },
-        },
+        );
+        continue;
+      }
+
+      const contentSchemas = contentTypes.map((contentType) =>
+        registry.addSchema(
+          unknownValue,
+          [...path, key, 'content', contentType, 'schema'],
+          {
+            io: 'output',
+            source: {
+              type: 'mediaType',
+            },
+          },
+        ),
       );
+
+      responseObject[key] = contentSchemas[0];
       continue;
     }
 
@@ -200,7 +219,7 @@ export const fastifyZodOpenApiTransform: Transform = ({
     fastifySchema.body = maybeBody;
   }
 
-  const maybeResponse = createResponse(response, registry, [
+  const maybeResponse = createResponse(response, rest.produces, registry, [
     ...routePath,
     'responses',
   ]);
