@@ -32,9 +32,7 @@ export const createSerializerCompiler =
         registry: createRegistry({
           schemas: opts?.components,
         }),
-        opts: {
-          schemaRefPath: '#/definitions/',
-        },
+        schemaRefPath: '#/definitions/',
       });
 
       const maybeDefinitions: Pick<ObjectSchema, 'definitions'> | undefined =
