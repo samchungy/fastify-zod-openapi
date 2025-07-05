@@ -1,4 +1,7 @@
-import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
+import {
+  type FastifyDynamicSwaggerOptions,
+  formatParamUrl,
+} from '@fastify/swagger';
 import type { FastifySchema } from 'fastify';
 import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import type { $ZodObject, $ZodType } from 'zod/v4/core';
@@ -168,7 +171,7 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const fastifySchema: FastifySchema = rest;
 
   const routeMethod = (opts.route.method as string).toLowerCase();
-  const routePath = ['paths', url, routeMethod];
+  const routePath = ['paths', formatParamUrl(url), routeMethod];
 
   const maybeBody = createBody(body, routePath, registry);
 
