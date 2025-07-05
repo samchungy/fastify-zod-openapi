@@ -1,6 +1,5 @@
-import 'zod-openapi/extend';
 import fastify from 'fastify';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
 import { RequestValidationError } from './validationError';
@@ -17,7 +16,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             querystring: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -42,7 +41,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             querystring: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -60,7 +59,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "querystring/jobId Expected number, received nan",
+          "message": "querystring/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -77,7 +76,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             body: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -102,7 +101,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             body: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -120,7 +119,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "body/jobId Expected number, received nan",
+          "message": "body/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -137,7 +136,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             headers: z.object({
-              'job-id': z.string().openapi({
+              'job-id': z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -165,7 +164,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             headers: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -183,7 +182,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "headers/jobId Expected number, received nan",
+          "message": "headers/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -200,7 +199,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             params: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -225,7 +224,7 @@ describe('validatorCompiler', () => {
         {
           schema: {
             params: z.object({
-              jobId: z.coerce.number().openapi({
+              jobId: z.coerce.number().meta({
                 description: 'Job ID',
                 example: 60002023,
               }),
@@ -243,7 +242,7 @@ describe('validatorCompiler', () => {
         {
           "code": "FST_ERR_VALIDATION",
           "error": "Bad Request",
-          "message": "params/jobId Expected number, received nan",
+          "message": "params/jobId Invalid input: expected number, received NaN",
           "statusCode": 400,
         }
       `);
@@ -261,7 +260,7 @@ describe('attachValidation', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -308,7 +307,7 @@ describe('setSchemaErrorFormatter', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -352,7 +351,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -396,7 +395,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -426,27 +425,25 @@ describe('setErrorHandler', () => {
     expect(result.json()).toMatchInlineSnapshot(`
 {
   "zodError": {
-    "issues": [
-      {
-        "code": "invalid_type",
-        "expected": "string",
-        "message": "Required",
-        "path": [
-          "jobId",
-        ],
-        "received": "undefined",
-      },
+    "message": "[
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "jobId"
     ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]",
     "name": "ZodError",
   },
   "zodIssue": {
     "code": "invalid_type",
     "expected": "string",
-    "message": "Required",
+    "message": "Invalid input: expected string, received undefined",
     "path": [
       "jobId",
     ],
-    "received": "undefined",
   },
 }
 `);
@@ -461,7 +458,7 @@ describe('setErrorHandler', () => {
       {
         schema: {
           querystring: z.object({
-            jobId: z.string().openapi({
+            jobId: z.string().meta({
               description: 'Job ID',
               example: '60002023',
             }),
@@ -499,22 +496,20 @@ describe('setErrorHandler', () => {
       "zodIssue": {
         "code": "invalid_type",
         "expected": "string",
-        "message": "Required",
+        "message": "Invalid input: expected string, received undefined",
         "path": [
           "jobId",
         ],
-        "received": "undefined",
       },
     },
     {
       "zodIssue": {
         "code": "invalid_type",
         "expected": "string",
-        "message": "Required",
+        "message": "Invalid input: expected string, received undefined",
         "path": [
           "jobTitle",
         ],
-        "received": "undefined",
       },
     },
   ],

@@ -1,8 +1,6 @@
-import 'zod-openapi/extend';
-
 import UnderPressure from '@fastify/under-pressure';
 import fastify from 'fastify';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
@@ -26,7 +24,7 @@ describe('serializerCompiler', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
@@ -56,7 +54,7 @@ describe('serializerCompiler', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -155,7 +153,7 @@ describe('serializerCompiler', () => {
               content: {
                 'application/json': {
                   schema: z.object({
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
@@ -193,7 +191,7 @@ describe('serializerCompiler', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().default('foo').openapi({
+              jobId: z.string().default('foo').meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -224,24 +222,24 @@ describe('serializerCompiler', () => {
                 'application/json': {
                   schema: z.object({
                     // invent a complex schema
-                    jobId: z.string().openapi({
+                    jobId: z.string().meta({
                       description: 'Job ID',
                       example: '60002023',
                     }),
-                    jobName: z.string().openapi({
+                    jobName: z.string().meta({
                       description: 'Job Name',
                       example: 'Job 1',
                     }),
-                    jobStatus: z.string().openapi({
+                    jobStatus: z.string().meta({
                       description: 'Job Status',
                       example: 'completed',
                     }),
                     jobDetails: z.object({
-                      jobType: z.string().openapi({
+                      jobType: z.string().meta({
                         description: 'Job Type',
                         example: 'export',
                       }),
-                      jobDate: z.string().openapi({
+                      jobDate: z.string().meta({
                         description: 'Job Date',
                         example: '2021-09-01',
                       }),
@@ -249,23 +247,23 @@ describe('serializerCompiler', () => {
                     jobArray: z.array(
                       z
                         .object({
-                          jobType: z.string().openapi({
+                          jobType: z.string().meta({
                             description: 'Job Type',
                             example: 'export',
                           }),
-                          jobDate: z.string().openapi({
+                          jobDate: z.string().meta({
                             description: 'Job Date',
                             example: '2021-09-01',
                           }),
                         })
-                        .openapi({ ref: 'something' }),
+                        .meta({ ref: 'something' }),
                     ),
                     jobTuple: z
                       .tuple([
-                        z.string().openapi({ ref: 'string' }),
-                        z.number().openapi({ ref: 'number' }),
+                        z.string().meta({ ref: 'string' }),
+                        z.number().meta({ ref: 'number' }),
                       ])
-                      .openapi({
+                      .meta({
                         description: 'Job Tuple',
                         example: ['foo', 123],
                       }),
@@ -273,21 +271,21 @@ describe('serializerCompiler', () => {
                       z
                         .object({
                           type: z.literal('success'),
-                          success: z.string().openapi({
+                          success: z.string().meta({
                             description: 'Success Message',
                             example: 'Job completed successfully',
                           }),
                         })
-                        .openapi({ ref: 'success' }),
+                        .meta({ ref: 'success' }),
                       z
                         .object({
                           type: z.literal('error'),
-                          error: z.string().openapi({
+                          error: z.string().meta({
                             description: 'Error Message',
                             example: 'Job failed',
                           }),
                         })
-                        .openapi({ ref: 'error' }),
+                        .meta({ ref: 'error' }),
                     ]),
                   }),
                 },
@@ -365,7 +363,7 @@ describe('createSerializerCompiler', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -385,7 +383,7 @@ describe('createSerializerCompiler', () => {
   it('should support custom components', async () => {
     const app = fastify();
 
-    const jobId = z.string().openapi({
+    const jobId = z.string().meta({
       description: 'Job ID',
       example: '60002023',
     });
@@ -439,7 +437,7 @@ describe('setErrorHandler', () => {
         schema: {
           response: {
             200: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),

@@ -3,33 +3,36 @@ import fastJsonStringify, {
   type Schema,
 } from 'fast-json-stringify';
 import type { FastifySerializerCompiler } from 'fastify/types/schema';
-import type { ZodType, ZodTypeAny } from 'zod';
+import type { ZodType } from 'zod/v4';
+import type { $ZodType } from 'zod/v4/core';
 import { createSchema } from 'zod-openapi';
+import { createRegistry, isAnyZodType } from 'zod-openapi/api';
 
-import { isZodType } from './transformer';
 import { ResponseSerializationError } from './validationError';
 
 export interface SerializerOptions {
-  components?: Record<string, ZodTypeAny>;
+  components?: Record<string, $ZodType>;
   stringify?: (value: unknown) => string;
-  fallbackSerializer?: FastifySerializerCompiler<ZodType>;
+  fallbackSerializer?: FastifySerializerCompiler<$ZodType>;
 }
 
 export const createSerializerCompiler =
-  (opts?: SerializerOptions): FastifySerializerCompiler<ZodType> =>
+  (opts?: SerializerOptions): FastifySerializerCompiler<$ZodType> =>
   (routeSchema) => {
     const { schema, url, method } = routeSchema;
-    if (!isZodType(schema)) {
+    if (!isAnyZodType(schema)) {
       return opts?.fallbackSerializer
         ? opts.fallbackSerializer(routeSchema)
-        : fastJsonStringify(schema);
+        : fastJsonStringify(schema as unknown as Schema);
     }
 
     let stringify = opts?.stringify;
     if (!stringify) {
       const { schema: jsonSchema, components } = createSchema(schema, {
-        components: opts?.components,
-        componentRefPath: '#/definitions/',
+        registry: createRegistry({
+          schemas: opts?.components,
+        }),
+        schemaRefPath: '#/definitions/',
       });
 
       const maybeDefinitions: Pick<ObjectSchema, 'definitions'> | undefined =
@@ -46,7 +49,7 @@ export const createSerializerCompiler =
     }
 
     return (value) => {
-      const result = schema.safeParse(value);
+      const result = (schema as unknown as ZodType).safeParse(value);
 
       if (!result.success) {
         throw new ResponseSerializationError(method, url, {
@@ -65,7 +68,7 @@ export const createSerializerCompiler =
  * ```typescript
  * import Fastify from 'fastify'
  *
- * const server = Fastify().setserializerCompiler(serializerCompiler)
+ * const server = Fastify().setSerializerCompiler(serializerCompiler)
  * ```
  */
 export const serializerCompiler = createSerializerCompiler();

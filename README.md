@@ -19,17 +19,16 @@ Fastify <a href="https://fastify.dev/docs/latest/Reference/Type-Providers/">type
 Install via `npm`, `pnpm` or `pnpm`:
 
 ```bash
-npm install zod zod-openapi fastify-zod-openapi
+npm install zod fastify-zod-openapi
 ## or
-pnpm add zod zod-openapi fastify-zod-openapi
+yarn add zod fastify-zod-openapi
 ## or
-pnpm install zod-openapi fastify-zod-openapi
+pnpm install zod fastify-zod-openapi
 ```
 
 ## Usage
 
 ```ts
-import 'zod-openapi/extend';
 import fastify from 'fastify';
 import {
   type FastifyZodOpenApiSchema,
@@ -37,7 +36,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
@@ -49,14 +48,14 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   url: '/:jobId',
   schema: {
     body: z.object({
-      jobId: z.string().openapi({
+      jobId: z.string().meta({
         description: 'Job ID',
         example: '60002023',
       }),
     }),
     response: {
       201: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),
@@ -75,7 +74,6 @@ await app.listen({ port: 5000 });
 ## Usage with plugins
 
 ```ts
-import 'zod-openapi/extend';
 import fastify from 'fastify';
 import {
   type FastifyPluginAsyncZodOpenApi,
@@ -83,7 +81,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
@@ -97,14 +95,14 @@ const plugin: FastifyPluginAsyncZodOpenApi = async (fastify, _opts) => {
     // Define your schema
     schema: {
       body: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),
       }),
       response: {
         201: z.object({
-          jobId: z.string().openapi({
+          jobId: z.string().meta({
             description: 'Job ID',
             example: '60002023',
           }),
@@ -123,7 +121,6 @@ app.register(plugin);
 ## Usage with @fastify/swagger
 
 ```ts
-import 'zod-openapi/extend';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
@@ -136,8 +133,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
-import { z } from 'zod';
-import { type ZodOpenApiVersion } from 'zod-openapi';
+import * as z from 'zod/v4';
 
 const app = fastify();
 
@@ -151,7 +147,7 @@ await app.register(fastifySwagger, {
       title: 'hello world',
       version: '1.0.0',
     },
-    openapi: '3.0.3' satisfies ZodOpenApiVersion, // If this is not specified, it will default to 3.1.0
+    openapi: '3.1.0',
   },
   transform: fastifyZodOpenApiTransform,
   transformObject: fastifyZodOpenApiTransformObject,
@@ -165,7 +161,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
   url: '/',
   schema: {
     body: z.object({
-      jobId: z.string().openapi({
+      jobId: z.string().meta({
         description: 'Job ID',
         example: '60002023',
       }),
@@ -175,7 +171,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().route({
         content: {
           'application/json': {
             schema: z.object({
-              jobId: z.string().openapi({
+              jobId: z.string().meta({
                 description: 'Job ID',
                 example: '60002023',
               }),
@@ -199,7 +195,7 @@ await app.listen({ port: 5000 });
 This library allows you to easily declare components. As an example:
 
 ```typescript
-const title = z.string().openapi({
+const title = z.string().meta({
   description: 'Job title',
   example: 'My job',
   ref: 'jobTitle', // <- new field
@@ -352,7 +348,7 @@ app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
   {
     schema: {
       querystring: z.object({
-        jobId: z.string().openapi({
+        jobId: z.string().meta({
           description: 'Job ID',
           example: '60002023',
         }),
