@@ -1,6 +1,6 @@
 {
   "name": "fastify-zod-openapi",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Fastify plugin for zod-openapi",
   "keywords": [
     "typescript",
