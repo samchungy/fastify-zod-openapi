@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import * as z from 'zod/v4';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin';
+import type { FastifyZodOpenApiSchema } from './transformer';
 import { RequestValidationError } from './validationError';
 import { validatorCompiler } from './validatorCompiler';
 
@@ -82,6 +83,37 @@ describe('validatorCompiler', () => {
               }),
             }),
           },
+        },
+        (req, res) => res.send(req.body),
+      );
+      await app.ready();
+
+      const result = await app.inject().post('/').body({ jobId: '60002023' });
+
+      expect(result.json()).toEqual({ jobId: '60002023' });
+    });
+
+    it('should pass a valid input with a full schema', async () => {
+      const app = fastify();
+
+      app.setValidatorCompiler(validatorCompiler);
+      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+        '/',
+        {
+          schema: {
+            body: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    jobId: z.string().meta({
+                      description: 'Job ID',
+                      example: '60002023',
+                    }),
+                  }),
+                },
+              },
+            },
+          } satisfies FastifyZodOpenApiSchema,
         },
         (req, res) => res.send(req.body),
       );
