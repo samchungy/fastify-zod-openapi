@@ -284,11 +284,10 @@ type SchemaSource = NonNullable<
 const resolveSchemaComponent = (
   object: oas31.SchemaObject | oas31.ReferenceObject,
   registry: ComponentRegistry,
-  io: 'input' | 'output',
 ): oas31.SchemaObject => {
   if (typeof object.$ref === 'string') {
     const id = object.$ref.replace('#/components/schemas/', '');
-    return registry.components.schemas[io].get(id) as oas31.SchemaObject;
+    return registry.components.schemas.ids.get(id) as oas31.SchemaObject;
   }
 
   return object as oas31.SchemaObject;
@@ -327,7 +326,7 @@ const traverseObject = (
         return schema;
       }
 
-      const resolved = resolveSchemaComponent(schemaObject, registry, 'input');
+      const resolved = resolveSchemaComponent(schemaObject, registry);
 
       const description = schemaObject.description ?? resolved.description;
       if (description) {
