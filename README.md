@@ -128,8 +128,7 @@ import {
   type FastifyZodOpenApiSchema,
   type FastifyZodOpenApiTypeProvider,
   fastifyZodOpenApiPlugin,
-  fastifyZodOpenApiTransform,
-  fastifyZodOpenApiTransformObject,
+  fastifyZodOpenApiTransformers,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-zod-openapi';
@@ -149,8 +148,7 @@ await app.register(fastifySwagger, {
     },
     openapi: '3.1.0',
   },
-  transform: fastifyZodOpenApiTransform,
-  transformObject: fastifyZodOpenApiTransformObject,
+  ...fastifyZodOpenApiTransformers,
 });
 await app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
