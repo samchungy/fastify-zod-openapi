@@ -7,7 +7,8 @@ import type {
   RawServerDefault,
 } from 'fastify';
 import fp from 'fastify-plugin';
-import type { ZodType, z } from 'zod/v4';
+import type * as z from 'zod/v4';
+import type { ZodType } from 'zod/v4';
 import type {
   CreateDocumentOptions,
   ZodOpenApiComponentsObject,
