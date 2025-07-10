@@ -1,6 +1,7 @@
 import { createError } from '@fastify/error';
 import type { FastifySchemaValidationError } from 'fastify/types/schema';
-import type { ZodError, core } from 'zod/v4';
+import type { ZodError } from 'zod/v4';
+import type * as core from 'zod/v4/core';
 
 export class RequestValidationError
   extends Error
