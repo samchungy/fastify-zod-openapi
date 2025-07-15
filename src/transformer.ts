@@ -77,18 +77,25 @@ const createResponse = (
   response: unknown,
   contentTypes: readonly string[] | undefined,
   registry: ComponentRegistry,
+  responseComponents: Map<
+    string,
+    {
+      referenceObject: oas31.ReferenceObject;
+      path: string[];
+    }
+  >,
   path: string[],
 ): unknown => {
   if (typeof response !== 'object' || response == null) {
     return response;
   }
 
-  const responseObject: Record<string, unknown> = {};
+  const responsesObject: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
       if (!contentTypes?.length) {
-        responseObject[key] = registry.addSchema(
+        responsesObject[key] = registry.addSchema(
           unknownValue,
           [...path, key, 'content', 'application/json', 'schema'],
           {
@@ -114,17 +121,28 @@ const createResponse = (
         ),
       );
 
-      responseObject[key] = contentSchemas[0];
+      responsesObject[key] = contentSchemas[0];
       continue;
     }
 
-    responseObject[key] = registry.addResponse(
+    const responsePath = [...path, key];
+
+    const responseObject = registry.addResponse(
       unknownValue as ZodOpenApiResponseObject,
-      [...path, key],
+      responsePath,
     );
+
+    if ('$ref' in responseObject && typeof responseObject.$ref === 'string') {
+      responseComponents.set(responseObject.$ref, {
+        referenceObject: responseObject,
+        path: responsePath,
+      });
+    }
+
+    responsesObject[key] = responseObject;
   }
 
-  return responseObject;
+  return responsesObject;
 };
 
 const createBody = (
@@ -132,6 +150,13 @@ const createBody = (
   contentTypes: readonly string[] | undefined,
   routePath: string[],
   registry: ComponentRegistry,
+  bodyComponents: Map<
+    string,
+    {
+      referenceObject: oas31.ReferenceObject;
+      path: string[];
+    }
+  >,
 ) => {
   if (!body) {
     return undefined;
@@ -173,10 +198,24 @@ const createBody = (
     return bodySchemas[0];
   }
 
-  return registry.addRequestBody(body as ZodOpenApiRequestBodyObject, [
-    ...routePath,
-    'requestBody',
-  ]);
+  const requestBodyPath = [...routePath, 'requestBody'];
+
+  const requestBodyObject = registry.addRequestBody(
+    body as ZodOpenApiRequestBodyObject,
+    requestBodyPath,
+  );
+
+  if (
+    '$ref' in requestBodyObject &&
+    typeof requestBodyObject.$ref === 'string'
+  ) {
+    bodyComponents.set(requestBodyObject.$ref, {
+      referenceObject: requestBodyObject,
+      path: requestBodyPath,
+    });
+  }
+
+  return requestBodyObject;
 };
 
 export const fastifyZodOpenApiTransform: Transform = ({
@@ -213,16 +252,25 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const routeMethod = (opts.route.method as string).toLowerCase();
   const routePath = ['paths', formatParamUrl(url), routeMethod];
 
-  const maybeBody = createBody(body, rest.consumes, routePath, registry);
+  const maybeBody = createBody(
+    body,
+    rest.consumes,
+    routePath,
+    registry,
+    config.fastifyComponents.requestBodies,
+  );
 
   if (maybeBody) {
     fastifySchema.body = maybeBody;
   }
 
-  const maybeResponse = createResponse(response, rest.produces, registry, [
-    ...routePath,
-    'responses',
-  ]);
+  const maybeResponse = createResponse(
+    response,
+    rest.produces,
+    registry,
+    config.fastifyComponents.responses,
+    [...routePath, 'responses'],
+  );
 
   if (maybeResponse) {
     fastifySchema.response = maybeResponse;
@@ -295,21 +343,50 @@ const resolveSchemaComponent = (
 
 const traverseObject = (
   openapiObject: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>,
-  source: SchemaSource,
+  source:
+    | SchemaSource
+    | {
+        type: 'response' | 'requestBody';
+        path: string[];
+      },
   schemaObject: oas31.SchemaObject | oas31.ReferenceObject,
   registry: ComponentRegistry,
-): OpenAPIV3_1.SchemaObject | undefined => {
+):
+  | OpenAPIV3_1.SchemaObject
+  | OpenAPIV3_1.ReferenceObject
+  | OpenAPIV3_1.RequestBodyObject
+  | undefined => {
   let index = 0;
   let current: unknown = openapiObject;
   while (index < source.path.length) {
-    const key = source.path[index++] as keyof typeof current;
+    const key = source.path[index++] as string;
     if (typeof current !== 'object' || current === null || !(key in current)) {
       return undefined;
     }
-    current = current[key];
+
+    current = current[key as keyof typeof current];
+
+    if (
+      typeof current === 'object' &&
+      current !== null &&
+      '$ref' in current &&
+      typeof current.$ref === 'string'
+    ) {
+      return current as OpenAPIV3_1.ReferenceObject;
+    }
 
     if (key === 'requestBody' && typeof current === 'object') {
       const requestBody = current as OpenAPIV3_1.RequestBodyObject;
+
+      if (source.type === 'requestBody') {
+        // @ts-expect-error - changing the type altogether
+        delete requestBody.content;
+        delete requestBody.required;
+        delete requestBody.description;
+        Object.assign(requestBody, schemaObject);
+        return requestBody;
+      }
+
       const contentType = source.path?.[index + 1];
 
       if (!contentType) {
@@ -366,6 +443,22 @@ const traverseObject = (
 
       return undefined;
     }
+
+    if (
+      key === 'responses' &&
+      typeof current === 'object' &&
+      source.type === 'response'
+    ) {
+      const responses = current as OpenAPIV3_1.ResponsesObject;
+      const statusCode = source.path?.[index];
+
+      if (!statusCode) {
+        return undefined;
+      }
+
+      responses[statusCode] = schemaObject as OpenAPIV3_1.ResponseObject;
+      return responses[statusCode];
+    }
   }
 
   if (
@@ -394,6 +487,40 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
     config.registry,
     config.documentOpts ?? {},
   );
+
+  for (const [, value] of config.fastifyComponents.responses) {
+    const response = traverseObject(
+      opts.openapiObject,
+      {
+        type: 'response',
+        path: value.path,
+      },
+      value.referenceObject,
+      config.registry,
+    );
+    if (!response) {
+      throw new Error(
+        `Response not found in OpenAPI object: ${value.path.join(' > ')}`,
+      );
+    }
+  }
+
+  for (const [, value] of config.fastifyComponents.requestBodies) {
+    const requestBody = traverseObject(
+      opts.openapiObject,
+      {
+        type: 'requestBody',
+        path: value.path,
+      },
+      value.referenceObject,
+      config.registry,
+    );
+    if (!requestBody) {
+      throw new Error(
+        `Request body not found in OpenAPI object: ${value.path.join(' > ')}`,
+      );
+    }
+  }
 
   for (const [, value] of config.registry.components.schemas.input) {
     const schema = traverseObject(

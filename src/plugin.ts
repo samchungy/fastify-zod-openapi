@@ -13,6 +13,7 @@ import type {
   CreateDocumentOptions,
   ZodOpenApiComponentsObject,
   ZodOpenApiRequestBodyObject,
+  oas31,
 } from 'zod-openapi';
 import { type ComponentRegistry, createRegistry } from 'zod-openapi/api';
 
@@ -28,6 +29,22 @@ export interface FastifyZodOpenApiOpts {
 interface FastifyZodOpenApiConfig {
   registry: ComponentRegistry;
   documentOpts?: CreateDocumentOptions;
+  fastifyComponents: {
+    responses: Map<
+      string,
+      {
+        referenceObject: oas31.ReferenceObject;
+        path: string[];
+      }
+    >;
+    requestBodies: Map<
+      string,
+      {
+        referenceObject: oas31.ReferenceObject;
+        path: string[];
+      }
+    >;
+  };
 }
 
 declare module 'fastify' {
@@ -78,6 +95,10 @@ const fastifyZodOpenApi: FastifyZodOpenApi = async (fastify, opts) => {
     schema[FASTIFY_ZOD_OPENAPI_CONFIG] ??= {
       registry,
       documentOpts: opts.documentOpts,
+      fastifyComponents: {
+        responses: new Map(),
+        requestBodies: new Map(),
+      },
     };
   });
 };
