@@ -133,8 +133,7 @@ const createResponse = (
     );
 
     if ('$ref' in responseObject && typeof responseObject.$ref === 'string') {
-      const id = responseObject.$ref.replace('#/components/responses/', '');
-      responseComponents.set(id, {
+      responseComponents.set(responseObject.$ref, {
         referenceObject: responseObject,
         path: responsePath,
       });
@@ -210,11 +209,7 @@ const createBody = (
     '$ref' in requestBodyObject &&
     typeof requestBodyObject.$ref === 'string'
   ) {
-    const id = requestBodyObject.$ref.replace(
-      '#/components/requestBodies/',
-      '',
-    );
-    bodyComponents.set(id, {
+    bodyComponents.set(requestBodyObject.$ref, {
       referenceObject: requestBodyObject,
       path: requestBodyPath,
     });
