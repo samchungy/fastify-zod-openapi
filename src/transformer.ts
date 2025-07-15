@@ -472,6 +472,35 @@ const traverseObject = (
   return Object.assign(current as OpenAPIV3_1.SchemaObject, schemaObject);
 };
 
+const combineComponents = (
+  existingComponents: OpenAPIV3.ComponentsObject,
+  newComponents: OpenAPIV3.ComponentsObject,
+) => {
+  const allComponents: Array<keyof OpenAPIV3.ComponentsObject> = [
+    'schemas',
+    'parameters',
+    'responses',
+    'requestBodies',
+    'securitySchemes',
+    'examples',
+    'links',
+    'headers',
+    'callbacks',
+  ];
+
+  for (const key of allComponents) {
+    if (existingComponents[key] || newComponents[key]) {
+      // @ts-expect-error - Combining components generically
+      existingComponents[key] = {
+        ...existingComponents[key],
+        ...newComponents[key],
+      };
+    }
+  }
+
+  return existingComponents;
+};
+
 export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
   if ('swaggerObject' in opts) {
     return opts.swaggerObject;
@@ -552,7 +581,10 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
 
   return {
     ...opts.openapiObject,
-    components: components as OpenAPIV3.ComponentsObject,
+    components: combineComponents(
+      opts.openapiObject.components as OpenAPIV3.ComponentsObject,
+      components as OpenAPIV3.ComponentsObject,
+    ),
   };
 };
 
