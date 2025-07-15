@@ -193,14 +193,113 @@ describe('fastifyZodOpenApiTransform', () => {
       "post": {
         "responses": {
           "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/responses/JobResponse",
+            "$ref": "#/components/responses/JobResponse",
+          },
+        },
+      },
+    },
+  },
+}
+`);
+  });
+
+  it('should support creating a registered openapi response with multiple content types', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          response: {
+            200: {
+              id: 'JobResponse',
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    jobId: z.string().meta({
+                      description: 'Job ID',
+                      example: '60002023',
+                    }),
+                  }),
+                },
+                'plain/text': {
+                  schema: z.string().meta({ description: 'Job ID' }),
                 },
               },
             },
-            "description": "Default Response",
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) =>
+        res.send({
+          jobId: '60002023',
+        }),
+    );
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "responses": {
+      "JobResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "jobId": {
+                  "description": "Job ID",
+                  "example": "60002023",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "jobId",
+              ],
+              "type": "object",
+            },
+          },
+          "plain/text": {
+            "schema": {
+              "description": "Job ID",
+              "type": "string",
+            },
+          },
+        },
+      },
+    },
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JobResponse",
           },
         },
       },
@@ -782,13 +881,7 @@ describe('fastifyZodOpenApiTransform', () => {
     "/": {
       "post": {
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/requestBodies/JobRequest",
-              },
-            },
-          },
+          "$ref": "#/components/requestBodies/JobRequest",
         },
         "responses": {
           "200": {

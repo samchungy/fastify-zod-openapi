@@ -240,7 +240,7 @@ const customSerializerCompiler = createSerializerCompiler({
 });
 ```
 
-Please note: the `responses`, `parameters` components do not appear to be supported by the `@fastify/swagger` library.
+Please note: the `parameters` components do not appear to be supported by the `@fastify/swagger` library.
 
 ### Create Document Options
 
