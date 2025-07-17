@@ -196,7 +196,7 @@ This library allows you to easily declare components. As an example:
 const title = z.string().meta({
   description: 'Job title',
   example: 'My job',
-  ref: 'jobTitle', // <- new field
+  id: 'jobTitle', // <- new field
 });
 ```
 
