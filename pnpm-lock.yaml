@@ -19,7 +19,7 @@ importers:
         version: 5.0.1
       zod-openapi:
         specifier: ^5.1.0
-        version: 5.1.0(zod@4.0.1)
+        version: 5.3.0(zod@4.0.1)
     devDependencies:
       '@crackle/cli':
         specifier: 0.15.5
@@ -2597,8 +2597,8 @@ packages:
   electron-to-chromium@1.5.151:
     resolution: {integrity: sha512-Rl6uugut2l9sLojjS4H4SAr3A4IgACMLgpuEMPYCVcKydzfyPrn5absNRju38IhQOf/NwjJY8OGWjlteqYeBCA==}
 
-  electron-to-chromium@1.5.182:
-    resolution: {integrity: sha512-Lv65Btwv9W4J9pyODI6EWpdnhfvrve/us5h1WspW8B2Fb0366REPtY3hX7ounk1CkV/TBjWCEvCBBbYbmV0qCA==}
+  electron-to-chromium@1.5.191:
+    resolution: {integrity: sha512-xcwe9ELcuxYLUFqZZxL19Z6HVKcvNkIwhbHUz7L3us6u12yR+7uY89dSl570f/IqNthx8dAw3tojG7i4Ni4tDA==}
 
   emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -5804,8 +5804,8 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zod-openapi@5.1.0:
-    resolution: {integrity: sha512-eo/E7A4RCTyf3Qbd0cPWzMxBTqs27WEGqJrp4wkgb+sbu6fvQ58Ert3hN4pL8hqkrrKpwGBZ78xao672ZoxRzg==}
+  zod-openapi@5.3.0:
+    resolution: {integrity: sha512-hv3DU37kV39v0MEiQ0vcL06NLS9bTHTb7FNtuFk2zhuATsi+UNcNN6y03z7qbI9NdC6LJS+Knk5shOSCUMwsDQ==}
     engines: {node: '>=20'}
     peerDependencies:
       zod: ^3.25.74 || ^4.0.0
@@ -8138,7 +8138,7 @@ snapshots:
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001727
-      electron-to-chromium: 1.5.182
+      electron-to-chromium: 1.5.191
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
 
@@ -8543,7 +8543,7 @@ snapshots:
 
   electron-to-chromium@1.5.151: {}
 
-  electron-to-chromium@1.5.182: {}
+  electron-to-chromium@1.5.191: {}
 
   emittery@0.13.1: {}
 
@@ -12429,7 +12429,7 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zod-openapi@5.1.0(zod@4.0.1):
+  zod-openapi@5.3.0(zod@4.0.1):
     dependencies:
       zod: 4.0.1
 
