@@ -56,7 +56,7 @@
     "@fastify/error": "^4.0.0",
     "fast-json-stringify": "^6.0.0",
     "fastify-plugin": "^5.0.0",
-    "zod-openapi": "^5.1.0"
+    "zod-openapi": "^5.4.0"
   },
   "devDependencies": {
     "@crackle/cli": "0.15.5",
@@ -68,7 +68,7 @@
     "eslint-plugin-zod-openapi": "2.0.0",
     "fastify": "5.4.0",
     "skuba": "12.1.1",
-    "zod": "4.0.16"
+    "zod": "4.1.1"
   },
   "peerDependencies": {
     "@fastify/swagger": "^9.0.0",
