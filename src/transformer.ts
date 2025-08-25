@@ -529,7 +529,7 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
   );
 
   for (const [, value] of config.fastifyComponents.responses) {
-    const response = traverseObject(
+    traverseObject(
       opts.openapiObject,
       {
         type: 'response',
@@ -538,15 +538,10 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
       value.referenceObject,
       config.registry,
     );
-    if (!response) {
-      throw new Error(
-        `Response not found in OpenAPI object: ${value.path.join(' > ')}`,
-      );
-    }
   }
 
   for (const [, value] of config.fastifyComponents.requestBodies) {
-    const requestBody = traverseObject(
+    traverseObject(
       opts.openapiObject,
       {
         type: 'requestBody',
@@ -555,39 +550,24 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
       value.referenceObject,
       config.registry,
     );
-    if (!requestBody) {
-      throw new Error(
-        `Request body not found in OpenAPI object: ${value.path.join(' > ')}`,
-      );
-    }
   }
 
   for (const [, value] of config.registry.components.schemas.input) {
-    const schema = traverseObject(
+    traverseObject(
       opts.openapiObject,
       value.source,
       value.schemaObject,
       config.registry,
     );
-    if (!schema) {
-      throw new Error(
-        `Schema not found in OpenAPI object: ${value.source.path.join(' > ')}`,
-      );
-    }
   }
 
   for (const [, value] of config.registry.components.schemas.output) {
-    const schema = traverseObject(
+    traverseObject(
       opts.openapiObject,
       value.source,
       value.schemaObject,
       config.registry,
     );
-    if (!schema) {
-      throw new Error(
-        `Schema not found in OpenAPI object: ${value.source.path.join(' > ')}`,
-      );
-    }
   }
 
   return {

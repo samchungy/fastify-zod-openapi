@@ -2176,4 +2176,56 @@ describe('fastifyZodOpenApiTransformObject', () => {
 }
 `);
   });
+
+  it('should support hidden routes', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          tags: ['X-HIDDEN'],
+          body: z.object({
+            foo: z.string(),
+          }),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.send({ foo: 'bar' }),
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+{
+  "components": {
+    "schemas": {},
+  },
+  "info": {
+    "title": "hello world",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": {},
+}
+`);
+  });
 });
