@@ -7,6 +7,7 @@ import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import type { $ZodObject, $ZodType } from 'zod/v4/core';
 import type {
   ZodObjectInput,
+  ZodOpenApiObject,
   ZodOpenApiParameters,
   ZodOpenApiRequestBodyObject,
   ZodOpenApiResponseObject,
@@ -526,6 +527,7 @@ export const fastifyZodOpenApiTransformObject: TransformObject = (opts) => {
   const components = createComponents(
     config.registry,
     config.documentOpts ?? {},
+    opts.openapiObject.openapi as ZodOpenApiObject['openapi'],
   );
 
   for (const [, value] of config.fastifyComponents.responses) {

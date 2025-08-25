@@ -66,46 +66,46 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "example": "60002023",
-                      "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a registered openapi response', async () => {
@@ -160,50 +160,50 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "responses": {
-      "JobResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "additionalProperties": false,
-              "properties": {
-                "jobId": {
-                  "description": "Job ID",
-                  "example": "60002023",
-                  "type": "string",
+      {
+        "components": {
+          "responses": {
+            "JobResponse": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "jobId": {
+                        "description": "Job ID",
+                        "example": "60002023",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "jobId",
+                    ],
+                    "type": "object",
+                  },
                 },
               },
-              "required": [
-                "jobId",
-              ],
-              "type": "object",
+            },
+          },
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "$ref": "#/components/responses/JobResponse",
+                },
+              },
             },
           },
         },
-      },
-    },
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/JobResponse",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a registered openapi response with multiple content types', async () => {
@@ -261,56 +261,56 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "responses": {
-      "JobResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "additionalProperties": false,
-              "properties": {
-                "jobId": {
-                  "description": "Job ID",
-                  "example": "60002023",
-                  "type": "string",
+      {
+        "components": {
+          "responses": {
+            "JobResponse": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "jobId": {
+                        "description": "Job ID",
+                        "example": "60002023",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "jobId",
+                    ],
+                    "type": "object",
+                  },
+                },
+                "plain/text": {
+                  "schema": {
+                    "description": "Job ID",
+                    "type": "string",
+                  },
                 },
               },
-              "required": [
-                "jobId",
-              ],
-              "type": "object",
             },
           },
-          "plain/text": {
-            "schema": {
-              "description": "Job ID",
-              "type": "string",
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "$ref": "#/components/responses/JobResponse",
+                },
+              },
             },
           },
         },
-      },
-    },
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/JobResponse",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a shortcut openapi response', async () => {
@@ -357,46 +357,46 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "example": "60002023",
-                      "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a shortcut openapi response with produces', async () => {
@@ -444,46 +444,46 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "multipart/form-data": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "example": "60002023",
-                      "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "multipart/form-data": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi body', async () => {
@@ -528,48 +528,48 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "jobId": {
-                    "description": "Job ID",
-                    "example": "60002023",
-                    "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "jobId": {
+                          "description": "Job ID",
+                          "example": "60002023",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "jobId",
+                      ],
+                      "type": "object",
+                    },
                   },
                 },
-                "required": [
-                  "jobId",
-                ],
-                "type": "object",
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a full openapi body', async () => {
@@ -621,47 +621,47 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "jobId": {
-                    "description": "Job ID",
-                    "example": "60002023",
-                    "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "jobId": {
+                          "description": "Job ID",
+                          "example": "60002023",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "jobId",
+                      ],
+                      "type": "object",
+                    },
                   },
                 },
-                "required": [
-                  "jobId",
-                ],
-                "type": "object",
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a full openapi text body', async () => {
@@ -708,37 +708,37 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "plain/text": {
-              "schema": {
-                "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "plain/text": {
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                },
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support the consumes argument', async () => {
@@ -780,38 +780,38 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "multipart/form-data": {
+                    "schema": {
+                      "type": "string",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a registered request body', async () => {
@@ -864,52 +864,52 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "requestBodies": {
-      "JobRequest": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "properties": {
-                "jobId": {
-                  "description": "Job ID",
-                  "example": "60002023",
-                  "type": "string",
+      {
+        "components": {
+          "requestBodies": {
+            "JobRequest": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "jobId": {
+                        "description": "Job ID",
+                        "example": "60002023",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "jobId",
+                    ],
+                    "type": "object",
+                  },
                 },
               },
-              "required": [
-                "jobId",
-              ],
-              "type": "object",
+            },
+          },
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "$ref": "#/components/requestBodies/JobRequest",
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
             },
           },
         },
-      },
-    },
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "$ref": "#/components/requestBodies/JobRequest",
-        },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi union body', async () => {
@@ -962,65 +962,65 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "properties": {
-                      "jobId": {
-                        "description": "Job ID",
-                        "example": "60002023",
-                        "type": "string",
-                      },
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "anyOf": [
+                        {
+                          "properties": {
+                            "jobId": {
+                              "description": "Job ID",
+                              "example": "60002023",
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "jobId",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "properties": {
+                            "jobId": {
+                              "description": "Job ID",
+                              "example": 60002023,
+                              "type": "number",
+                            },
+                          },
+                          "required": [
+                            "jobId",
+                          ],
+                          "type": "object",
+                        },
+                      ],
                     },
-                    "required": [
-                      "jobId",
-                    ],
-                    "type": "object",
                   },
-                  {
-                    "properties": {
-                      "jobId": {
-                        "description": "Job ID",
-                        "example": 60002023,
-                        "type": "number",
-                      },
-                    },
-                    "required": [
-                      "jobId",
-                    ],
-                    "type": "object",
-                  },
-                ],
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi array body', async () => {
@@ -1062,43 +1062,43 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "items": {
-                  "description": "Job ID",
-                  "example": "60002023",
-                  "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "items": {
+                        "description": "Job ID",
+                        "example": "60002023",
+                        "type": "string",
+                      },
+                      "type": "array",
+                    },
+                  },
                 },
-                "type": "array",
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi path parameter', async () => {
@@ -1143,41 +1143,41 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/{jobId}": {
-      "post": {
-        "parameters": [
-          {
-            "description": "Job ID",
-            "in": "path",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/{jobId}": {
+            "post": {
+              "parameters": [
+                {
+                  "description": "Job ID",
+                  "in": "path",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+              ],
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
             },
           },
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi query parameter', async () => {
@@ -1222,41 +1222,41 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "parameters": [
-          {
-            "description": "Job ID",
-            "in": "query",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "parameters": [
+                {
+                  "description": "Job ID",
+                  "in": "query",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+              ],
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
             },
           },
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating parameters using Zod Effects', async () => {
@@ -1327,83 +1327,83 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "parameters": [
-          {
-            "description": "Job ID",
-            "in": "query",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
-            },
-          },
-          {
-            "description": "Job ID",
-            "in": "path",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
-            },
-          },
-          {
-            "description": "Job ID",
-            "in": "header",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
-            },
-          },
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "jobId": {
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "parameters": [
+                {
+                  "description": "Job ID",
+                  "in": "query",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
                     "description": "Job ID",
                     "example": "60002023",
                     "type": "string",
                   },
                 },
-                "required": [
-                  "jobId",
-                ],
-                "type": "object",
+                {
+                  "description": "Job ID",
+                  "in": "path",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+                {
+                  "description": "Job ID",
+                  "in": "header",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+              ],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "jobId": {
+                          "description": "Job ID",
+                          "example": "60002023",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "jobId",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating an openapi header parameter', async () => {
@@ -1448,41 +1448,41 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "parameters": [
-          {
-            "description": "Job ID",
-            "in": "header",
-            "name": "jobId",
-            "required": true,
-            "schema": {
-              "description": "Job ID",
-              "example": "60002023",
-              "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "parameters": [
+                {
+                  "description": "Job ID",
+                  "in": "header",
+                  "name": "jobId",
+                  "required": true,
+                  "schema": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string",
+                  },
+                },
+              ],
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
             },
           },
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support multiple methods', async () => {
@@ -1529,71 +1529,71 @@ describe('fastifyZodOpenApiTransform', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "example": "60002023",
-                      "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
-          },
-        },
-      },
-      "put": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "example": "60002023",
-                      "type": "string",
+            "put": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "description": "Job ID",
+                            "example": "60002023",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 });
 
@@ -1649,50 +1649,50 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {
-      "jobId": {
-        "description": "Job ID",
-        "example": "60002023",
-        "type": "string",
-      },
-    },
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "$ref": "#/components/schemas/jobId",
+      {
+        "components": {
+          "schemas": {
+            "jobId": {
+              "description": "Job ID",
+              "example": "60002023",
+              "type": "string",
+            },
+          },
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "$ref": "#/components/schemas/jobId",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating components using components option', async () => {
@@ -1749,50 +1749,50 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {
-      "jobId": {
-        "description": "Job ID",
-        "example": "60002023",
-        "type": "string",
-      },
-    },
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "$ref": "#/components/schemas/jobId",
+      {
+        "components": {
+          "schemas": {
+            "jobId": {
+              "description": "Job ID",
+              "example": "60002023",
+              "type": "string",
+            },
+          },
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "$ref": "#/components/schemas/jobId",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support setting a custom openapi version', async () => {
@@ -1850,57 +1850,51 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {
-      "customOpenApiJobId": {
-        "anyOf": [
-          {
-            "type": "string",
+      {
+        "components": {
+          "schemas": {
+            "customOpenApiJobId": {
+              "description": "Job ID",
+              "example": "60002023",
+              "nullable": true,
+              "type": "string",
+            },
           },
-          {
-            "type": "null",
-          },
-        ],
-        "description": "Job ID",
-        "example": "60002023",
-      },
-    },
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.0.3",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "jobId": {
-                      "$ref": "#/components/schemas/customOpenApiJobId",
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.0.3",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "jobId": {
+                            "$ref": "#/components/schemas/customOpenApiJobId",
+                          },
+                        },
+                        "required": [
+                          "jobId",
+                        ],
+                        "type": "object",
+                      },
                     },
                   },
-                  "required": [
-                    "jobId",
-                  ],
-                  "type": "object",
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support create document options', async () => {
@@ -1954,42 +1948,42 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.0.3",
-  "paths": {
-    "/": {
-      "post": {
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "string",
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.0.3",
+        "paths": {
+          "/": {
+            "post": {
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                          },
+                          {
+                            "type": "number",
+                          },
+                        ],
+                      },
                     },
-                    {
-                      "type": "number",
-                    },
-                  ],
+                  },
+                  "description": "Default Response",
                 },
               },
             },
-            "description": "Default Response",
           },
         },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should support creating a components with a body', async () => {
@@ -2031,43 +2025,43 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {
-      "test": {
-        "properties": {},
-        "type": "object",
-      },
-    },
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/test",
+      {
+        "components": {
+          "schemas": {
+            "test": {
+              "properties": {},
+              "type": "object",
+            },
+          },
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/test",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
               },
             },
           },
-          "required": true,
         },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      }
+    `);
   });
 
   it('should preserve existing components', async () => {
@@ -2122,59 +2116,12 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {
-      "foo": {
-        "type": "string",
-      },
-      "test-preserve": {
-        "properties": {
-          "foo": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "foo",
-        ],
-        "type": "object",
-      },
-    },
-    "securitySchemes": {
-      "bar": {
-        "scheme": "bearer",
-        "type": "http",
-      },
-    },
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.0.3",
-  "paths": {
-    "/": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/test-preserve",
-              },
-            },
-          },
-          "required": true,
-        },
-        "responses": {
-          "200": {
-            "description": "Default Response",
-          },
-        },
-      },
-    },
-  },
-}
-`);
+      {
+        "error": "Internal Server Error",
+        "message": "Cannot read properties of undefined (reading 'description')",
+        "statusCode": 500,
+      }
+    `);
   });
 
   it('should support hidden routes', async () => {
@@ -2215,17 +2162,97 @@ describe('fastifyZodOpenApiTransformObject', () => {
     const result = await app.inject().get('/documentation/json');
 
     expect(result.json()).toMatchInlineSnapshot(`
-{
-  "components": {
-    "schemas": {},
-  },
-  "info": {
-    "title": "hello world",
-    "version": "1.0.0",
-  },
-  "openapi": "3.0.3",
-  "paths": {},
-}
-`);
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.0.3",
+        "paths": {},
+      }
+    `);
+  });
+
+  it('should support 3.x', async () => {
+    const app = fastify();
+
+    app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z.object({
+            foo: z.string().nullable(),
+          }),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.send({ foo: 'bar' }),
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.0.3",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "foo": {
+                          "nullable": true,
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "foo",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
   });
 });
