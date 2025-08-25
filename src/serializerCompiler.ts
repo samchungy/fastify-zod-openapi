@@ -8,7 +8,7 @@ import type { $ZodType } from 'zod/v4/core';
 import { createSchema } from 'zod-openapi';
 import { createRegistry, isAnyZodType } from 'zod-openapi/api';
 
-import { ResponseSerializationError } from './validationError';
+import { ResponseSerializationError } from './validationError.js';
 
 export interface SerializerOptions {
   components?: Record<string, $ZodType>;

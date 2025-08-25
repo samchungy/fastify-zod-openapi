@@ -7,12 +7,12 @@ import {
   type FastifyZodOpenApiTypeProvider,
   serializerCompiler,
   validatorCompiler,
-} from '../src';
-import { fastifyZodOpenApiPlugin } from '../src/plugin';
+} from '../src/index.js';
+import { fastifyZodOpenApiPlugin } from '../src/plugin.js';
 import {
   type FastifyZodOpenApiSchema,
   fastifyZodOpenApiTransformers,
-} from '../src/transformer';
+} from '../src/transformer.js';
 
 describe('fastifyZodOpenApiTransform', () => {
   it('should support creating an openapi response', async () => {

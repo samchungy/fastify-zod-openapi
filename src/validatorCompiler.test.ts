@@ -1,10 +1,10 @@
 import fastify from 'fastify';
 import * as z from 'zod/v4';
 
-import type { FastifyZodOpenApiTypeProvider } from './plugin';
-import type { FastifyZodOpenApiSchema } from './transformer';
-import { RequestValidationError } from './validationError';
-import { validatorCompiler } from './validatorCompiler';
+import type { FastifyZodOpenApiTypeProvider } from './plugin.js';
+import type { FastifyZodOpenApiSchema } from './transformer.js';
+import { RequestValidationError } from './validationError.js';
+import { validatorCompiler } from './validatorCompiler.js';
 
 describe('validatorCompiler', () => {
   describe('querystring', () => {

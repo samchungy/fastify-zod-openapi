@@ -20,7 +20,7 @@ import {
   unwrapZodObject,
 } from 'zod-openapi/api';
 
-import { FASTIFY_ZOD_OPENAPI_CONFIG } from './plugin';
+import { FASTIFY_ZOD_OPENAPI_CONFIG } from './plugin.js';
 
 type Transform = NonNullable<FastifyDynamicSwaggerOptions['transform']>;
 

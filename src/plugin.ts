@@ -17,7 +17,7 @@ import type {
 } from 'zod-openapi';
 import { type ComponentRegistry, createRegistry } from 'zod-openapi/api';
 
-import type { RequestValidationError } from './validationError';
+import type { RequestValidationError } from './validationError.js';
 
 export const FASTIFY_ZOD_OPENAPI_CONFIG = Symbol('fastify-zod-openapi-config');
 
