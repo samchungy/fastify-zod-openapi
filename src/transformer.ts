@@ -249,75 +249,86 @@ export const fastifyZodOpenApiTransform: Transform = ({
 
   const fastifySchema: FastifySchema = rest;
 
-  const routeMethod = (opts.route.method as string).toLowerCase();
-  const routePath = ['paths', formatParamUrl(url), routeMethod];
+  const routeMethods =
+    typeof opts.route.method === 'string'
+      ? [opts.route.method]
+      : opts.route.method;
 
-  const maybeBody = createBody(
-    body,
-    rest.consumes,
-    routePath,
-    registry,
-    config.fastifyComponents.requestBodies,
-  );
+  const routes = routeMethods.map((method) => {
+    const routeObject: FastifySchema = {};
 
-  if (maybeBody) {
-    fastifySchema.body = maybeBody;
-  }
+    const routePath = ['paths', formatParamUrl(url), method.toLowerCase()];
+    const parameterPath = [...routePath, 'parameters'];
 
-  const maybeResponse = createResponse(
-    response,
-    rest.produces,
-    registry,
-    config.fastifyComponents.responses,
-    [...routePath, 'responses'],
-  );
-
-  if (maybeResponse) {
-    fastifySchema.response = maybeResponse;
-  }
-
-  const parameterPath = [...routePath, 'parameters'];
-
-  if (isAnyZodType(querystring)) {
-    const queryStringSchema = unwrapZodObject(querystring, 'input', [
-      ...parameterPath,
-      'query',
-    ]);
-
-    fastifySchema.querystring = createParams(
-      queryStringSchema,
-      'query',
+    const maybeBody = createBody(
+      body,
+      rest.consumes,
+      routePath,
       registry,
-      parameterPath,
+      config.fastifyComponents.requestBodies,
     );
-  }
 
-  if (isAnyZodType(params)) {
-    const paramsSchema = unwrapZodObject(params, 'input', [
-      ...parameterPath,
-      'path',
-    ]);
+    if (maybeBody) {
+      routeObject.body = maybeBody;
+    }
 
-    fastifySchema.params = createParams(
-      paramsSchema,
-      'path',
+    const maybeResponse = createResponse(
+      response,
+      rest.produces,
       registry,
-      parameterPath,
+      config.fastifyComponents.responses,
+      [...routePath, 'responses'],
     );
-  }
 
-  if (isAnyZodType(headers)) {
-    const headersSchema = unwrapZodObject(headers, 'input', [
-      ...parameterPath,
-      'header',
-    ]);
-    fastifySchema.headers = createParams(
-      headersSchema,
-      'header',
-      registry,
-      parameterPath,
-    );
-  }
+    if (maybeResponse) {
+      routeObject.response = maybeResponse;
+    }
+
+    if (isAnyZodType(querystring)) {
+      const queryStringSchema = unwrapZodObject(querystring, 'input', [
+        ...parameterPath,
+        'query',
+      ]);
+
+      routeObject.querystring = createParams(
+        queryStringSchema,
+        'query',
+        registry,
+        parameterPath,
+      );
+    }
+
+    if (isAnyZodType(params)) {
+      const paramsSchema = unwrapZodObject(params, 'input', [
+        ...parameterPath,
+        'path',
+      ]);
+
+      routeObject.params = createParams(
+        paramsSchema,
+        'path',
+        registry,
+        parameterPath,
+      );
+    }
+
+    if (isAnyZodType(headers)) {
+      const headersSchema = unwrapZodObject(headers, 'input', [
+        ...parameterPath,
+        'header',
+      ]);
+      routeObject.headers = createParams(
+        headersSchema,
+        'header',
+        registry,
+        parameterPath,
+      );
+    }
+
+    return routeObject;
+  });
+
+  Object.assign(fastifySchema, routes[0]);
 
   return {
     schema: fastifySchema,
