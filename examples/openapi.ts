@@ -11,7 +11,7 @@ import {
   fastifyZodOpenApiTransformObject,
   serializerCompiler,
   validatorCompiler,
-} from '../src';
+} from '../src/index.js';
 
 const JobIdSchema = z.string().meta({
   description: 'Job ID',

@@ -1,7 +1,7 @@
 import type { FastifySchemaCompiler } from 'fastify';
 import type { ZodType } from 'zod/v4';
 
-import { RequestValidationError } from './validationError';
+import { RequestValidationError } from './validationError.js';
 
 /**
  * Enables zod-openapi schema validation

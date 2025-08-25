@@ -7,10 +7,10 @@ import type {
   FastifyPluginAsyncZodOpenApi,
   FastifyPluginCallbackZodOpenApi,
   FastifyZodOpenApiTypeProvider,
-} from './plugin';
-import { serializerCompiler } from './serializerCompiler';
-import type { FastifyZodOpenApiSchema } from './transformer';
-import { validatorCompiler } from './validatorCompiler';
+} from './plugin.js';
+import { serializerCompiler } from './serializerCompiler.js';
+import type { FastifyZodOpenApiSchema } from './transformer.js';
+import { validatorCompiler } from './validatorCompiler.js';
 
 describe('plugin basics', () => {
   it('should pass a valid response', async () => {

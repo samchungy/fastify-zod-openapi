@@ -3,12 +3,12 @@ import fastify from 'fastify';
 import * as z from 'zod/v4';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 
-import type { FastifyZodOpenApiTypeProvider } from './plugin';
+import type { FastifyZodOpenApiTypeProvider } from './plugin.js';
 import {
   createSerializerCompiler,
   serializerCompiler,
-} from './serializerCompiler';
-import { ResponseSerializationError } from './validationError';
+} from './serializerCompiler.js';
+import { ResponseSerializationError } from './validationError.js';
 
 describe('serializerCompiler', () => {
   it('should pass a valid response', async () => {
