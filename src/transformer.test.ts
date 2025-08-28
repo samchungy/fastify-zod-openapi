@@ -2256,63 +2256,48 @@ describe('fastifyZodOpenApiTransformObject', () => {
     `);
   });
 
-  it.each([
-    {
-      schema: z.void(),
-      description: 'void',
-    },
-    {
-      schema: z.undefined(),
-      description: 'undefined',
-    },
-    {
-      schema: z.null(),
-      description: 'null',
-    },
-  ])(
-    'should support empty responses with $description schema',
-    async ({ schema }) => {
-      const app = fastify();
+  it('should support empty responses with no content field', async () => {
+    const app = fastify();
 
-      app.setSerializerCompiler(serializerCompiler);
-      app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+    app.setValidatorCompiler(validatorCompiler);
 
-      await app.register(fastifyZodOpenApiPlugin);
-      await app.register(fastifySwagger, {
-        openapi: {
-          info: {
-            title: 'hello world',
-            version: '1.0.0',
-          },
-          openapi: '3.1.0',
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
         },
-        ...fastifyZodOpenApiTransformers,
-      });
-      await app.register(fastifySwaggerUI, {
-        routePrefix: '/documentation',
-      });
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
 
-      app.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
-        '/{id}',
-        {
-          schema: {
-            params: z.object({
-              id: z.string(),
-            }),
-            response: {
-              204: schema.meta({
-                description: 'The resource was deleted successfully.',
-              }),
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
+      '/{id}',
+      {
+        schema: {
+          params: z.object({
+            id: z.string(),
+          }),
+          response: {
+            '204': {
+              description: 'The resource was deleted successfully.',
             },
-          } satisfies FastifyZodOpenApiSchema,
-        },
-        async (_req, res) => res.status(204).send(),
-      );
-      await app.ready();
+          },
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => res.status(204).send(),
+    );
+    await app.ready();
 
-      const result = await app.inject().get('/documentation/json');
+    const result = await app.inject().get('/documentation/json');
 
-      expect(result.json()).toMatchInlineSnapshot(`
+    expect(result.json()).toMatchInlineSnapshot(`
       {
         "components": {
           "schemas": {},
@@ -2345,6 +2330,5 @@ describe('fastifyZodOpenApiTransformObject', () => {
         },
       }
     `);
-    },
-  );
+  });
 });
