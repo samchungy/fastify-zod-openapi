@@ -95,6 +95,22 @@ const createResponse = (
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
+      if (
+        'type' in unknownValue &&
+        (unknownValue.type === 'null' ||
+          unknownValue.type === 'undefined' ||
+          unknownValue.type === 'void')
+      ) {
+        responsesObject[key] = {
+          description:
+            'description' in unknownValue
+              ? unknownValue.description
+              : undefined,
+          type: 'null',
+        };
+        continue;
+      }
+
       if (!contentTypes?.length) {
         responsesObject[key] = registry.addSchema(
           unknownValue,
