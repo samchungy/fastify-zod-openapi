@@ -374,7 +374,9 @@ const traverseObject = (
         type: 'response' | 'requestBody';
         path: string[];
       },
-  schemaObject: (oas31.SchemaObject | oas31.ReferenceObject) & { examples?: unknown[] },
+  schemaObject: (oas31.SchemaObject | oas31.ReferenceObject) & {
+    examples?: unknown[];
+  },
   registry: ComponentRegistry,
 ):
   | OpenAPIV3_1.SchemaObject
@@ -435,17 +437,23 @@ const traverseObject = (
         requestBody.description = description;
       }
 
-      const { examples, ...schemaWithoutExamples } = schemaObject
+      const { examples, ...schemaWithoutExamples } = schemaObject;
       Object.assign(schema, schemaWithoutExamples);
 
-      if(examples !== undefined && Array.isArray(examples) && examples.length > 0) {
-        const examplesAsRecord = examples.reduce<Record<string, OpenAPIV3.ExampleObject>>((result, example, examplesIndex) => {
-          result[`Example${examplesIndex+1}`] = { value: example }
+      if (
+        examples !== undefined &&
+        Array.isArray(examples) &&
+        examples.length > 0
+      ) {
+        const examplesAsRecord = examples.reduce<
+          Record<string, OpenAPIV3.ExampleObject>
+        >((result, example, examplesIndex) => {
+          result[`Example${examplesIndex + 1}`] = { value: example };
 
-          return result
+          return result;
         }, {});
 
-        if(requestBody.content[contentType]) {
+        if (requestBody.content[contentType]) {
           requestBody.content[contentType].examples = examplesAsRecord;
         }
       }
