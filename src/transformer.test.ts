@@ -2064,6 +2064,318 @@ describe('fastifyZodOpenApiTransformObject', () => {
     `);
   });
 
+  it('should extract examples from components with a body', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z
+            .object({
+              id: z.number(),
+              text: z.string(),
+              isActive: z.boolean().optional(),
+            })
+            .meta({
+              examples: [
+                { id: 1, text: 'yolo', isActive: true },
+                { id: 2, text: 'bro', isActive: false },
+                { id: 3, text: 'cool' },
+              ],
+            }),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => {
+        res.send({
+          jobId: '60002023',
+        });
+      },
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "examples": {
+                      "Example1": {
+                        "value": {
+                          "id": 1,
+                          "isActive": true,
+                          "text": "yolo",
+                        },
+                      },
+                      "Example2": {
+                        "value": {
+                          "id": 2,
+                          "isActive": false,
+                          "text": "bro",
+                        },
+                      },
+                      "Example3": {
+                        "value": {
+                          "id": 3,
+                          "text": "cool",
+                        },
+                      },
+                    },
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
+  });
+
+  it('should not extract examples if provided an empty examples array', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z
+            .object({
+              id: z.number(),
+              text: z.string(),
+              isActive: z.boolean().optional(),
+            })
+            .meta({
+              examples: [],
+            }),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => {
+        res.send({
+          jobId: '60002023',
+        });
+      },
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
+  });
+
+  it('should not extract examples if no examples are provided', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: '/documentation',
+    });
+
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+      '/',
+      {
+        schema: {
+          body: z
+            .object({
+              id: z.number(),
+              text: z.string(),
+              isActive: z.boolean().optional(),
+            })
+            .meta({}),
+        } satisfies FastifyZodOpenApiSchema,
+      },
+      async (_req, res) => {
+        res.send({
+          jobId: '60002023',
+        });
+      },
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/documentation/json');
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
+  });
+
   it('should preserve existing components', async () => {
     const app = fastify();
 

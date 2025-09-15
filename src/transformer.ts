@@ -374,7 +374,9 @@ const traverseObject = (
         type: 'response' | 'requestBody';
         path: string[];
       },
-  schemaObject: oas31.SchemaObject | oas31.ReferenceObject,
+  schemaObject: (oas31.SchemaObject | oas31.ReferenceObject) & {
+    examples?: unknown[];
+  },
   registry: ComponentRegistry,
 ):
   | OpenAPIV3_1.SchemaObject
@@ -434,7 +436,27 @@ const traverseObject = (
       if (description) {
         requestBody.description = description;
       }
-      Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+
+      const { examples, ...schemaWithoutExamples } = schemaObject;
+      Object.assign(schema, schemaWithoutExamples);
+
+      if (
+        examples !== undefined &&
+        Array.isArray(examples) &&
+        examples.length > 0
+      ) {
+        const examplesAsRecord = examples.reduce<
+          Record<string, OpenAPIV3.ExampleObject>
+        >((result, example, examplesIndex) => {
+          result[`Example${examplesIndex + 1}`] = { value: example };
+
+          return result;
+        }, {});
+
+        if (requestBody.content[contentType]) {
+          requestBody.content[contentType].examples = examplesAsRecord;
+        }
+      }
 
       if (
         (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] ===
