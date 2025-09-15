@@ -458,8 +458,6 @@ const traverseObject = (
         }
       }
 
-      // Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
-
       if (
         (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] ===
         false
