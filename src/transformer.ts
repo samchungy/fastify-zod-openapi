@@ -271,7 +271,25 @@ export const fastifyZodOpenApiTransform: Transform = ({
   const routes = routeMethods.map((method) => {
     const routeObject: FastifySchema = {};
 
-    const routePath = ['paths', formatParamUrl(url), method.toLowerCase()];
+    let urlWithoutPrefix = url;
+    const serverUrl =
+      (opts?.openapiObject?.servers ?? []).find((server) =>
+        server.url.startsWith('/'),
+      )?.url || '/';
+
+    if (serverUrl !== '/') {
+      const maybeSubPath = url.split(serverUrl)[1];
+      if (maybeSubPath) {
+        urlWithoutPrefix = formatParamUrl(maybeSubPath);
+      }
+    }
+
+    const routePath = [
+      'paths',
+      formatParamUrl(urlWithoutPrefix),
+      method.toLowerCase(),
+    ];
+
     const parameterPath = [...routePath, 'parameters'];
 
     const maybeBody = createBody(
