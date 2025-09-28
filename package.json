@@ -67,7 +67,7 @@
     "eslint-plugin-import-zod": "1.2.0",
     "eslint-plugin-zod-openapi": "2.0.0",
     "fastify": "5.5.0",
-    "skuba": "12.1.1",
+    "skuba": "12.3.0",
     "zod": "4.1.11"
   },
   "peerDependencies": {
