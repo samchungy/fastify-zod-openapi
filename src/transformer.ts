@@ -95,22 +95,6 @@ const createResponse = (
   for (const [key, value] of Object.entries(response)) {
     const unknownValue = value as unknown;
     if (isAnyZodType(unknownValue)) {
-      if (
-        'type' in unknownValue &&
-        (unknownValue.type === 'null' ||
-          unknownValue.type === 'undefined' ||
-          unknownValue.type === 'void')
-      ) {
-        responsesObject[key] = {
-          description:
-            'description' in unknownValue
-              ? unknownValue.description
-              : undefined,
-          type: 'null',
-        };
-        continue;
-      }
-
       if (!contentTypes?.length) {
         responsesObject[key] = registry.addSchema(
           unknownValue,
@@ -139,6 +123,19 @@ const createResponse = (
       );
 
       responsesObject[key] = contentSchemas[0];
+      continue;
+    }
+
+    if (
+      unknownValue &&
+      typeof unknownValue === 'object' &&
+      !('content' in unknownValue)
+    ) {
+      responsesObject[key] = {
+        description:
+          'description' in unknownValue ? unknownValue.description : undefined,
+        type: 'null',
+      };
       continue;
     }
 
@@ -377,7 +374,9 @@ const traverseObject = (
         type: 'response' | 'requestBody';
         path: string[];
       },
-  schemaObject: oas31.SchemaObject | oas31.ReferenceObject,
+  schemaObject: (oas31.SchemaObject | oas31.ReferenceObject) & {
+    examples?: unknown[];
+  },
   registry: ComponentRegistry,
 ):
   | OpenAPIV3_1.SchemaObject
@@ -437,7 +436,27 @@ const traverseObject = (
       if (description) {
         requestBody.description = description;
       }
-      Object.assign(schema, schemaObject) as OpenAPIV3_1.SchemaObject;
+
+      const { examples, ...schemaWithoutExamples } = schemaObject;
+      Object.assign(schema, schemaWithoutExamples);
+
+      if (
+        examples !== undefined &&
+        Array.isArray(examples) &&
+        examples.length > 0
+      ) {
+        const examplesAsRecord = examples.reduce<
+          Record<string, OpenAPIV3.ExampleObject>
+        >((result, example, examplesIndex) => {
+          result[`Example${examplesIndex + 1}`] = { value: example };
+
+          return result;
+        }, {});
+
+        if (requestBody.content[contentType]) {
+          requestBody.content[contentType].examples = examplesAsRecord;
+        }
+      }
 
       if (
         (schema as oas31.SchemaObject)['x-fastify-zod-openapi-optional'] ===
