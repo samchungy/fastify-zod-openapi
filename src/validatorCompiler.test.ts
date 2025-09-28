@@ -548,4 +548,33 @@ describe('setErrorHandler', () => {
 }
 `);
   });
+
+  it('should passthrough non Zod schemas', async () => {
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+      '/',
+      {
+        schema: {
+          querystring: {
+            type: 'object',
+            properties: {
+              jobId: { type: 'string' },
+            },
+            required: ['jobId'],
+          },
+        },
+      },
+      (req, res) => res.send(req.query),
+    );
+
+    await app.ready();
+
+    const result = await app.inject().get('/').query({ foo: 'foo' });
+
+    expect(result.json()).toEqual({
+      foo: 'foo',
+    });
+  });
 });
