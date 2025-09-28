@@ -1,5 +1,6 @@
 import type { FastifySchemaCompiler } from 'fastify';
 import type { ZodType } from 'zod/v4';
+import { isAnyZodType } from 'zod-openapi/api';
 
 import { RequestValidationError } from './validationError.js';
 
@@ -13,10 +14,15 @@ import { RequestValidationError } from './validationError.js';
  * const server = Fastify().setValidatorCompiler(validatorCompiler)
  * ```
  */
-export const validatorCompiler: FastifySchemaCompiler<ZodType> =
-  ({ schema }) =>
-  (value) => {
-    const result = schema.safeParse(value);
+export const validatorCompiler: FastifySchemaCompiler<ZodType> = ({
+  schema,
+}) => {
+  if (!isAnyZodType(schema)) {
+    return (value: unknown) => ({ value });
+  }
+
+  return (value) => {
+    const result = (schema as ZodType).safeParse(value);
 
     if (!result.success) {
       return {
@@ -38,3 +44,4 @@ export const validatorCompiler: FastifySchemaCompiler<ZodType> =
 
     return { value: result.data };
   };
+};
