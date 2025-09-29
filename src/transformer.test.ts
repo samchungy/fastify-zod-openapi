@@ -1,6 +1,9 @@
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
-import fastify from 'fastify';
+import fastify, {
+  type FastifyInstance,
+  type FastifyRegisterOptions,
+} from 'fastify';
 import * as z from 'zod/v4';
 
 import {
@@ -1592,6 +1595,510 @@ describe('fastifyZodOpenApiTransform', () => {
             },
           },
         },
+      }
+    `);
+  });
+
+  it('should not use servers prefix if url is equal to /', async () => {
+    const prefix = '/api/v1';
+
+    const app = fastify();
+
+    const endpointPlugin = (
+      fastifyInstance: FastifyInstance,
+      _options: FastifyRegisterOptions<unknown>,
+      done: (error?: Error) => void,
+    ): void => {
+      fastifyInstance.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+        '/sub/path',
+        {
+          schema: {
+            body: z
+              .object({
+                id: z.number(),
+                text: z.string(),
+                isActive: z.boolean().optional(),
+              })
+              .meta({
+                examples: [],
+              }),
+          } satisfies FastifyZodOpenApiSchema,
+        },
+        async (_req, res) => {
+          res.send({
+            jobId: '60002023',
+          });
+        },
+      );
+
+      done();
+    };
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      swagger: {
+        basePath: prefix,
+      },
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+        servers: [{ url: '/', description: 'root' }],
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: `${prefix}/documentation`,
+    });
+
+    await app.register(endpointPlugin, {
+      prefix: `${prefix}/jobs`,
+    });
+
+    await app.ready();
+
+    const result = await app.inject().get(`${prefix}/documentation/json`);
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/api/v1/jobs/sub/path": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+        "servers": [
+          {
+            "description": "root",
+            "url": "/",
+          },
+        ],
+      }
+    `);
+  });
+
+  it('should do nothing if no servers prop has no entries', async () => {
+    const prefix = '/api/v1';
+
+    const app = fastify();
+
+    const endpointPlugin = (
+      fastifyInstance: FastifyInstance,
+      _options: FastifyRegisterOptions<unknown>,
+      done: (error?: Error) => void,
+    ): void => {
+      fastifyInstance.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+        '/sub/path',
+        {
+          schema: {
+            body: z
+              .object({
+                id: z.number(),
+                text: z.string(),
+                isActive: z.boolean().optional(),
+              })
+              .meta({
+                examples: [],
+              }),
+          } satisfies FastifyZodOpenApiSchema,
+        },
+        async (_req, res) => {
+          res.send({
+            jobId: '60002023',
+          });
+        },
+      );
+
+      done();
+    };
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      swagger: {
+        basePath: prefix,
+      },
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+        servers: [],
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: `${prefix}/documentation`,
+    });
+
+    await app.register(endpointPlugin, {
+      prefix: `${prefix}/jobs`,
+    });
+
+    await app.ready();
+
+    const result = await app.inject().get(`${prefix}/documentation/json`);
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/api/v1/jobs/sub/path": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+        "servers": [],
+      }
+    `);
+  });
+
+  it('should do nothing if no servers prop is provided', async () => {
+    const prefix = '/api/v1';
+
+    const app = fastify();
+
+    const endpointPlugin = (
+      fastifyInstance: FastifyInstance,
+      _options: FastifyRegisterOptions<unknown>,
+      done: (error?: Error) => void,
+    ): void => {
+      fastifyInstance.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+        '/sub/path',
+        {
+          schema: {
+            body: z
+              .object({
+                id: z.number(),
+                text: z.string(),
+                isActive: z.boolean().optional(),
+              })
+              .meta({
+                examples: [],
+              }),
+          } satisfies FastifyZodOpenApiSchema,
+        },
+        async (_req, res) => {
+          res.send({
+            jobId: '60002023',
+          });
+        },
+      );
+
+      done();
+    };
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      swagger: {
+        basePath: prefix,
+      },
+      openapi: {
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        openapi: '3.1.0',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: `${prefix}/documentation`,
+    });
+
+    await app.register(endpointPlugin, {
+      prefix: `${prefix}/jobs`,
+    });
+
+    await app.ready();
+
+    const result = await app.inject().get(`${prefix}/documentation/json`);
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.0",
+        "paths": {
+          "/api/v1/jobs/sub/path": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+      }
+    `);
+  });
+
+  it('should strip server prefix from endpoint path if a server entry has a prefix starting with "/"', async () => {
+    const prefix = '/api/v1';
+
+    const endpointPlugin = (
+      fastifyInstance: FastifyInstance,
+      _options: FastifyRegisterOptions<unknown>,
+      done: (error?: Error) => void,
+    ): void => {
+      fastifyInstance.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
+        '/sub/path',
+        {
+          schema: {
+            body: z
+              .object({
+                id: z.number(),
+                text: z.string(),
+                isActive: z.boolean().optional(),
+              })
+              .meta({
+                examples: [],
+              }),
+          } satisfies FastifyZodOpenApiSchema,
+        },
+        async (_req, res) => {
+          res.send({
+            jobId: '60002023',
+          });
+        },
+      );
+
+      done();
+    };
+
+    const app = fastify();
+
+    app.setValidatorCompiler(validatorCompiler);
+    app.setSerializerCompiler(serializerCompiler);
+
+    await app.register(fastifyZodOpenApiPlugin);
+    await app.register(fastifySwagger, {
+      swagger: {
+        basePath: prefix,
+      },
+      openapi: {
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: 'http',
+              scheme: 'bearer',
+            },
+          },
+        },
+        info: {
+          title: 'hello world',
+          version: '1.0.0',
+        },
+        servers: [
+          {
+            url: `https://staging.yolo-bro.org${prefix}`,
+            description: 'Staging v1',
+          },
+          { url: prefix, description: 'Localhost v1' },
+          {
+            url: `https://preprod.yolo-bro.org${prefix}`,
+            description: 'Preprod v1',
+          },
+        ],
+        openapi: '3.1.1',
+      },
+      ...fastifyZodOpenApiTransformers,
+    });
+    await app.register(fastifySwaggerUI, {
+      routePrefix: `${prefix}/documentation`,
+    });
+
+    await app.register(endpointPlugin, {
+      prefix: `${prefix}/jobs`,
+    });
+
+    await app.ready();
+
+    const result = await app.inject().get(`${prefix}/documentation/json`);
+
+    expect(result.json()).toMatchInlineSnapshot(`
+      {
+        "components": {
+          "schemas": {},
+          "securitySchemes": {
+            "bearerAuth": {
+              "scheme": "bearer",
+              "type": "http",
+            },
+          },
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.1.1",
+        "paths": {
+          "/jobs/sub/path": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
+        "servers": [
+          {
+            "description": "Staging v1",
+            "url": "https://staging.yolo-bro.org/api/v1",
+          },
+          {
+            "description": "Localhost v1",
+            "url": "/api/v1",
+          },
+          {
+            "description": "Preprod v1",
+            "url": "https://preprod.yolo-bro.org/api/v1",
+          },
+        ],
       }
     `);
   });
