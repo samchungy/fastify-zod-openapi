@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "samchungy/zod-openapi"
+      "repo": "samchungy/fastify-zod-openapi"
     }
   ],
   "commit": false,
