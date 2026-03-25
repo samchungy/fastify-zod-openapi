@@ -1,5 +1,5 @@
 import { createError } from '@fastify/error';
-import type { FastifySchemaValidationError } from 'fastify/types/schema';
+import type { FastifySchemaValidationError } from 'fastify/types/schema.js';
 import type { ZodError } from 'zod/v4';
 import type * as core from 'zod/v4/core';
 
