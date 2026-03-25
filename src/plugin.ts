@@ -8,11 +8,9 @@ import type {
 } from 'fastify';
 import fp from 'fastify-plugin';
 import type * as z from 'zod/v4';
-import type { ZodType } from 'zod/v4';
 import type {
   CreateDocumentOptions,
   ZodOpenApiComponentsObject,
-  ZodOpenApiRequestBodyObject,
   oas31,
 } from 'zod-openapi';
 import { type ComponentRegistry, createRegistry } from 'zod-openapi/api';
@@ -67,18 +65,14 @@ declare module 'openapi-types' {
 }
 
 export interface FastifyZodOpenApiTypeProvider extends FastifyTypeProvider {
-  validator: this['schema'] extends ZodType
-    ? z.infer<this['schema']>
-    : this['schema'] extends ZodOpenApiRequestBodyObject
-      ? this['schema']['content'] extends Record<string, { schema: ZodType }>
-        ? z.infer<
-            this['schema']['content'][keyof this['schema']['content']]['schema']
-          >
+  validator: unknown extends z.infer<this['schema']>
+    ? this['schema'] extends { content: infer TContent }
+      ? TContent extends Record<string, { schema: infer TSchema }>
+        ? z.infer<TSchema>
         : unknown
-      : unknown;
-  serializer: this['schema'] extends ZodType
-    ? z.input<this['schema']>
-    : unknown;
+      : unknown
+    : z.infer<this['schema']>;
+  serializer: z.input<this['schema']>;
 }
 
 export type FastifyZodOpenApi = FastifyPluginAsync<FastifyZodOpenApiOpts>;
