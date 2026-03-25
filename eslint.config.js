@@ -1,13 +1,17 @@
-const skuba = require('eslint-config-skuba');
-const importZod = require('eslint-plugin-import-zod');
-const zodOpenapi = require('eslint-plugin-zod-openapi');
+import skuba from 'eslint-config-skuba';
+import zodOpenapi from 'eslint-plugin-zod-openapi';
 
-module.exports = [
+export default [
   {
-    ignores: ['src/openapi3-ts/*'],
+    ignores: [
+      'src/openapi3-ts/*',
+      'api',
+      'extend',
+      'packages/openapi3-ts/src/*',
+      'packages/openapi3-ts/lib-*',
+    ],
   },
   ...skuba,
-  ...importZod.configs.recommended,
   {
     plugins: {
       'zod-openapi': zodOpenapi,

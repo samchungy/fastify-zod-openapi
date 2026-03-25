@@ -25,28 +25,27 @@
   },
   "license": "MIT",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
-      "types": {
-        "import": "./dist/index.d.mts",
-        "require": "./dist/index.d.ts"
-      },
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "fastify-zod-openapi/source": "./src/index.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.cts",
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
-    "build": "crackle package",
+    "build": "skuba build-package",
     "format": "skuba format",
     "lint": "skuba lint",
     "prepare": "pnpm build",
+    "release": "pnpm build && changeset publish",
     "start": "skuba node --port=5678 examples/openapi.ts",
     "test": "skuba test",
     "test:ci": "skuba test --coverage",
@@ -59,15 +58,16 @@
     "zod-openapi": "^5.4.0"
   },
   "devDependencies": {
-    "@crackle/cli": "0.15.5",
+    "@changesets/changelog-github": "0.5.2",
+    "@changesets/cli": "2.30.0",
     "@fastify/swagger": "9.5.1",
     "@fastify/swagger-ui": "5.2.3",
     "@fastify/under-pressure": "9.0.3",
     "@types/node": "24.3.0",
-    "eslint-plugin-import-zod": "1.2.0",
+    "eslint-plugin-import-zod": "1.2.1",
     "eslint-plugin-zod-openapi": "2.0.0",
     "fastify": "5.5.0",
-    "skuba": "12.1.1",
+    "skuba": "15.3.0",
     "zod": "4.1.11"
   },
   "peerDependencies": {
@@ -84,18 +84,23 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@10.12.4",
+  "packageManager": "pnpm@10.26.1",
   "engines": {
     "node": ">=20"
   },
   "publishConfig": {
-    "provenance": true,
-    "registry": "https://registry.npmjs.org/"
+    "exports": {
+      ".": {
+        "import": "./lib/index.mjs",
+        "require": "./lib/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "skuba": {
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "12.1.1"
+    "version": "15.3.0"
   }
 }

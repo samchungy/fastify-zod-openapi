@@ -1,75 +1,86 @@
 name: Release
 
 on:
-  release:
-    types:
-      - released
-
-permissions: {}
-
-env:
-  COREPACK_DEFAULT_TO_LATEST: 0
+  push:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   release:
-    name: Version & Publish
+    name: Release
     permissions:
       contents: write
-      pull-requests: write
       id-token: write
+      pull-requests: write
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
-
-      - name: Set up Node.js 20.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-          registry-url: 'https://registry.npmjs.org'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up pnpm
-        run: corepack enable pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create Release Branch
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git checkout -b release
-          git push --force origin release --set-upstream
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
+      - name: Release
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          version: pnpm changeset version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  snapshot:
+    name: Snapshot
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Version Package
-        run: npm version ${{ github.event.release.tag_name }} --git-tag-version=false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
 
-      - name: Push package.json and tags
-        run: |
-          sha=$(gh api --method PUT /repos/:owner/:repo/contents/$FILE_TO_COMMIT \
-            -f message="Release ${{ github.event.release.tag_name }}" \
-            -f content="$( base64 -i $FILE_TO_COMMIT )" \
-            -f encoding="base64" \
-            -f branch="$DESTINATION_BRANCH" \
-            -f sha="$( git rev-parse $DESTINATION_BRANCH:$FILE_TO_COMMIT )" --jq '.commit.sha')
-          gh api --method PATCH /repos/:owner/:repo/git/refs/tags/${{ github.event.release.tag_name }} \
-            -f sha="$sha" -F force=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILE_TO_COMMIT: package.json
-          DESTINATION_BRANCH: release
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
 
-      - name: Raise Release PR
-        run: |
-          gh pr create -H release -B main --title "Release ${{ github.event.release.tag_name }}" --body "Please merge this with a Merge Request to update main<br><br>[${{ github.event.release.tag_name }}](${{ github.event.release.html_url }})<br><br>${{ github.event.release.body }}" -l "chore"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install latest npm
+        run: npm install -g npm@latest
 
       - name: Publish to npm
-        run: pnpm build && npm publish --provenance
+        uses: seek-oss/changesets-snapshot@v0
+        with:
+          pre-publish: pnpm run build
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

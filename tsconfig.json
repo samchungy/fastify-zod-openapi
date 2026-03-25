@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
-    "lib": ["ES2022"],
+    "skipLibCheck": true, // tsdown has optional peer deps
+    "customConditions": ["@seek/fastify-zod-openapi/source"],
+    "rootDir": ".",
+    "lib": ["ES2023"],
     "outDir": "lib",
     "removeComments": false,
-    "target": "ES2022"
+    "target": "ES2023"
   },
   "exclude": ["lib*/**/*", "dist*/**/*"],
   "extends": "skuba/config/tsconfig.json"
