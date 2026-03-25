@@ -2,7 +2,7 @@ import fastJsonStringify, {
   type ObjectSchema,
   type Schema,
 } from 'fast-json-stringify';
-import type { FastifySerializerCompiler } from 'fastify/types/schema';
+import type { FastifySerializerCompiler } from 'fastify/types/schema.js';
 import type { ZodType } from 'zod/v4';
 import type { $ZodType } from 'zod/v4/core';
 import { createSchema } from 'zod-openapi';

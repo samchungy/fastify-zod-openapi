@@ -4,6 +4,7 @@ import fastify, {
   type FastifyInstance,
   type FastifyRegisterOptions,
 } from 'fastify';
+import { describe, expect, it } from 'vitest';
 import * as z from 'zod/v4';
 
 import {
@@ -2936,9 +2937,56 @@ describe('fastifyZodOpenApiTransformObject', () => {
 
     expect(result.json()).toMatchInlineSnapshot(`
       {
-        "error": "Internal Server Error",
-        "message": "Cannot read properties of undefined (reading 'description')",
-        "statusCode": 500,
+        "components": {
+          "schemas": {
+            "foo": {
+              "type": "string",
+            },
+            "test-preserve": {
+              "properties": {
+                "foo": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "foo",
+              ],
+              "type": "object",
+            },
+          },
+          "securitySchemes": {
+            "bar": {
+              "scheme": "bearer",
+              "type": "http",
+            },
+          },
+        },
+        "info": {
+          "title": "hello world",
+          "version": "1.0.0",
+        },
+        "openapi": "3.0.3",
+        "paths": {
+          "/": {
+            "post": {
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/test-preserve",
+                    },
+                  },
+                },
+                "required": true,
+              },
+              "responses": {
+                "200": {
+                  "description": "Default Response",
+                },
+              },
+            },
+          },
+        },
       }
     `);
   });

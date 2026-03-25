@@ -1,6 +1,7 @@
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
 import fastify from 'fastify';
+import { describe, expect, it } from 'vitest';
 import * as z from 'zod/v4';
 
 import type {

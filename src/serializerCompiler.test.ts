@@ -1,5 +1,6 @@
 import UnderPressure from '@fastify/under-pressure';
 import fastify from 'fastify';
+import { describe, expect, it } from 'vitest';
 import * as z from 'zod/v4';
 import type { ZodOpenApiResponsesObject } from 'zod-openapi';
 

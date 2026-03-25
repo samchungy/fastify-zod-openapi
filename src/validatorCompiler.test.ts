@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import { describe, expect, it } from 'vitest';
 import * as z from 'zod/v4';
 
 import type { FastifyZodOpenApiTypeProvider } from './plugin.js';
