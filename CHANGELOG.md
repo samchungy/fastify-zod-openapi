@@ -1,5 +1,11 @@
 # fastify-zod-openapi
 
+## 5.6.1
+
+### Patch Changes
+
+- [#357](https://github.com/samchungy/fastify-zod-openapi/pull/357) [`f395c03`](https://github.com/samchungy/fastify-zod-openapi/commit/f395c038c8dd0643496b3c8c53d82904058681fd) Thanks [@samchungy](https://github.com/samchungy)! - Optimise tree shaking
+
 ## 5.6.0
 
 ### Minor Changes
