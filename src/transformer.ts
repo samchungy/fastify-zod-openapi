@@ -1,7 +1,5 @@
-import {
-  type FastifyDynamicSwaggerOptions,
-  formatParamUrl,
-} from '@fastify/swagger';
+import type { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
+import { formatParamUrl } from '@fastify/swagger/lib/util/format-param-url.js';
 import type { FastifySchema } from 'fastify';
 import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import type { $ZodObject, $ZodType } from 'zod/v4/core';
