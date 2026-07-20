@@ -53,27 +53,26 @@
   },
   "dependencies": {
     "@fastify/error": "^4.0.0",
-    "fast-json-stringify": "^6.0.0",
+    "fast-json-stringify": "^7.0.1",
     "fastify-plugin": "^5.0.0",
     "zod-openapi": "^5.4.0"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "0.6.0",
-    "@changesets/cli": "2.30.0",
-    "@fastify/swagger": "9.5.1",
-    "@fastify/swagger-ui": "5.2.3",
-    "@fastify/under-pressure": "9.0.3",
+    "@changesets/changelog-github": "0.7.0",
+    "@changesets/cli": "2.31.1",
+    "@fastify/swagger": "9.8.1",
+    "@fastify/swagger-ui": "6.1.0",
+    "@fastify/under-pressure": "9.1.0",
     "@types/node": "24.3.0",
-    "@vitest/coverage-v8": "4.1.1",
     "eslint-plugin-import-zod": "1.2.1",
     "eslint-plugin-zod-openapi": "2.0.0",
-    "fastify": "5.5.0",
+    "fastify": "5.10.0",
     "skuba": "16.2.0",
-    "zod": "4.3.6"
+    "zod": "4.4.3"
   },
   "peerDependencies": {
     "@fastify/swagger": "^9.0.0",
-    "@fastify/swagger-ui": "^5.0.1",
+    "@fastify/swagger-ui": "^5.0.1 || ^6.0.0",
     "fastify": "5",
     "zod": "^3.25.74 || ^4.0.0"
   },
@@ -85,7 +84,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@10.34.3",
   "engines": {
     "node": ">=20"
   },
