@@ -1,5 +1,11 @@
 # fastify-zod-openapi
 
+## 5.7.0
+
+### Minor Changes
+
+- [`0affc9a`](https://github.com/samchungy/fastify-zod-openapi/commit/0affc9a09e9b77ff1f1998d363af0da91bca902c) Thanks [@samchungy](https://github.com/samchungy)! - Bump fast-json-stringify to ^7.0.1, Allow @fastify/swagger-ui v6 in peer dependencies
+
 ## 5.6.1
 
 ### Patch Changes
