@@ -47,8 +47,8 @@
     "prepare": "pnpm build",
     "release": "pnpm build && changeset publish",
     "start": "skuba node --port=5678 examples/openapi.ts",
-    "test": "vitest",
-    "test:ci": "vitest --coverage",
+    "test": "skuba test",
+    "test:ci": "skuba test --coverage",
     "test:watch": "skuba test --watch"
   },
   "dependencies": {
@@ -68,8 +68,7 @@
     "eslint-plugin-import-zod": "1.2.1",
     "eslint-plugin-zod-openapi": "2.0.0",
     "fastify": "5.5.0",
-    "skuba": "15.3.0",
-    "vitest": "4.1.1",
+    "skuba": "16.2.0",
     "zod": "4.3.6"
   },
   "peerDependencies": {
@@ -103,6 +102,6 @@
     "entryPoint": "src/index.ts",
     "template": "oss-npm-package",
     "type": "package",
-    "version": "15.3.0"
+    "version": "16.2.0"
   }
 }

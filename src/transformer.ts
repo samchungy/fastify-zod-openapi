@@ -498,10 +498,7 @@ const traverseObject = (
       );
 
       if (parameter?.schema) {
-        return Object.assign(
-          parameter.schema,
-          schemaObject,
-        ) as OpenAPIV3_1.SchemaObject;
+        return Object.assign(parameter.schema, schemaObject);
       }
 
       return undefined;
@@ -529,7 +526,7 @@ const traverseObject = (
     current !== null &&
     Object.keys(current).length !== 0
   ) {
-    return current as OpenAPIV3_1.SchemaObject;
+    return current;
   }
 
   return Object.assign(current as OpenAPIV3_1.SchemaObject, schemaObject);

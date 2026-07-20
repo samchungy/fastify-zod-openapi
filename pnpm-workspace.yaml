@@ -1,4 +1,10 @@
+trustPolicyExclude:
+  - semver@6.3.1 # Managed by skuba
 publicHoistPattern:
+  - '@changesets/cli' # Managed by skuba
+  - '@skuba-lib/*' # Managed by skuba
+  - '@vitest/*' # Managed by skuba
+  - vitest # Managed by skuba
   - openapi-types
   - '@arethetypeswrong/core' # Managed by skuba
   - '@eslint/*' # Managed by skuba
@@ -6,7 +12,6 @@ publicHoistPattern:
   - esbuild # Managed by skuba
   - eslint # Managed by skuba
   - eslint-config-skuba # Managed by skuba
-  - jest # Managed by skuba
   - prettier # Managed by skuba
   - publint # Managed by skuba
   - rolldown # Managed by skuba
@@ -15,6 +20,7 @@ publicHoistPattern:
   - typescript # Managed by skuba
 
 allowBuilds:
+  '@ast-grep/lang-bash': true # Managed by skuba
   '@ast-grep/lang-json': true # Managed by skuba
   '@ast-grep/lang-yaml': true # Managed by skuba
   '@datadog/native-appsec': true # Managed by skuba
@@ -42,5 +48,3 @@ minimumReleaseAgeExclude:
 packageManagerStrictVersion: true # Managed by skuba
 strictDepBuilds: false # Managed by skuba
 trustPolicy: off # Managed by skuba
-trustPolicyExclude:
-  - semver@5.7.2 || 6.3.1 # Managed by skuba
