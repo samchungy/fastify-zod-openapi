@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, { type FastifyError } from 'fastify';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod/v4';
 
@@ -393,7 +393,7 @@ describe('setErrorHandler', () => {
       },
       (req, res) => res.send(req.query),
     );
-    app.setErrorHandler((error, _req, res) => {
+    app.setErrorHandler<FastifyError>((error, _req, res) => {
       if (error.validation) {
         for (const err of error.validation) {
           if (err instanceof RequestValidationError) {
@@ -437,7 +437,7 @@ describe('setErrorHandler', () => {
       },
       (req, res) => res.send(req.query),
     );
-    app.setErrorHandler((error, _req, res) => {
+    app.setErrorHandler<FastifyError>((error, _req, res) => {
       if (error.validation) {
         for (const err of error.validation) {
           if (err instanceof RequestValidationError) {
@@ -501,7 +501,7 @@ describe('setErrorHandler', () => {
       },
       (req, res) => res.send(req.query),
     );
-    app.setErrorHandler((error, _req, res) => {
+    app.setErrorHandler<FastifyError>((error, _req, res) => {
       if (error.validation) {
         const errs = error.validation.map((err) => {
           if (err instanceof RequestValidationError) {
